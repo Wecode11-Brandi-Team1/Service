@@ -358,7 +358,7 @@ tags
 
 ### VisualStudioCode ###
 .vscode/*
-!.vscode/settings.json
+.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
@@ -369,3 +369,5 @@ tags
 .history
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,visualstudiocode,python,pycharm,flask,vim
+
+node_modules
