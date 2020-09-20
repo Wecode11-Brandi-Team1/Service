@@ -9,10 +9,10 @@ import Cart from '../views/Cart/Cart.vue'
 import Order from '../views/Order/Order.vue'
 import Mypage from '../views/Mypage/Mypage.vue'
 import Event from '../views/Event/Event.vue'
-
-
+import GSignInButton from 'vue-google-signin-button'
 
 Vue.use(VueRouter)
+Vue.use(GSignInButton)
 
 export const router = new VueRouter({
     mode: "history",
