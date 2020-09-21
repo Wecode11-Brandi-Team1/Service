@@ -9,7 +9,7 @@
       <input type="password" placeholder="비밀번호 입력" v-model="password"/>
       <div class="btn-box">
         <button class="login-btn" v-on:click="loginSubmit">로그인</button>
-        <button class="join-btn">회원가입</button>
+        <router-link to="/signup"><button class="join-btn">회원가입</button></router-link>
       </div>
       <h3>간편로그인 / 가입</h3>
       <g-signin-button
@@ -40,35 +40,44 @@ export default {
       }else if(this.account && !this.password){
         alert('비밀번호를 입력하세요')
       }else{
-        axios.post('/user', {
+        axios.post('http://10.251.1.174:5000/sign-in', {
           account: this.account,
           password: this.password
         })
-        .then(function (response) {
-          console.log(response);
+        .then((response) => {
+          if (response.data.access_token) {
+            this.$store.state.token = response.data.access_token;
+            alert('로그인에 성공하였습니다.');
+            this.$router.push({path: '/main'});
+          }else{
+            alert('아이디와 비밀번호를 확인해주세요.');
+          }
         })
-        .catch(function (error) {
-          alert('아이디와 비밀번호를 다시 확인해주세요.');
-        });
       }
     },
     
     onSignInSuccess (googleUser) {
       const accessToken = googleUser.getAuthResponse(true).access_token;
-      console.log(accessToken);
-
-      axios.post('http://10.251.1.125:5000/api/user/google-login', {
-        token_type :'Bearer',
-        access_token: accessToken
+      const headers = {
+        headers: { 'Authorization': accessToken }
+      }
+      axios.post('http://10.251.1.174:5000/social-signin', null, headers)
+      .then((response) => {
+        console.log(accessToken);
+        if(response.data.access_token){
+          this.$store.state.token = response.data.access_token;
+          this.$router.push({path: '/main'});
+        }
       })
-      .then(function (response) {
-        console.log(response);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-    }
+      .catch((error) => {
+        if (error.response && error.response.status === 401) {
+          this.$store.state.googleToken = accessToken;
+          this.$store.state.isGoogle = false;
+          this.$router.push({path: '/signup'});
+        }
+    })
   }
+}
 }
 </script>
 

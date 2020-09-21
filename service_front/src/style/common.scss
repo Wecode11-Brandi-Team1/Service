@@ -1,0 +1,57 @@
+@import url(//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSans-kr.css);
+@import url(//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSans-jp.css);
+
+@mixin setFlex($justify-justify: null,
+  $align-align: null,
+  $flex-wrap: null,
+  $order-order: null) {
+  display: flex;
+
+  @if not($justify-justify) {}
+
+  @else {
+    justify-content: $justify-justify;
+  }
+
+  @if not($align-align) {}
+
+  @else {
+    align-content: $align-align;
+  }
+
+  @if not($flex-wrap) {}
+
+  @else {
+    flex-wrap: $flex-wrap;
+  }
+
+  @if not($order-order) {}
+
+  @else {
+    order: $order-order;
+  }
+}
+
+@mixin pink {
+  color: #ff1f4b
+}
+
+;
+
+@mixin productBlack {
+  color: #1e1e1e
+}
+
+;
+
+@mixin grey {
+  color: #c5c5c5
+}
+
+@mixin productGrey {
+  color: #9a9a9e
+}
+
+@mixin footerGrey {
+  color: #e0e0e0
+}
