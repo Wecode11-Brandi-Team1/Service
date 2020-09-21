@@ -1,6 +1,9 @@
 Pipfile
 Pipfile.lock
 config.py
+jwt.py
+miniter.sql
+script.sql
 
 # Created by https://www.toptal.com/developers/gitignore/api/macos,visualstudiocode,python,pycharm,flask,vim
 # Edit at https://www.toptal.com/developers/gitignore?templates=macos,visualstudiocode,python,pycharm,flask,vim
