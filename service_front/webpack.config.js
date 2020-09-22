@@ -29,6 +29,7 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: './public/index.html',
+      inject: false,
     }),
     new VueLoaderPlugin(),
     new webpack.HotModuleReplacementPlugin(),
