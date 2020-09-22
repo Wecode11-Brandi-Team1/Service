@@ -6,7 +6,7 @@
   "scripts": {
     "clean": "rimraf dist",
     "build": "npm run clean && webpack --mode production",
-    "serve": "webpack-dev-server --mode development",
+    "serve": "webpack-dev-server --quiet --mode development",
     "lint": "eslint --ext .js,.vue src",
     "lint-autofix": "eslint --ext .js,.vue src --fix"
   },
@@ -42,6 +42,7 @@
   "dependencies": {
     "axios": "^0.20.0",
     "prettier": "^2.1.2",
+    "vue-daum-postcode": "^0.9.0",
     "vue-google-signin-button": "^1.0.4",
     "vue-router": "^2.8.1",
     "vue-styled-components": "^1.5.1",
