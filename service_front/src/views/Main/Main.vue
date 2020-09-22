@@ -1,104 +1,61 @@
 <template>
-  <div id="Main">
-    <header id="rollingBannerContainer">
+  <div class="main">
+    <header id="rollingbanner-container">
       <a href="?">
-        <img
-          alt="rollingBanner"
-          src="http://image.brandi.me/home/banner/bannerImage_159982_1593396258.jpg"
-        />
+        <img alt="rolling banner" v-bind:src="datas.rolling_banner_image" />
       </a>
-      <div id="slideButton">
+      <div id="slide-button">
         <div class="spot" href="?"></div>
       </div>
     </header>
-    <main id="mainListContainer">
-      <div id="mainPageTittle">
+    <main id="main-list-container">
+      <div id="main-page-title">
         <span>당신을 위한 추천</span>
       </div>
-      <div class="MainList">
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-      </div>
-      <div class="mainSubBanner">
-        <a href="?">
-          <img
-            alt="Banner photo"
-            src="http://image.brandi.me/home/banner/bannerImage_159429_1593395957.jpg"
-          />
+      <div class="main-list">
+        <a
+          v-bind:href="`/productdetail/` + list.id"
+          v-bind:key="list.id"
+          v-for="list in datas.list.slice(0, 20)"
+        >
+          <list-card v-bind="list" />
         </a>
       </div>
-      <div class="MainList">
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-      </div>
-      <div class="mainSubBanner">
+      <div class="main-subbanner">
         <a href="?">
-          <img
-            alt="Banner photo"
-            src="http://image.brandi.me/home/banner/bannerImage_159375_1593395565.jpg"
-          />
+          <img alt="Banner photo" v-bind:src="datas.main_subbanner_image[0]" />
         </a>
       </div>
-      <div id="MainListBottom">
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
-        <listCard />
+      <div class="main-list">
+        <a
+          v-bind:href="`/productdetail/` + list.id"
+          v-bind:key="list.id"
+          v-for="list in datas.list.slice(20, 40)"
+        >
+          <list-card v-bind="list" />
+        </a>
       </div>
-      <div class="buttonContainer">
-        <button class="more">더보기</button>
+      <div class="main-subbanner">
+        <a href="?">
+          <img alt="Banner photo" v-bind:src="datas.main_subbanner_image[1]" />
+        </a>
+      </div>
+      <div id="mainlist-bottom">
+        <a
+          v-bind:href="`/productdetail/` + list.id"
+          v-bind:key="list.id"
+          v-for="list in paginatedData"
+        >
+          <list-card v-bind="list" />
+        </a>
+      </div>
+      <div
+        v-bind:class="{
+          'button-container': datas.list.length !== paginatedData.length + 40,
+          none: datas.list.length === paginatedData.length + 40,
+        }"
+      >
+        <button class="more" v-on:click="more_loading">더보기</button>
       </div>
     </main>
   </div>
@@ -106,23 +63,75 @@
 
 <script>
 import listCard from "./MainComponents/ListCard.vue";
+import axios from "axios";
 
 export default {
   name: "main",
   components: { listCard },
-  data: () => ({}),
-  methods: {},
+  data: () => ({
+    offset: 40,
+    limit: 20,
+    loading_list: 1,
+    datas: {
+      list: [
+        {
+          id: "",
+          src: "",
+          seller_name: "",
+          product_name: "",
+          discount: 0,
+          origin_price: 0,
+          list_count: 0,
+          one_day_delivery: false,
+        },
+      ],
+      rolling_banner_image: [],
+      rolling_banner_url: [],
+      main_subbanner_image: [],
+      main_subbanner_url: [],
+    },
+  }),
+  computed: {
+    paginatedData() {
+      const start = this.offset,
+        end = start + this.limit * this.loading_list;
+      return this.datas.list.slice(start, end);
+    },
+  },
+  methods: {
+    more_loading() {
+      this.loading_list += 1;
+    },
+  },
+  created: function () {
+    axios
+      .get("public/data/mockData/mainProductJson.json")
+      .then((res) => (this.datas = res.data));
+  },
 };
 </script>
 
 <style lang="scss">
-#main {
+.main {
   display: flex;
   flex-direction: column;
   width: 100vw;
   box-sizing: border-box;
 
-  #rollingBannerContainer {
+  .none {
+    display: none;
+  }
+
+  a {
+    color: inherit;
+
+    &:hover {
+      color: inherit;
+      text-decoration: none;
+    }
+  }
+
+  #rollingbanner-container {
     position: relative;
     margin-bottom: 30px;
     padding-bottom: 24px;
@@ -132,7 +141,7 @@ export default {
       background-color: black;
     }
 
-    #slideButton {
+    #slide-button {
       position: absolute;
       display: flex;
       justify-content: center;
@@ -152,21 +161,21 @@ export default {
     }
   }
 
-  #mainListContainer {
+  #main-list-container {
     display: flex;
     flex-direction: column;
     width: 1300px;
     padding: 0 30px;
     margin: auto;
 
-    .MainList,
-    #MainListBottom {
+    .main-list,
+    #mainlist-bottom {
       display: flex;
       flex-wrap: wrap;
     }
   }
 
-  #mainPageTittle {
+  #main-page-title {
     display: flex;
     justify-content: center;
     margin-bottom: 30px;
@@ -177,7 +186,7 @@ export default {
     }
   }
 
-  .mainSubBanner {
+  .main-subbanner {
     height: 313.3px;
     margin-top: 50px;
     margin-bottom: 80px;
@@ -189,7 +198,7 @@ export default {
     }
   }
 
-  .buttonContainer {
+  .button-container {
     display: flex;
     justify-content: center;
     height: 82px;

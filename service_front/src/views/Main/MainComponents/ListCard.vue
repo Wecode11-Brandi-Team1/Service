@@ -1,53 +1,60 @@
 <template>
-  <div id="ListCard">
-    <a href="?">
-      <ul>
-        <li>
-          <img
-            alt="product photo"
-            src="http://image.brandi.me/cproduct/2020/08/27/17865870_1598496166_image1_M.jpg"
-          />
-        </li>
-        <li class="listSeller">
-          냥냥 마켓
-          <img alt="One day delivery" src="src/assets/oneday.png" />
-        </li>
-        <li class="productName">안경냥이</li>
-        <li>
-          <span class="discount">9%</span>
-          <span class="price">90</span>
-          <span class="originPrice">100</span>
-        </li>
-        <li class="listCount">5억개 구매중</li>
-      </ul>
-    </a>
-  </div>
+  <ul class="list-card">
+    <li>
+      <img class="product-photo" alt="product photo" v-bind:src="src" />
+    </li>
+    <li class="list-seller">
+      {{seller_name}}
+      <img
+        v-bind:class="{'none':one_day_delivery}"
+        alt="One day delivery"
+        src="src/assets/oneday.png"
+      />
+    </li>
+    <li class="product-name">{{product_name}}</li>
+    <li>
+      <span v-bind:class="{'discount':discount,'none':!discount}">{{discount}}%</span>
+      <span class="price">{{origin_price*(1-discount/100)}}</span>
+      <span v-bind:class="{'origin-price':discount,'none':!discount}">{{origin_price}}</span>
+    </li>
+    <li v-bind:class="{'list-count':list_count, 'none':!list_count}">{{list_count}}개 구매중</li>
+  </ul>
 </template>
 
 <script>
 export default {
-  name: "listCard",
+  name: "list-card",
   components: {},
+  props: [
+    "id",
+    "src",
+    "seller_name",
+    "product_name",
+    "discount",
+    "origin_price",
+    "list_count",
+    "one_day_delivery",
+  ],
   data: () => ({}),
   methods: {},
 };
 </script>
 
 <style lang="scss">
-#ListCard {
+.list-card {
   width: 248px;
   padding: 0 6.188px 30px;
 
-  img {
+  .none {
+    display: none;
+  }
+
+  .product-photo {
     width: 100%;
+    height: 254px;
   }
 
-  a {
-    color: inherit;
-    text-decoration: none;
-  }
-
-  .listSeller {
+  .list-seller {
     display: flex;
     justify-content: space-between;
     font-size: 15.6px;
@@ -59,7 +66,7 @@ export default {
     }
   }
 
-  .productName {
+  .product-name {
     font-size: 16px;
     font-weight: 500;
   }
@@ -74,13 +81,13 @@ export default {
     color: #ff1f4b;
   }
 
-  .originPrice {
+  .origin-price {
     font-size: 15px;
     color: #757575;
     text-decoration: line-through;
   }
 
-  .listCount {
+  .list-count {
     font-size: 13px;
     margin-top: 10px;
   }
