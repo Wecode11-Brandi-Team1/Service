@@ -1,62 +1,67 @@
 <template>
   <div class="main">
-    <header id="rollingbanner-container">
+    <header class="rollingbanner-container">
       <a href="?">
-        <img alt="rolling banner" v-bind:src="datas.rolling_banner_image" />
+        <img alt="rolling banner" v-bind:src="rolling_banner_image" />
       </a>
-      <div id="slide-button">
+      <div class="slide-button">
         <div class="spot" href="?"></div>
       </div>
     </header>
-    <main id="main-list-container">
-      <div id="main-page-title">
-        <span>당신을 위한 추천</span>
-      </div>
-      <div class="main-list">
-        <a
-          v-bind:href="`/productdetail/` + list.id"
-          v-bind:key="list.id"
-          v-for="list in datas.list.slice(0, 20)"
-        >
-          <list-card v-bind="list" />
-        </a>
-      </div>
-      <div class="main-subbanner">
-        <a href="?">
-          <img alt="Banner photo" v-bind:src="datas.main_subbanner_image[0]" />
-        </a>
-      </div>
-      <div class="main-list">
-        <a
-          v-bind:href="`/productdetail/` + list.id"
-          v-bind:key="list.id"
-          v-for="list in datas.list.slice(20, 40)"
-        >
-          <list-card v-bind="list" />
-        </a>
-      </div>
-      <div class="main-subbanner">
-        <a href="?">
-          <img alt="Banner photo" v-bind:src="datas.main_subbanner_image[1]" />
-        </a>
-      </div>
-      <div id="mainlist-bottom">
-        <a
-          v-bind:href="`/productdetail/` + list.id"
-          v-bind:key="list.id"
-          v-for="list in paginatedData"
-        >
-          <list-card v-bind="list" />
-        </a>
-      </div>
-      <div
-        v-bind:class="{
-          'button-container': datas.list.length !== paginatedData.length + 40,
-          none: datas.list.length === paginatedData.length + 40,
-        }"
-      >
-        <button class="more" v-on:click="more_loading">더보기</button>
-      </div>
+    <main class="main-list-container">
+      <section>
+        <div class="subtitle-container">
+          <div class="subtitle">
+            <p>
+              사람들이 많이 찾는 상품
+              <span>요즘 뭐가 그렇게 잘나가?</span>
+            </p>
+            <router-link v-bind:to="`categories/${`1`}/products`">
+              더보기
+              <img
+                alt="arrow"
+                src="https://web-staging.brandi.co.kr/static/2020.7.3/images/img_span_arrow.jpg"
+              />
+            </router-link>
+          </div>
+        </div>
+        <div class="main-list">
+          <router-link
+            v-bind:to="`products/${list.product_id}`"
+            v-bind:key="list.product_id"
+            v-for="list in datas.most_sold_products"
+          >
+            <list-card v-bind="list" />
+          </router-link>
+        </div>
+        <div class="colume-bar"></div>
+      </section>
+      <section>
+        <div class="subtitle-container">
+          <div class="subtitle">
+            <p>
+              오늘의 특가 리스트
+              <span>놓치면 안될 단독 특가!</span>
+            </p>
+            <router-link v-bind:to="`categories/${`1`}/products`">
+              더보기
+              <img
+                alt="arrow"
+                src="https://web-staging.brandi.co.kr/static/2020.7.3/images/img_span_arrow.jpg"
+              />
+            </router-link>
+          </div>
+        </div>
+        <div class="main-list">
+          <router-link
+            v-bind:to="`products/${list.product_id}`"
+            v-bind:key="list.product_id"
+            v-for="list in datas.discounted_products"
+          >
+            <list-card v-bind="list" />
+          </router-link>
+        </div>
+      </section>
     </main>
   </div>
 </template>
@@ -66,47 +71,23 @@ import listCard from "./MainComponents/ListCard.vue";
 import axios from "axios";
 
 export default {
-  name: "main",
+  name: "home-page",
   components: { listCard },
   data: () => ({
-    offset: 40,
-    limit: 20,
-    loading_list: 1,
+    rolling_banner_image: [
+      "http://image.brandi.me/home/banner/bannerImage_159982_1593396258.jpg",
+    ],
+    rolling_banner_url: [],
     datas: {
-      list: [
-        {
-          id: "",
-          src: "",
-          seller_name: "",
-          product_name: "",
-          discount: 0,
-          origin_price: 0,
-          list_count: 0,
-          one_day_delivery: false,
-        },
-      ],
-      rolling_banner_image: [],
-      rolling_banner_url: [],
-      main_subbanner_image: [],
-      main_subbanner_url: [],
+      discounted_products: [],
+      most_sold_products: [],
     },
   }),
-  computed: {
-    paginatedData() {
-      const start = this.offset,
-        end = start + this.limit * this.loading_list;
-      return this.datas.list.slice(start, end);
-    },
-  },
-  methods: {
-    more_loading() {
-      this.loading_list += 1;
-    },
-  },
+  methods: {},
   created: function () {
     axios
-      .get("public/data/mockData/mainProductJson.json")
-      .then((res) => (this.datas = res.data));
+      .get("http://10.251.1.146:5000/")
+      .then((res) => (this.datas = res.data.data));
   },
 };
 </script>
@@ -117,6 +98,7 @@ export default {
   flex-direction: column;
   width: 100vw;
   box-sizing: border-box;
+  margin-bottom: 20px;
 
   .none {
     display: none;
@@ -131,7 +113,7 @@ export default {
     }
   }
 
-  #rollingbanner-container {
+  .rollingbanner-container {
     position: relative;
     margin-bottom: 30px;
     padding-bottom: 24px;
@@ -141,7 +123,7 @@ export default {
       background-color: black;
     }
 
-    #slide-button {
+    .slide-button {
       position: absolute;
       display: flex;
       justify-content: center;
@@ -161,10 +143,11 @@ export default {
     }
   }
 
-  #main-list-container {
+  .main-list-container {
     display: flex;
     flex-direction: column;
-    width: 1300px;
+    max-width: 1300px;
+    width: 100%;
     padding: 0 30px;
     margin: auto;
 
@@ -175,44 +158,45 @@ export default {
     }
   }
 
-  #main-page-title {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 30px;
+  .subtitle-container {
     padding-top: 40px;
-    span {
-      font-size: 26px;
-      font-weight: 700;
-    }
-  }
 
-  .main-subbanner {
-    height: 313.3px;
-    margin-top: 50px;
-    margin-bottom: 80px;
+    .subtitle {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+      margin-bottom: 15px;
+      padding: 0 5px;
 
-    img {
-      width: 100%;
-      height: 313.3;
-      padding: 0 6.1875px;
-    }
-  }
-
-  .button-container {
-    display: flex;
-    justify-content: center;
-    height: 82px;
-    padding: 20px 0;
-
-    .more {
-      width: 250px;
-      border: 1px solid black;
-      font-size: 14px;
-
-      &:focus {
-        border: inherit;
+      img {
+        position: relative;
+        top: -3px;
+        width: 20px;
       }
     }
+
+    p {
+      font-size: 26px;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    span,
+    a {
+      font-size: 20px;
+      margin-left: 10px;
+      color: #4d4d4d;
+    }
+
+    a {
+      position: relative;
+      top: 10px;
+    }
+  }
+
+  .colume-bar {
+    border-bottom: 2px solid #cccccc;
+    margin-top: 30px;
   }
 }
 </style>

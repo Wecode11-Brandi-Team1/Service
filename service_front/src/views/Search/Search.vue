@@ -5,16 +5,12 @@
         id="product"
         v-bind:class="{ 'select-header': this.select_search === 'product' }"
         v-on:click="switching_search"
-      >
-        상품
-      </button>
+      >상품</button>
       <button
         id="store"
         v-bind:class="{ 'select-header': this.select_search === 'store' }"
         v-on:click="switching_search"
-      >
-        스토어
-      </button>
+      >스토어</button>
     </header>
     <main>
       <section
@@ -24,8 +20,8 @@
         }"
       >
         <article>
-          검색결과(<span>{{ this.datas.products.length }}</span
-          >건)
+          검색결과(
+          <span>{{ Number(this.datas.products.length).toLocaleString("en") }}</span>건)
         </article>
         <article>
           <div class="checkbox-container" v-on:click="checkbox_clicker">
@@ -40,8 +36,8 @@
           </div>
           <div class="filter-container">
             <div class="filter-box-fix" v-on:click="filter_closer">
-              <span>{{ this.filter }}</span
-              ><img
+              <span>{{ this.filter }}</span>
+              <img
                 v-bind:class="{ 'reverse-img': open_filter }"
                 alt="arrow"
                 src="https://web-staging.brandi.co.kr/static/2020.7.3/images/ic-arrow-bl-down@3x.png"
@@ -49,27 +45,23 @@
             </div>
             <div v-bind:class="{ none: !open_filter }">
               <div class="filter-floating">
-                <div class="filter-box" id="추천순" v-on:click="filter_closer">
-                  추천순
-                </div>
-                <div
-                  class="filter-box"
-                  id="판매량순"
-                  v-on:click="filter_closer"
-                >
-                  판매량순
-                </div>
-                <div class="filter-box" id="최신순" v-on:click="filter_closer">
-                  최신순
-                </div>
+                <div class="filter-box" id="추천순" v-on:click="filter_closer">추천순</div>
+                <div class="filter-box" id="판매량순" v-on:click="filter_closer">판매량순</div>
+                <div class="filter-box" id="최신순" v-on:click="filter_closer">최신순</div>
               </div>
             </div>
           </div>
         </article>
         <article>
-          <a v-for="list in datas.products" v-bind:key="list.product_id">
+          <router-link
+            v-bind:to="`/products/${list.product_id}`"
+            v-for="list in datas.products"
+            v-bind:key="list.product_id"
+          >
             <ul class="product">
-              <li><img alt="store logo" v-bind:src="list.image_url" /></li>
+              <li>
+                <img alt="store logo" v-bind:src="list.image_path" />
+              </li>
               <li>{{ list.seller_name }}</li>
               <li>
                 <p>{{ list.product_name }}</p>
@@ -80,22 +72,22 @@
                     discount: list.discount_rate,
                     none: !list.discount_rate,
                   }"
-                  >{{ list.discount_rate }}%</span
-                >
-                <span class="price">{{
-                  list.origin_price * (1 - list.discount_rate / 100)
-                }}</span>
+                >{{ Number(list.discount_rate).toLocaleString("en")}}%</span>
+                <span class="price">
+                  {{
+                  Number(list.sale_price * (1 - list.discount_rate / 100)).toLocaleString("en")
+                  }}
+                </span>
                 <span
                   v-bind:class="{
                     'origin-price': list.discount_rate,
                     none: !list.discount_rate,
                   }"
-                  >{{ list.origin_price }}</span
-                >
+                >{{ Number(list.sale_price).toLocaleString("en") }}</span>
               </li>
-              <li>{{ list.sale_amount }}개 구매중</li>
+              <li>{{ Number(list.sale_amount).toLocaleString("en") }}개 구매중</li>
             </ul>
-          </a>
+          </router-link>
         </article>
       </section>
       <section
@@ -105,22 +97,16 @@
         }"
       >
         <article>
-          스토어 검색결과(<span>{{ this.datas.stores.length }}</span
-          >건)
+          스토어 검색결과(
+          <span>{{ this.datas.stores.length }}</span>건)
         </article>
         <article>
-          <div
-            class="store"
-            v-for="list in datas.stores"
-            v-bind:key="list.seller_id"
-          >
+          <div class="store" v-for="list in datas.stores" v-bind:key="list.seller_id">
             <img alt="store logo" v-bind:src="list.profile_image" />
             <div>
-              <p>{{ list.korean_name }}</p>
+              <p>{{ list.seller_name }}</p>
               <p>
-                <span v-for="hash in list.hash_tag" v-bind:key="hash"
-                  >#{{ hash }}</span
-                >
+                <span v-for="hash in list.hash_tag" v-bind:key="hash">#{{ hash }}</span>
               </p>
             </div>
           </div>
@@ -148,7 +134,7 @@ export default {
           discounted_price: 32000,
           image_url:
             "https://image.brandi.me/cproduct/2020/06/04/17082238_1591255535_image1_M.jpg",
-          origin_price: 32000,
+          sale_price: 32000,
           product_id: 1,
           product_name: "vivi 반팔자켓 린넨자켓 2col_무드글램",
           sale_amount: 0,
@@ -159,7 +145,7 @@ export default {
           discounted_price: 32000,
           image_url:
             "https://image.brandi.me/cproduct/2020/06/04/17082238_1591255535_image1_M.jpg",
-          origin_price: 32000,
+          sale_price: 32000,
           product_id: 2,
           product_name: "vivi 반팔자켓 린넨자켓 2col_무드글램",
           sale_amount: 0,
@@ -170,7 +156,7 @@ export default {
           discounted_price: 32000,
           image_url:
             "https://image.brandi.me/cproduct/2020/06/04/17082238_1591255535_image1_M.jpg",
-          origin_price: 32000,
+          sale_price: 32000,
           product_id: 3,
           product_name: "vivi 반팔자켓 린넨자켓 2col_무드글램",
           sale_amount: 10,
@@ -181,7 +167,7 @@ export default {
           discounted_price: 32000,
           image_url:
             "https://image.brandi.me/cproduct/2020/06/04/17082238_1591255535_image1_M.jpg",
-          origin_price: 32000,
+          sale_price: 32000,
           product_id: 4,
           product_name: "vivi 반팔자켓 린넨자켓 2col_무드글램",
           sale_amount: 0,
@@ -192,7 +178,7 @@ export default {
           discounted_price: 32000,
           image_url:
             "https://image.brandi.me/cproduct/2020/06/04/17082238_1591255535_image1_M.jpg",
-          origin_price: 32000,
+          sale_price: 32000,
           product_id: 5,
           product_name: "vivi 반팔자켓 린넨자켓 2col_무드글램",
           sale_amount: 147,
@@ -203,7 +189,7 @@ export default {
           discounted_price: 32000,
           image_url:
             "https://image.brandi.me/cproduct/2020/06/04/17082238_1591255535_image1_M.jpg",
-          origin_price: 32000,
+          sale_price: 32000,
           product_id: 6,
           product_name: "vivi 반팔자켓 린넨자켓 2col_무드글램",
           sale_amount: 147,
@@ -225,11 +211,13 @@ export default {
       this.is_checked = !this.is_checked;
       if (this.is_checked) {
         axios
-          .get("public/data/mockData/discountjson.json")
+          .get(
+            `http://10.251.1.146:5000/search?q=${this.$route.query.q}&&is_dicounted=1`
+          )
           .then((res) => (this.datas = { ...this.datas, ...res.data }));
       } else {
         axios
-          .get("public/data/mockData/allproductjson.json")
+          .get(`http://10.251.1.146:5000/search?q=${this.$route.query.q}`)
           .then((res) => (this.datas = { ...this.datas, ...res.data }));
       }
     },
@@ -243,11 +231,11 @@ export default {
       this.open_filter = !this.open_filter;
     },
   },
-  // created: function () {
-  //   axios
-  //     .get("http://10.251.1.160:5000/search?q=이지연&r=10")
-  //     .then((res) => (this.datas = res.data));
-  // },
+  created: function () {
+    axios
+      .get(`http://10.251.1.146:5000/search?q=${this.$route.query.q}`)
+      .then((res) => (this.datas = res.data));
+  },
 };
 </script>
 
@@ -260,6 +248,11 @@ export default {
 
   .none {
     display: none;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
   }
 
   header {
@@ -320,10 +313,12 @@ export default {
             display: flex;
             flex-direction: column;
             width: 11.4%;
+            background-color: white;
 
             .filter-floating {
               position: absolute;
               width: 100%;
+              background-color: white;
             }
 
             .filter-box,

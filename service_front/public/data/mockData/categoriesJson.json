@@ -1,0 +1,94 @@
+{
+  "list": [
+    {
+      "id": 1,
+      "image_path": "https://image.brandi.me/cproduct/2020/06/04/17082238_1591255535_image1_M.jpg",
+      "seller_name": "이지연1",
+      "product_name": "vivi 반팔자켓 린넨자켓 2col_무드글램",
+      "discount_rate": 10,
+      "sale_price": 32000,
+      "sale_amount": 27
+    },
+    {
+      "id": "2",
+      "image_path": "http://image.brandi.me/cproduct/2020/08/27/17865870_1598496166_image1_M.jpg",
+      "seller_name": "냥이냥이",
+      "product_name": "밥내놔라 집사야",
+      "discount_rate": 9,
+      "sale_price": 100,
+      "sale_amount": 0
+    },
+    {
+      "id": "3",
+      "image_path": "http://image.brandi.me/cproduct/2020/09/04/17866084_1599199433_image1_M.jpg",
+      "seller_name": "브레스",
+      "product_name": "UX디자인팀 옵션",
+      "discount_rate": "",
+      "sale_price": 76383800,
+      "sale_amount": "763"
+    },
+    {
+      "id": "4",
+      "image_path": "http://image.brandi.me/cproduct/2020/08/27/17865870_1598496166_image1_M.jpg",
+      "seller_name": "브레스",
+      "product_name": "밥내놔라 집사야",
+      "discount_rate": 9,
+      "sale_price": 100,
+      "sale_amount": 100
+    },
+    {
+      "id": "5",
+      "image_path": "http://image.brandi.me/cproduct/2020/09/04/17866084_1599199433_image1_M.jpg",
+      "seller_name": "브레스",
+      "product_name": "UX디자인팀 옵션",
+      "discount_rate": "",
+      "sale_price": 76383800,
+      "sale_amount": "446"
+    },
+    {
+      "id": "6",
+      "image_path": "http://image.brandi.me/cproduct/2020/08/27/17865870_1598496166_image1_M.jpg",
+      "seller_name": "브레스",
+      "product_name": "밥내놔라 집사야",
+      "discount_rate": 9,
+      "sale_price": 100,
+      "sale_amount": 100
+    },
+    {
+      "id": "7",
+      "image_path": "http://image.brandi.me/cproduct/2020/09/04/17866084_1599199433_image1_M.jpg",
+      "seller_name": "브레스",
+      "product_name": "UX디자인팀 옵션",
+      "discount_rate": "",
+      "sale_price": 76383800,
+      "sale_amount": "72"
+    },
+    {
+      "id": "8",
+      "image_path": "http://image.brandi.me/cproduct/2020/08/27/17865870_1598496166_image1_M.jpg",
+      "seller_name": "브레스",
+      "product_name": "밥내놔라 집사야",
+      "discount_rate": 9,
+      "sale_price": 100,
+      "sale_amount": 100
+    },
+    {
+      "id": "9",
+      "image_path": "http://image.brandi.me/cproduct/2020/09/04/17866084_1599199433_image1_M.jpg",
+      "seller_name": "브레스",
+      "product_name": "UX디자인팀 옵션",
+      "discount_rate": "",
+      "sale_price": 76383800,
+      "sale_amount": "197"
+    },
+    {
+      "id": "10",
+      "image_path": "http://image.brandi.me/cproduct/2020/08/27/17865870_1598496166_image1_M.jpg",
+      "seller_name": "브레스",
+      "product_name": "밥내놔라 집사야",
+      "discount_rate": 9,
+      "sale_price": 100,
+      "sale_amount": 100
+    }
+  ]
+}

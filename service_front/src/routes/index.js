@@ -6,9 +6,8 @@ import Signup from '../views/Signup/Signup.vue'
 import Argee from '../views/Signup/SignUpAgree.vue'
 import SignupInfo from '../views/Signup/SignUpInfo.vue'
 import SignSuccess from '../views/Signup/SignSuccess.vue'
-import ProductList from '../views/ProductList/ProductList.vue'
-import ProductDetail from '../views/ProductDetail/ProductDetail.vue'
-import Cart from '../views/Cart/Cart.vue'
+import Categories from '../views/ProductList/Categories.vue'
+import ProductDetails from '../views/ProductDetails/ProductDetails.vue'
 import Order from '../views/Order/Order.vue'
 import Mypage from '../views/Mypage/Mypage.vue'
 import Event from '../views/Event/Event.vue'
@@ -20,7 +19,8 @@ Vue.use(VueRouter)
 Vue.use(GSignInButton)
 
 export const router = new VueRouter({
-  mode: "history",
+  // mode: "history",
+  
   routes: [
     {
       path: "/",
@@ -53,19 +53,14 @@ export const router = new VueRouter({
       component: SignSuccess,
     },
     {
-      path: "/productList",
-      name: "ProductList",
-      component: ProductList,
+      path: "/categories/:id/products",
+      name: "Categories",
+      component: Categories,
     },
     {
-      path: "/productDetail",
-      name: "ProductDetail",
-      component: ProductDetail,
-    },
-    {
-      path: "/cart",
-      name: "Cart",
-      component: Cart,
+      path: "/products/:id",
+      name: "ProductDetails",
+      component: ProductDetails,
     },
     {
       path: "/order",
@@ -86,6 +81,13 @@ export const router = new VueRouter({
       path: "/search",
       name: "Search",
       component: Search,
-    },
+    }, 
   ],
+});
+
+router.beforeEach(function (to, from, next) {
+  setTimeout(() => {
+    window.scrollTo(0, 0);
+  }, 100);
+  next();
 });

@@ -1,5 +1,5 @@
 <template>
-  <ul class="list-card">
+  <ul class="categories-card">
     <li>
       <img class="product-photo" alt="product photo" v-bind:src="image_path" />
     </li>
@@ -8,30 +8,20 @@
       <p>{{ product_name }}</p>
     </li>
     <li>
-      <span v-bind:class="{ discount: discount_rate, none: !discount_rate }"
-        >{{ discount_rate }}%</span
-      >
-      <span class="price">{{
-        Number(sale_price * (1 - discount_rate / 100)).toLocaleString("en")
-      }}</span>
-      <span
-        v-bind:class="{ 'origin-price': discount_rate, none: !discount_rate }"
-      >
-        {{ Number(sale_price).toLocaleString("en") }}
-      </span>
+      <span class="discount-rate" v-if="discount_rate">{{ discount_rate }}%</span>
+      <span class="price">{{ Number(sale_price * (1 - discount_rate / 100)).toLocaleString("en") }}</span>
+      <span class="origin-price" v-if="discount_rate">{{ Number(sale_price).toLocaleString("en") }}</span>
     </li>
-    <li v-bind:class="{ 'list-count': sale_amount, none: !sale_amount }">
-      {{ Number(sale_amount).toLocaleString("en") }}개 구매중
-    </li>
+    <li class="sale-amount" v-if="sale_amount">{{ Number(sale_amount).toLocaleString("en") }}개 구매중</li>
   </ul>
 </template>
 
 <script>
 export default {
-  name: "list-card",
+  name: "categories-card",
   components: {},
   props: [
-    "product_id",
+    "id",
     "image_path",
     "seller_name",
     "product_name",
@@ -45,7 +35,7 @@ export default {
 </script>
 
 <style lang="scss">
-.list-card {
+.categories-card {
   width: 248px;
   margin: 0;
   padding: 0 6.188px 30px;
@@ -79,12 +69,12 @@ export default {
   }
 
   .price,
-  .discount {
+  .discount-rate {
     font-size: 20px;
     font-weight: 600;
   }
 
-  .discount {
+  .discount-rate {
     color: #ff1f4b;
   }
 
@@ -94,7 +84,7 @@ export default {
     text-decoration: line-through;
   }
 
-  .list-count {
+  .sale-amount {
     font-size: 13px;
     margin-top: 10px;
   }
