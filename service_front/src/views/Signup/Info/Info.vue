@@ -1,15 +1,11 @@
 <template>
   <div class="info-wrap">
-    <div class="page-title">
-      <h1>회원가입</h1>
-    </div>
-    <signUpTab v-bind:propsdata="pageName"></signUpTab>
     <div class="join-container">
       <input type="text" placeholder="아이디 입력" v-model="account" />
-      <input class="bottom-input" type="text" placeholder="이메일 입력" v-model="email" v-if="$store.state.isGoogle"/>
+      <input class="bottom-input" type="text" placeholder="이메일 입력" v-model="email" v-if="!$store.state.isGoogle"/>
       <span>이메일 정보는 비밀번호 찾기시 사용됩니다.</span>
-      <input type="password" placeholder="비밀번호 입력" v-model="password" v-if="$store.state.isGoogle"/>
-      <input class="bottom-input" type="password" placeholder="비밀번호 확인" v-model="passwordCheck" v-if="$store.state.isGoogle"/>
+      <input type="password" placeholder="비밀번호 입력" v-model="password" v-if="!$store.state.isGoogle"/>
+      <input class="bottom-input" type="password" placeholder="비밀번호 확인" v-model="passwordCheck" v-if="!$store.state.isGoogle"/>
       <div class="line"></div>
       <h1>추천인 코드</h1>
       <input type="text" placeholder="추천인 코드 (선택사항)" v-model="recommen"/>
@@ -23,8 +19,7 @@
 </template>
 
 <script>
-import { axios } from '../../plugins/axios';
-import signUpTab from '../../components/signUpComponent/signUpTab.vue'; 
+import { axios } from '../../../plugins/axios';
 
 export default {
   data:() => ({
@@ -35,48 +30,54 @@ export default {
     passwordCheck:'',
     recommen:''
   }),
-  props:['propsdata'],
-  components: {
-    signUpTab
+  mounted:function(){
+    this.$store.state.signUpTabName = this.pageName;
   },
   methods:{
+    
     infoSubmit: function(){
       if(!this.account){
         alert('아이디를 입력해주세요.');
-      // }else if(this.account.length < 4 && this.account.length > 20){
-      //   alert('4~20자의 영문 소문자, 숫자만 입력 가능합니다.');
-      // }else if(!this.email || this.$store.state.isGoogl){
-      //   alert('이메일를 입력하세요.');
-      // }else if(this.email && !this.email.includes('.com') || this.$store.state.isGoogl){
-      //   alert('이메일이 유효하지 않습니다.');
-      // }else if(!this.password || this.$store.state.isGoogl){
-      //   alert('비밀번호를 입력하세요.')
-      // }else if(this.password.length < 8 || this.$store.state.isGoogl){
-      //   alert('비밀번호는 최소 8자 이상 입력해 주세요.')
-      // }else if(!this.passwordCheck || !this.$store.state.isGoogl){
-      //   alert('비밀번호를 확인해주세요.')
-      // }else if(this.password !== this.passwordCheck || this.$store.state.isGoogl){
-      //   alert('비밀번호가 일치하지 않습니다.')
-      // }else if(this.password.length >= 20 || this.$store.state.isGoogl){
-      //   alert('비밀번호는 8~20자 영문 대소문자, 숫자, 특수문자를 사용해 주세요.')
-      }else if(this.$store.state.isGoogle){
-        axios.post('http://10.58.0.241:5000/sign-up', {
+      }else if(this.account.length < 4 && !this.account.length > 20){
+        alert('4~20자의 영문 소문자, 숫자만 입력 가능합니다.');
+      }else if(!this.email && !this.$store.state.isGoogle){
+        alert('이메일를 입력하세요.');
+      }else if(!this.email.includes('@') && !this.$store.state.isGoogle){
+        alert('이메일이 유효하지 않습니다.');
+      }else if(!this.password && !this.$store.state.isGoogle){
+        alert('비밀번호를 입력하세요.')
+      }else if(this.password.length < 8 && !this.$store.state.isGoogle){
+        alert('비밀번호는 최소 8자 이상 입력해 주세요.')
+      }else if(!this.passwordCheck && !this.$store.state.isGoogle){
+        alert('비밀번호를 확인해주세요.')
+      }else if(this.password !== this.passwordCheck && !this.$store.state.isGoogle){
+        alert('비밀번호가 일치하지 않습니다.')
+      }else if(this.password.length >= 20 && !this.$store.state.isGoogle){
+        alert('비밀번호는 8~20자 영문 대소문자, 숫자, 특수문자를 사용해 주세요.')
+      }else if(!this.$store.state.isGoogle){
+        axios.post('http://10.251.1.146:5000/sign-up', {
           account: this.account,
           email: this.email,
           password: this.password,
         })
         .then((response) => {
-          if (response.data.message === "SUCCESS") {
+          if (response.data.message === "SUCCESS"){
             this.$router.push({path: '/signup/success'});
           }else{
             alert('입력된 정보값을 확인하세요.');
           }
         })
-      }else if(!this.$store.state.isGoogle){
+        .catch((error) => {
+          if(error.response && error.response.data.message){
+            let errorText = error.response.data.message
+            alert(errorText);
+          }
+        });
+      }else if(this.$store.state.isGoogle){
         const headers = {
           headers: { 'Authorization': this.$store.state.googleToken}
         }
-        axios.post('http://10.58.0.241:5000/social-signup', {
+        axios.post('http://10.251.1.146:5000/social-signup', {
           account: this.account
         }, headers)
         .then((response) => {
@@ -87,6 +88,9 @@ export default {
             alert('입력된 정보값을 확인하세요.');
           }
         })
+        .catch((error) => {
+          console.log(error);
+        })
       }
     }
   }
@@ -95,21 +99,11 @@ export default {
 
 <style lang="scss" scoped>
 .info-wrap{
+  width: 100%;
   display: flex;
   flex-direction: column;
   justify-items: center;
   align-items: center;
-
-  .page-title{
-    margin-bottom: 30px;
-    padding: 0 20px;
-
-    h1{
-      font-size: 28px;
-      text-align: center;
-      margin-bottom: 15px;
-    }
-  }
 
   .join-container{
     width: 100%;
@@ -174,6 +168,31 @@ export default {
           outline: none;
         }
       }
+    }
+  }
+}
+
+@media screen and (min-width: 769px){
+  .join-container {
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+}
+
+
+@media screen and (max-width: 400px){
+  .join-container {
+    max-width: 400px;
+    padding-top: 10px;
+    margin: 0 auto;
+  }
+
+  .button-wrap{
+    button{
+      width: 278px !important;
+      height: 50px !important;
+      font-size: 16px !important;
+      line-height: 46px !important;
     }
   }
 }

@@ -40,7 +40,7 @@ export default {
       }else if(this.account && !this.password){
         alert('비밀번호를 입력하세요')
       }else{
-        axios.post('http://10.251.1.174:5000/sign-in', {
+        axios.post('http://10.251.1.146:5000/sign-in', {
           account: this.account,
           password: this.password
         })
@@ -48,11 +48,19 @@ export default {
           if (response.data.access_token) {
             this.$store.state.token = response.data.access_token;
             alert('로그인에 성공하였습니다.');
-            this.$router.push({path: '/main'});
+            console.log(response.data.access_token)
+            // this.$router.push({path: '/'});
           }else{
             alert('아이디와 비밀번호를 확인해주세요.');
           }
         })
+        .catch((error) => {
+        if (error.response && error.response.data.message === "탈퇴한 회원입니다.") {
+          alert('탈퇴한 회원입니다. 회원가입을 진행해주세요.')
+        }else if(error.response && error.response.data.message === '회원정보가 일치하지 않습니다.'){
+          alert('회원정보가 일치하지 않습니다. 아이디와 비밀번호를 확인해주세요.');
+        }
+    })
       }
     },
     
@@ -61,18 +69,18 @@ export default {
       const headers = {
         headers: { 'Authorization': accessToken }
       }
-      axios.post('http://10.251.1.174:5000/social-signin', null, headers)
+      axios.post('http://10.251.1.146:5000/social-signin', null, headers)
       .then((response) => {
-        console.log(accessToken);
         if(response.data.access_token){
           this.$store.state.token = response.data.access_token;
-          this.$router.push({path: '/main'});
+          this.$router.push({path: '/'});
         }
       })
       .catch((error) => {
         if (error.response && error.response.status === 401) {
           this.$store.state.googleToken = accessToken;
-          this.$store.state.isGoogle = false;
+          this.$store.state.isGoogle = true;
+          alert('회원정보가 없습니다. 회원가입을 진행해주세요.');
           this.$router.push({path: '/signup'});
         }
     })
@@ -198,6 +206,35 @@ export default {
       &:hover{
         color:#fff;
         background: #000;
+      }
+    }
+  }
+}
+
+@media screen and (min-width: 769px){
+  .login-wrap {
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+}
+
+@media screen and (max-width: 400px){
+  .login-wrap {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 0 20px;
+
+    .login-title-box{
+      padding: 0 8px;
+
+      h1{
+        font-size: 29px;
+        margin-top: 50px;
+        line-height: 39px;
+      }
+
+      h2{
+        line-height: 39px;
       }
     }
   }

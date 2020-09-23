@@ -1,9 +1,5 @@
 <template>
   <div class="agree-wrap">
-    <div class="page-title">
-      <h1>회원가입</h1>
-    </div>
-    <signUpTab v-bind:propsdata="pageName"></signUpTab>
     <div class="join-container">
       <h1>가입 약관 동의</h1>
       <div class="agree-list-wrap">
@@ -25,7 +21,7 @@
         </div>
       </div>
       <div class="button-wrap">
-        <button v-bind:class="isActivBtn" v-on:click="agreeSubmit">다음</button>
+        <button v-bind:class="isActiveBtn" v-on:click="agreeSubmit">다음</button>
       </div>
     </div>
   </div>
@@ -33,12 +29,7 @@
 </template>
 
 <script>
-import signUpTab from '../../components/signUpComponent/signUpTab.vue'; 
-
 export default {
-  components: {
-    signUpTab
-  },
   data:()=>({
     pageName:'agree',
     agreeList: [ 
@@ -51,15 +42,19 @@ export default {
     selectAll: false,
     activeBtn: false,
   }),
-  props:['propsdata'],
   computed: {
-    isAllChecked: function() {
-      return this.agreeList.every(function(item){
-        return item.checked;
-      });
+    isAllChecked:{
+      get () {
+        return this.agreeList.every(function(item){
+          return item.checked;
+        });
+      },
+      set(newValue){
+        
+      }
     },
     
-    isActivBtn: function () {
+    isActiveBtn() {
       if(this.agreeList[0].checked && this.agreeList[1].checked){
         return {activeBtn: true}
       }else{
@@ -68,45 +63,36 @@ export default {
     }
   },
   methods : {
-    toggleSelect: function() {
+    toggleSelect() {
       let select = this.isAllChecked;
       this.agreeList.forEach(function(item) {
         item.checked = !select;
       });
       this.isAllChecked = !select;
     },
-
-    agreeSubmit: function(){
+    agreeSubmit(){
       if(this.agreeList[0].checked && this.agreeList[1].checked){
         this.$router.push({path: '/signup/info'})
       }else{
         alert('약관에 동의해주세요.')
       }
     }
+  },
+  mounted:function(){
+    this.$store.state.signUpTabName = this.pageName;
   }
 }
-
 </script>
 
 
 <style lang='scss' scoped>
 .agree-wrap{
+  width: 100%;
   display: flex;
   flex-direction: column;
   justify-items: center;
   align-items: center;
-
-  .page-title{
-    margin-bottom: 30px;
-    padding: 0 20px;
-
-    h1{
-      font-size: 28px;
-      text-align: center;
-      margin-bottom: 15px;
-    }
-  }
-
+  
   .join-container{
     width: 100%;
     max-width: 600px;
@@ -129,6 +115,7 @@ export default {
       padding: 30px 0;
 
       .all-check{
+
         label{
           font-size: 16px;
           margin-bottom: 16px;
@@ -184,7 +171,6 @@ export default {
                   color: #FF204B;
                 }
               }
-
               input[type=checkbox] + label:before {
                 content: '';
                 width: 20px;
@@ -216,7 +202,7 @@ export default {
                   text-decoration: none;
                 }
               }
-             }
+            }
           }
         }
       }
@@ -235,7 +221,6 @@ export default {
         background: #9e9e9e;
         border: 1px solid #9e9e9e;
         border-radius: 4px;
-
         &:focus{
           outline: none;
         }
@@ -244,6 +229,56 @@ export default {
       .activeBtn{
         background: #000;
         border: 1px solid #000;
+      }
+    }
+  }
+}
+}
+@media screen and (min-width: 769px){
+  .join-container {
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+}
+
+@media screen and (max-width: 400px){
+  .join-container {
+    max-width: 400px;
+    padding-top: 10px;
+    margin: 0 auto;
+
+    .agree-list-wrap{
+      .all-check{
+        label{
+          font-size: 14px;
+          font-weight: bold;
+        }
+      }
+
+      .agree-detail{
+        .detail-list{
+          ul{
+            li{
+              align-items: inherit !important;
+          
+              label{
+                font-size: 13.2px;
+              }
+
+              input[type=checkbox] + label:before {
+                margin-right: 5px !important;
+            }
+          }
+        }
+      }
+    }
+
+    .button-wrap{
+      button{
+        width: 278px !important;
+        height: 50px !important;
+        font-size: 16px !important;
+        line-height: 46px !important;
       }
     }
   }

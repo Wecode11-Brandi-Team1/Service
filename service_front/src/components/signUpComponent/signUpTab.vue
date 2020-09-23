@@ -1,27 +1,27 @@
 <template>
   <div class="tab-wrap">
-    <div :class="['join-tab', isActive[propsdata][0]]">
+    <div :class="['join-tab', isActive[$store.state.signUpTabName][0]]" v-if="$store.state.signUpTabName">
       <div class="join-tab-flex">
         <img src="https://web-staging.brandi.co.kr/static/3.50.7/images/ic-join-step-01-s@3x.png" />
         <span>본인인증</span>
       </div>
     </div>
 
-    <div :class="['join-tab', isActive[propsdata][1]]">
+    <div :class="['join-tab', isActive[$store.state.signUpTabName][1]]" v-if="$store.state.signUpTabName">
       <div class="join-tab-flex">
         <img src="https://web-staging.brandi.co.kr/static/3.50.7/images/ic-join-step-02-40-s@3x.png" />
         <span>정보수집동의</span>
       </div>
     </div>
 
-    <div :class="['join-tab', isActive[propsdata][2]]">
+    <div :class="['join-tab', isActive[$store.state.signUpTabName][2]]" v-if="$store.state.signUpTabName">
       <div class="join-tab-flex">
         <img src="https://web-staging.brandi.co.kr/static/3.50.7/images/ic-join-step-03-40-s@3x.png" />
         <span>정보입력</span>
       </div>
     </div>
 
-    <div :class="['join-tab', isActive[propsdata][3]]">
+    <div :class="['join-tab', isActive[$store.state.signUpTabName][3]]" v-if="$store.state.signUpTabName">
       <div class="join-tab-flex">
         <img src="https://web-staging.brandi.co.kr/static/3.50.7/images/ic-join-step-04-s@3x.png" />
         <span>가입완료</span>
@@ -40,7 +40,6 @@ export default {
       complete: ["none", "none", "none", "on"],
     }
   }),
-  props:['propsdata']
 }
 </script>
 
@@ -72,10 +71,8 @@ export default {
       flex-direction: column;
       justify-content: center;
       align-items: center;
-
     }
   }
-
   .on{
     color: #000;
     border-right: 1px solid #000;
@@ -83,6 +80,35 @@ export default {
 
     img{
       opacity: 1;
+    }
+  }
+}
+
+@media screen and (max-width: 400px){
+  .tab-wrap {
+    height: 103px;
+
+    .join-tab{
+      width: 24%;
+      padding: 20px 0 3px 0;
+
+      img{
+        width: 40px;
+      }
+
+      span{
+        font-size: 13px;
+      }
+    }
+
+    .on{
+      &:first-child{
+        border-left: none;
+      }
+
+      &:last-child{
+        border-right: none;
+      }
     }
   }
 }
