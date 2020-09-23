@@ -12,6 +12,14 @@ class SearchView(MethodView):
     def get(self):
         Q     = request.args.get('q')
         limit = request.args.get('r')
-        search_results = self.service.search_stores(Q, limit)
+        search_stores_results   = self.service.search_stores(Q, limit)
+        search_products_results = self.service.search_products(Q, limit)
 
-        return jsonify({'data' : search_results}), 200
+        return jsonify(
+            {
+            'stores'   : search_stores_results,
+            'products' : search_products_results
+            }), 200
+    
+
+  

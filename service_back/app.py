@@ -30,7 +30,7 @@ def create_app(test_config = None):
     #SetUp Business Layer
     services = Services
     services.product_service = ProductService(product_dao, app.config)
-    services.search_service  = SearchService(search_dao, app.config)
+    services.search_service  = SearchService(search_dao, product_dao, app.config)
 
     #SetUp Presentation Layer
     create_endpoints(app, services)
