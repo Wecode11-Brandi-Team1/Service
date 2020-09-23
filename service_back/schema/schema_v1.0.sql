@@ -1,7 +1,3 @@
-DROP DATABASE IF EXISTS brandi;
-CREATE DATABASE brandi;
-USE brandi;
-
 -- 셀러 속성
 CREATE TABLE seller_properties
 (
@@ -36,17 +32,18 @@ ALTER TABLE banks COMMENT '은행 이름';
 CREATE TABLE sellers
 (
     `id`                           INT              NOT NULL    AUTO_INCREMENT COMMENT '셀러번호', 
-    `register_date`                DATETIME         NOT NULL    DEFAULT NOW() COMMENT '등록일시', 
+    `register_date`                DATETIME         NOT NULL    COMMENT '등록일시', 
     `seller_status_id`             INT              NOT NULL    COMMENT '셀러 상태 아이디', 
-    `is_master`                    BOOLEAN          NOT NULL    DEFAULT False COMMENT '마스터', 
-    `is_deleted`                   BOOLEAN          NOT NULL    DEFAULT False COMMENT '삭제 여부', 
-    `seller_account`               VARCHAR(128)     NOT NULL    COMMENT '셀러 계정', 
+    `is_master`                    TINYINT          NOT NULL    DEFAULT 0 COMMENT '마스터', 
+    `is_deleted`                   TINYINT          NOT NULL    DEFAULT 0 COMMENT '삭제 여부', 
+    `seller_id`                    INT              NOT NULL    COMMENT '셀러 아이디', 
+    `seller_account_id`            VARCHAR(128)     NOT NULL    COMMENT '셀러 계정', 
     `english_name`                 VARCHAR(128)     NOT NULL    COMMENT '영문이름', 
     `korean_name`                  VARCHAR(128)     NOT NULL    COMMENT '한글 이름', 
     `cs_phone`                     VARCHAR(64)      NOT NULL    COMMENT '고객센터 전화번호', 
     `seller_property_id`           INT              NOT NULL    COMMENT '셀러 속성 아이디', 
     `profile_image`                VARCHAR(2048)    NULL        COMMENT '프로필이미지URL', 
-    `password`                     VARCHAR(256)     NULL        COMMENT '패스워드', 
+    `password`                     BINARY(255)      NULL        COMMENT '패스워드', 
     `background_image`             VARCHAR(2048)    NOT NULL    COMMENT '셀러페이지배경이미지URL', 
     `simple_description`           TEXT             NOT NULL    COMMENT '한줄소개', 
     `detail_description`           TEXT             NOT NULL    COMMENT '상세소개', 
@@ -65,10 +62,10 @@ CREATE TABLE sellers
     `model_bottom_size`            VARCHAR(32)      NULL        COMMENT '모델하의사이즈', 
     `model_feet_size`              VARCHAR(32)      NULL        COMMENT '모델신발사이즈', 
     `shopping_feedtext`            TEXT             NULL        COMMENT '쇼핑피드텍스트', 
-    `registered_product_count`     INT              NOT NULL    DEFAULT 0 COMMENT '등록상품개수', 
-    `created_at`                   DATETIME         NOT NULL    DEFAULT CURRENT_TIMESTAMP COMMENT '선분이력 시작일자',
+    `registered_product_count`     INT              NOT NULL    COMMENT '등록상품개수', 
+    `created_at`                   TIMESTAMP        NOT NULL    DEFAULT CURRENT_TIMESTAMP COMMENT '선분이력 시작일자',
     `expired_at`                   DATETIME         NOT NULL    DEFAULT '9999-12-31 23:59:59' COMMENT '선분이력 종료일자', 
-    `modifier_id`                  INT              NULL        COMMENT '수정자아이디', 
+    `modifier_id`                  INT              NOT NULL    COMMENT '수정자아이디', 
     PRIMARY KEY (id)
 );
 
@@ -91,7 +88,7 @@ ALTER TABLE sellers
         REFERENCES sellers (id) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 -- 셀러 담당자
-CREATE TABLE seller_managers
+CREATE TABLE seller_manager_tables
 (
     `id`            INT             NOT NULL    AUTO_INCREMENT, 
     `name`          VARCHAR(64)     NOT NULL    COMMENT '이름', 
@@ -101,10 +98,10 @@ CREATE TABLE seller_managers
     PRIMARY KEY (id)
 );
 
-ALTER TABLE seller_managers COMMENT '셀러 담당자';
+ALTER TABLE seller_manager_tables COMMENT '셀러 담당자';
 
-ALTER TABLE seller_managers
-    ADD CONSTRAINT FK_seller_managers_seller_id_sellers_id FOREIGN KEY (seller_id)
+ALTER TABLE seller_manager_tables
+    ADD CONSTRAINT FK_seller_manager_tables_seller_id_sellers_id FOREIGN KEY (seller_id)
         REFERENCES sellers (id) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 -- 셀러 상태 변경 이력
@@ -228,12 +225,12 @@ CREATE TABLE product_details
 (
     `id`                    INT             NOT NULL    AUTO_INCREMENT COMMENT 'pk', 
     `name`                  VARCHAR(64)     NOT NULL    COMMENT '상품명',
-    `is_sold`               BOOLEAN         NOT NULL    DEFAULT 0 COMMENT '판매 여부', 
-    `is_displayed`          BOOLEAN         NOT NULL    DEFAULT 0 COMMENT '진열 여부', 
+    `is_sold`               BOOLEAN         NOT NULL    COMMENT '판매 여부', 
+    `is_displayed`          BOOLEAN         NOT NULL    COMMENT '진열 여부', 
     `origin_company`        VARCHAR(128)    NULL        COMMENT '제조사', 
     `origin_date`           DATE            NULL        COMMENT '제조일자',   
     `simple_description`    VARCHAR(256)    NULL        COMMENT '한줄설명', 
-    `description`           LONGTEXT        NOT NULL    COMMENT '상세설명',   
+    `decription`            LONGTEXT        NOT NULL    COMMENT '상세설명',   
     `sale_price`            INT             NOT NULL    COMMENT '판매가', 
     `discount_rate`         INT             NOT NULL    DEFAULT 0 COMMENT '할인율', 
     `discount_started_at`   DATETIME        NULL        COMMENT '할인시작날짜', 
@@ -266,7 +263,7 @@ ALTER TABLE product_details
 CREATE TABLE product_images
 (
     `id`          INT            NOT NULL    AUTO_INCREMENT COMMENT 'pk',  
-    `image_path`  VARCHAR(2048)    NOT NULL    COMMENT 'URL', 
+    `image_path`  VARCHAR(64)    NOT NULL    COMMENT 'URL', 
     `ordering`    TINYINT        NOT NULL    COMMENT '이미지 순서', 
     `product_id`  INT            NOT NULL    COMMENT '상품 아이디',
     PRIMARY KEY (id)
@@ -475,7 +472,7 @@ CREATE TABLE users
     `last_name`      VARCHAR(64)     NOT NULL                     COMMENT '성',
     `first_name`     VARCHAR(64)     NOT NULL                     COMMENT '이름',
     `email`          VARCHAR(128)    NOT NULL                     COMMENT '이메일',
-    `password`       BIT             NULL                         COMMENT '패스워드',
+    `password`       BINARY(255)     NULL                         COMMENT '패스워드',
     `created_at`     DATETIME        NOT NULL    Default NOW()    COMMENT '선분이력시작일자',
     `expired_at`     DATETIME        NOT NULL                     COMMENT '선분이력종료일자',
     `phone_number`   VARCHAR(32)     NULL                         COMMENT '휴대폰 번호',
@@ -518,7 +515,7 @@ CREATE TABLE reviews
     `product_id`            INT             NOT NULL                     COMMENT '상품아이디',
     `content`               TEXT            NOT NULL                     COMMENT '리뷰내용',
     `register_date`         DATETIME        NOT NULL    Default NOW()    COMMENT '등록 일자',
-    `updated_at`            DATETIME        NOT NULL                     COMMENT '수정일자',
+    `updated_at`            DATETIME        NULL                         COMMENT '수정일자',
     `grade`                 INT             NOT NULL                     COMMENT '1-5',
     `is_deleted`            BOOLEAN         NOT NULL    Default False    COMMENT '삭제 여부',
     `modifier_id`           INT             NULL                         COMMENT '수정자 아이디',
@@ -561,7 +558,7 @@ CREATE TABLE question_tables
     `user_id`           INT         NOT NULL    COMMENT '유저 아이디', 
     `question_content`  TEXT        NOT NULL    COMMENT '문의 내용', 
     `question_type_id`  INT         NOT NULL    COMMENT '문의 유형 아이디', 
-    `updated_at`        DATETIME    NOT NULL    COMMENT '수정일자',
+    `updated_at`        DATETIME    NULL        COMMENT '수정일자',
     `is_deleted`        TINYINT     NOT NULL    COMMENT '삭제 여부', 
     PRIMARY KEY (id)
 );

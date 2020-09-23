@@ -223,6 +223,11 @@ ALTER TABLE products
     ADD CONSTRAINT FK_products_categories_id FOREIGN KEY (categories_id)
         REFERENCES first_category_second_categories (id) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
+-- 상품과 셀러 연결
+ALTER TABLE products
+    ADD CONSTRAINT FK_products_seller_id FOREIGN KEY (seller_id)
+        REFERENCES sellers (id) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
 -- 상품 상세
 CREATE TABLE product_details
 (
@@ -475,7 +480,7 @@ CREATE TABLE users
     `last_name`      VARCHAR(64)     NOT NULL                     COMMENT '성',
     `first_name`     VARCHAR(64)     NOT NULL                     COMMENT '이름',
     `email`          VARCHAR(128)    NOT NULL                     COMMENT '이메일',
-    `password`       BIT             NULL                         COMMENT '패스워드',
+    `password`       VARCHAR(256)    NULL                         COMMENT '패스워드',
     `created_at`     DATETIME        NOT NULL    Default NOW()    COMMENT '선분이력시작일자',
     `expired_at`     DATETIME        NOT NULL                     COMMENT '선분이력종료일자',
     `phone_number`   VARCHAR(32)     NULL                         COMMENT '휴대폰 번호',
@@ -518,7 +523,7 @@ CREATE TABLE reviews
     `product_id`            INT             NOT NULL                     COMMENT '상품아이디',
     `content`               TEXT            NOT NULL                     COMMENT '리뷰내용',
     `register_date`         DATETIME        NOT NULL    Default NOW()    COMMENT '등록 일자',
-    `updated_at`            DATETIME        NOT NULL                     COMMENT '수정일자',
+    `updated_at`            DATETIME        NULL                         COMMENT '수정일자',
     `grade`                 INT             NOT NULL                     COMMENT '1-5',
     `is_deleted`            BOOLEAN         NOT NULL    Default False    COMMENT '삭제 여부',
     `modifier_id`           INT             NULL                         COMMENT '수정자 아이디',
@@ -553,7 +558,7 @@ CREATE TABLE question_types
 
 ALTER TABLE question_types COMMENT '문의유형';
 
-CREATE TABLE question_tables
+CREATE TABLE questions
 (
     `id`                INT         NOT NULL    AUTO_INCREMENT COMMENT '아이디', 
     `product_id`        INT         NOT NULL    COMMENT '상품 아이디', 
@@ -561,21 +566,21 @@ CREATE TABLE question_tables
     `user_id`           INT         NOT NULL    COMMENT '유저 아이디', 
     `question_content`  TEXT        NOT NULL    COMMENT '문의 내용', 
     `question_type_id`  INT         NOT NULL    COMMENT '문의 유형 아이디', 
-    `updated_at`        DATETIME    NOT NULL    COMMENT '수정일자',
+    `updated_at`        DATETIME    NULL        COMMENT '수정일자',
     `is_deleted`        TINYINT     NOT NULL    COMMENT '삭제 여부', 
     PRIMARY KEY (id)
 );
 
-ALTER TABLE question_tables
-    ADD CONSTRAINT FK_question_tables_product_id_products_id FOREIGN KEY (product_id)
+ALTER TABLE questions
+    ADD CONSTRAINT FK_questions_product_id_products_id FOREIGN KEY (product_id)
         REFERENCES products (id) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
-ALTER TABLE question_tables
-    ADD CONSTRAINT FK_question_tables_user_id_users_id FOREIGN KEY (user_id)
+ALTER TABLE questions
+    ADD CONSTRAINT FK_questions_user_id_users_id FOREIGN KEY (user_id)
         REFERENCES users (id) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
-ALTER TABLE question_tables
-    ADD CONSTRAINT FK_question_tables_question_type_id_question_types_id FOREIGN KEY (question_type_id)
+ALTER TABLE questions
+    ADD CONSTRAINT FK_questions_question_type_id_question_types_id FOREIGN KEY (question_type_id)
         REFERENCES question_types (id) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 
@@ -587,7 +592,7 @@ CREATE TABLE orders
     `final_price`             INT             NOT NULL, 
     `order_date`              DATETIME        NOT NULL    DEFAULT NOW(), 
     `user_id`                 INT             NOT NULL,
-    `shipping_infomation_id`  INT             NOT NULL,
+    `shipping_information_id` INT             NOT NULL,
     PRIMARY KEY (id)
 );
 
@@ -596,7 +601,7 @@ ALTER TABLE orders
         REFERENCES users (id) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 ALTER TABLE orders
-    ADD CONSTRAINT FK_orders_shipping_infomation_id FOREIGN KEY (shipping_infomation_id)
+    ADD CONSTRAINT FK_orders_shipping_infomation_id FOREIGN KEY (shipping_information_id)
         REFERENCES shipping_informations (id) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 -- order_cancel_reasons Table Create SQL
@@ -627,7 +632,7 @@ CREATE TABLE order_details
     `option_id`                        INT             NOT NULL, 
     `quantity`                         INT             NOT NULL, 
     `price`                            INT             NOT NULL, 
-    `is_comfirmed`                     TINYINT(1)      NOT NULL, 
+    `is_confirmed`                     TINYINT(1)      NOT NULL, 
     `order_cancel_reason_id`           INT             NULL, 
     `order_refund_reason_id`           INT             NULL, 
     `order_refund_reason_description`  TEXT            NULL, 
