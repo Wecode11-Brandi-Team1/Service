@@ -1,5 +1,4 @@
 import pymysql
-from connection import get_connection
 
 # 작성자: 김기욱
 # 작성일: 2020.09.22.화
@@ -8,7 +7,7 @@ class SearchDao:
     def search_stores(self, Q, limit, db):
         try:
             cursor = db.cursor()
-            sql = """
+            QEURY = """
             SELECT DISTINCT
                 id,
                 profile_image,
@@ -19,8 +18,8 @@ class SearchDao:
                 korean_name LIKE %s
             LIMIT
                 %s;
-            """
-            cursor.execute(sql, ('%'+Q+'%', limit))
+            """ 
+            cursor.execute(QEURY, ('%'+Q+'%', limit))
             result = cursor.fetchall()
         
         except:
@@ -36,7 +35,7 @@ class SearchDao:
         try:
             cursor = db.cursor()
 
-            sql = """
+            QEURY = """
             SELECT DISTINCT
                 s.korean_name as seller_name,
                 p.id,
@@ -60,7 +59,7 @@ class SearchDao:
             LIMIT
                 %s;
             """
-            cursor.execute(sql, ('%'+Q+'%', '%'+Q+'%', limit))
+            cursor.execute(QEURY, ('%'+Q+'%', '%'+Q+'%', limit))
             result = cursor.fetchall()
             #ORDER BY 적용시 쿼리 실행속도가 저하되므로 따로 ORDER BY하지않고 데이터를 뽑음
         

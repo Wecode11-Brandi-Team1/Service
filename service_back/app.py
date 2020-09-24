@@ -1,12 +1,11 @@
-import pymysql
-
 import config
 
-from flask      import Flask
-from flask_cors import CORS
-from view       import create_endpoints
-from model      import ProductDao, SearchDao, UserDao
-from service    import ProductService, SearchService, UserService
+from flask        import Flask
+from flask_cors   import CORS
+  
+from view         import create_endpoints
+from model        import ProductDao, SearchDao, UserDao
+from service      import ProductService, SearchService, UserService
 
 class Services:
     pass
