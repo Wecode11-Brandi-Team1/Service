@@ -7,6 +7,15 @@ from view         import create_endpoints
 from model        import ProductDao, SearchDao, UserDao
 from service      import ProductService, SearchService, UserService
 
+import sentry_sdk
+from sentry_sdk.integrations.flask import FlaskIntegration
+
+sentry_sdk.init(
+    dsn="https://5cc349d8de88441c9c3427c07077f3a9@o453871.ingest.sentry.io/5443008",
+    integrations=[FlaskIntegration()],
+    traces_sample_rate=1.0
+)
+
 class Services:
     pass
 

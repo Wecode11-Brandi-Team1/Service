@@ -60,6 +60,7 @@ class ProductsView(MethodView):
     def __init__(self, service):
         self.service = service
 
+    #Validation_params 데코레이터를 통해 유효성 검사 후 통과한 파라미터들만 튜플로 반환
     @validate_params(
         Param('limit',  GET, int, default = 100, required = False),
         Param('offset', GET, int, required = False),
@@ -74,6 +75,7 @@ class ProductsView(MethodView):
     def get(self, *args):
         try:
             db = connection.get_connection(config.database)
+            #통과한 파라미터들을 딕셔너리 패킹
             params = {
                 'limit'         :args[0],
                 'offset'        :args[1],
@@ -85,8 +87,6 @@ class ProductsView(MethodView):
                 'is_new'        :args[7],
                 'is_cheap'      :args[8]
             }
-            print('@@@@@@@@@view@@@@')
-            print(params)
             products = self.service.get_products(params, db)
         
         except Exception as e:

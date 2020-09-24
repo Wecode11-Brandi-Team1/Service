@@ -163,49 +163,49 @@ class ProductDao:
                 AND pi.ordering = 1
                 AND p.is_deleted = 0
             """
-            # Pagination
-            limit = params.get('limit', None)
-            if limit:
-                QUERY += f"LIMIT {limit}"
-
-            offset = params.get('offset', None)
-            if offset:
-                QUERY += f"OFFSET {offset}"
 
             # seller property
             sp_id = params.get('sp_id', None)
             if sp_id:
-                QUERY += f"AND sp.id = {sp_id}"
+                QUERY += f" AND sp.id = {sp_id}"
 
             # first category
             fc_id = params.get('fc_id', None)
             if fc_id:
-                QUERY += f"AND fcsc.first_category_id = {fc_id}"
+                QUERY += f" AND fcsc.first_category_id = {fc_id}"
 
             # second category
             sc_id = params.get('sc_id', None)
             if sc_id:
-                QUERY += f"AND fcsc.second_category_id = {sc_id}"
+                QUERY += f" AND fcsc.second_category_id = {sc_id}"
 
             # discounted(세일상품)
             if params.get('is_discounted', None):
-                QUERY += "AND pd.discount_rate > 0"
+                QUERY += " AND pd.discount_rate > 0"
 
             # order by popularity(인기순정렬) 
             if params.get('is_popular', None):
-                QUERY += "ORDER BY p.sale_amount DESC"   
+                QUERY += " ORDER BY p.sale_amount DESC"   
 
             # order by brand new(최신순정렬)
             if params.get('is_new', None):
-                QUERY += "ORDER BY p.register_date DESC"  
+                QUERY += " ORDER BY p.register_date DESC"  
             
             # order by cheapest(가격순정렬)
             if params.get('is_cheap', None):
-                QUERY += "ORDER BY pd.sale_price ASC"  
+                QUERY += " ORDER BY pd.sale_price ASC"  
+
+            # Pagination
+            limit = params.get('limit', None)
+            if limit:
+                QUERY += f" LIMIT {limit}"
+
+            offset = params.get('offset', None)
+            if offset:
+                QUERY += f" OFFSET {offset}"
             QUERY += ";"
             cursor.execute(QUERY, params)
             result = cursor.fetchall()
-            
             
         except Exception as e:
             print(f'Dao Problem : {e}')
@@ -215,5 +215,3 @@ class ProductDao:
         
         finally :
             cursor.close()
-        
-    

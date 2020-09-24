@@ -53,12 +53,12 @@ class ProductService:
             # Pandas 중복제거 기능을 통해 first_cateogory의 이름을 모아놓은 리스트패킹
             fc_names  = pandas.unique([category['fc_name'] for category in categories]).tolist()
             # 쿼리스트링에 따라 매칭되는 first_category_id값 변환
-            if Q == 1 :
-                category_set = { 
+            if Q == 1  :
+                category_set = [{ 
                 seller_property : [
                     {fc_name : [category['sc_name'] for category in categories if category['fc_id'] == i+1]} 
                     for i, fc_name in enumerate(fc_names)]
-                }
+                }]
             if Q == 4 :
                 category_set = { 
                 seller_property : [
