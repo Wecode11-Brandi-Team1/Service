@@ -374,3 +374,4 @@ tags
 # End of https://www.toptal.com/developers/gitignore/api/macos,visualstudiocode,python,pycharm,flask,vim
 
 node_modules
+SERVICE_BACK/.vscode/*

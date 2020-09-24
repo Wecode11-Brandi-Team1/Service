@@ -2,15 +2,11 @@ import pymysql
 
 import config
 
-from flask        import Flask
-from flask_cors   import CORS
-from view         import create_endpoints
-
-from model.user_dao       import UserDao
-from service.user_service import UserService
-from view.user_view       import SignUp
-from model      import ProductDao, SearchDao
-from service    import ProductService, SearchService
+from flask      import Flask
+from flask_cors import CORS
+from view       import create_endpoints
+from model      import ProductDao, SearchDao, UserDao
+from service    import ProductService, SearchService, UserService
 
 class Services:
     pass
@@ -29,9 +25,10 @@ def create_app(test_config = None):
     search_dao  = SearchDao()
 
     #SetUp Business Layer
-    services = Services
-    services.product_service = ProductService(product_dao)
-    services.search_service  = SearchService(search_dao, product_dao)
+    services                 = Services
+    services.product_service = ProductService(product_dao, app.config)
+    services.search_service  = SearchService(search_dao, product_dao, app.config)
+    services.user_service    = UserService(user_dao)
 
     #SetUp Presentation Layer
     create_endpoints(app, services)
