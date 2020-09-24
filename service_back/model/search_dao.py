@@ -5,15 +5,11 @@ from connection import get_connection
 # 작성일: 2020.09.22.화
 # Sellers와 연결된 Class
 class SearchDao:
-    def __init__(self, db):
-        self.db = db
-    
-    def search_stores(self, Q, limit):
+    def search_stores(self, Q, limit, db):
         try:
-            db     = get_connection(self.db)
-            cursor = db.cursor(pymysql.cursors.DictCursor)
+            cursor = db.cursor()
             sql = """
-            SELECT 
+            SELECT DISTINCT
                 id,
                 profile_image,
                 korean_name
@@ -24,17 +20,55 @@ class SearchDao:
             LIMIT
                 %s;
             """
-            print(sql)
-            cursor.execute(sql, ('%' + Q + '%', int(limit)))
+            cursor.execute(sql, ('%'+Q+'%', limit))
             result = cursor.fetchall()
         
         except:
-            db.rollback()
-            raise
+            pass
 
         else:
             return result
         
         finally:
             cursor.close()
-            db.close()
+
+    def search_products(self, Q, limit, db):
+        try:
+            cursor = db.cursor()
+
+            sql = """
+            SELECT DISTINCT
+                s.korean_name as seller_name,
+                p.id,
+                p.sale_amount,
+                pi.image_path,
+                pd.name as product_name,
+                pd.discount_rate,
+                pd.sale_price 
+            FROM 
+                products p,
+                product_images pi,
+                product_details pd,
+                sellers s
+            WHERE 
+                s.korean_name LIKE %s  
+                OR pd.name LIKE %s 
+                AND p.seller_id = s.id
+                AND p.id = pi.product_id
+                AND p.id = pd.product_id
+                AND pi.ordering = 1
+            LIMIT
+                %s;
+            """
+            cursor.execute(sql, ('%'+Q+'%', '%'+Q+'%', limit))
+            result = cursor.fetchall()
+            #ORDER BY 적용시 쿼리 실행속도가 저하되므로 따로 ORDER BY하지않고 데이터를 뽑음
+        
+        except:
+            pass
+        
+        else:
+            return result
+        
+        finally:
+            cursor.close()

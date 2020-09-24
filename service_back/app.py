@@ -25,16 +25,13 @@ def create_app(test_config = None):
         app.config.update(test_config)
 
     #SetUp Persistence Layer
-    db          = config.database
-    product_dao = ProductDao(db)
-    search_dao  = SearchDao(db)
-    user_dao    = UserDao()
+    product_dao = ProductDao()
+    search_dao  = SearchDao()
 
     #SetUp Business Layer
-    services                 = Services
-    services.product_service = ProductService(product_dao, app.config)
-    services.search_service  = SearchService(search_dao, product_dao, app.config)
-    services.user_service    = UserService(user_dao, app.config)
+    services = Services
+    services.product_service = ProductService(product_dao)
+    services.search_service  = SearchService(search_dao, product_dao)
 
     #SetUp Presentation Layer
     create_endpoints(app, services)
