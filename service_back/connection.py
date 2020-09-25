@@ -5,7 +5,7 @@ def get_connection(db):
         host        = db['host'],
         port        = db['port'],
         user        = db['user'],
-        passwd      = db['password'],
+        password    = db['password'],
         db          = db['database'],
         charset     = db['charset'],
         cursorclass = pymysql.cursors.DictCursor,

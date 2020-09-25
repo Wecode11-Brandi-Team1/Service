@@ -1,6 +1,6 @@
 import config, connection
 
-from flask       import jsonify, request
+from flask import jsonify, request
 from flask.views import MethodView
 
 from pymysql import err
@@ -14,14 +14,14 @@ class SignUp(MethodView):
 
     def post(self):
         try:
-            db        = connection.get_connection(config.database)
+            db = connection.get_connection(config.database)
             user_info = request.json
-            sign_up   = self.service.sign_up(user_info, db)
+            sign_up = self.service.sign_up(user_info, db)
+            
         except (err.OperationalError, err.InternalError, err.ProgrammingError, err.IntegrityError) as e:
             db.rollback()
-            message = {"errno": e.args[0], "errval": e.args[1]}
+            message = {"error_number": e.args[0], "err_value": e.args[1]}
             return jsonify(message), 400
-            # return jsonify({'message':'UNSUCCESS'}), 400
         else:
             db.commit()
             return jsonify({'message':'SUCCESS'}), 200
@@ -37,11 +37,11 @@ class SignIn(MethodView):
 
     def post(self):
         try:
-            db           = connection.get_connection(config.database)
-            user         = request.json
+            db = connection.get_connection(config.database)
+            user = request.json
             access_token = self.service.sign_in(user, db)
         except:
-            return jsonify({'message':'INVALID_USER'}), 400
+            return jsonify({'message':'Unauthorized'}), 401
         else:
             return jsonify({'access_token':access_token}), 200
         finally:
@@ -56,10 +56,10 @@ class SocialSignUp(MethodView):
 
     def post(self):
         try:
-            db        = connection.get_connection(config.database)
+            db = connection.get_connection(config.database)
             user_info = request.json
             google_access_token = request.headers.get("Authorization", None)
-            sign_up   = self.service.social_sign_up(user_info, google_access_token, db)
+            sign_up = self.service.social_sign_up(user_info, google_access_token, db)
         except:
             db.rollback()
             return jsonify({'message': 'UNSUCCESS'}), 400
@@ -78,11 +78,11 @@ class SocialSignIn(MethodView):
 
     def post(self):
         try:
-            db                  = connection.get_connection(config.database)
+            db = connection.get_connection(config.database)
             google_access_token = request.headers.get("Authorization", None)
-            access_token        = self.service.social_sign_in(google_access_token, db)
+            access_token = self.service.social_sign_in(google_access_token, db)
         except:
-            return jsonify({'message': 'INVALID_USER'}), 400
+            return jsonify({'is_google': False}), 401
         else:
             return jsonify({'access_token': access_token}), 200
         finally:
