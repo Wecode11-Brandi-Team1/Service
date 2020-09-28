@@ -9,7 +9,7 @@ manager = Manager(app)
 def run():
     app.run(
         host='0.0.0.0', 
-        port=5000,
+        port=80,
         debug=True)
 
 if __name__ == '__main__':

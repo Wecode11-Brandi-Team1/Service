@@ -1,38 +1,56 @@
-# 작성자: 김기욱
-# 작성일: 2020.09.23.수
-# 검색 기능 Service
+import traceback
 
 class SearchService:
-    def __init__(self, search_dao, product_dao):
+    def __init__(self, search_dao):
         self.search_dao = search_dao
-        self.product_dao = product_dao
 
-    def search_stores(self, Q, limit, db):
-        try:
-            search_stores_results = self.search_dao.search_stores(Q, limit, db)
+    def search_stores(self, params, db):
+        """
+        Args :
+            search_dao: 검색 관련 데이터접근객체
+            params : 딕셔너리 패킹된 쿼리파라미터객체
+            db : 데이터베이스 연결객체
+        Returns :
+            search_stores_results객체(검색어와 매칭된 셀러 리스트)
+        Authors :
+            1218kim23@gmail.com(김기욱)
+        History :
+            2020-10-04 : 파라미터 형식 변경
+            2020-09-28 : 예외처리 수정(traceback 추가 *모든 함수 공통사항*)
+            2020-09-23 : 초기 생성
+        """
+        try :
+            search_stores_results = self.search_dao.search_stores(params, db)
        
-        except:
-            raise
+        except :
+            traceback.print_exc()
        
-        else:
+        else :
             return search_stores_results
 
-    def search_products(self, Q, limit, db):
-        try:
-            products_data = self.search_dao.search_products(Q, limit, db)
-            search_products_results  = [{
-                'id'               : product['id'],
-                'image_url'        : product['image_path'], 
-                'seller_name'      : product['seller_name'], 
-                'product_name'     : product['product_name'], 
-                'discount_rate'    : product['discount_rate'],
-                'origin_price'     : product['sale_price'], 
-                'discounted_price' : (lambda x,y : int(x*((100-y)/100)))(product['sale_price'],product['discount_rate']),
-                'sale_amount'      : product['sale_amount']
-            } for product in products_data] 
+    def search_products(self, params, db):
+        """
+        Args :
+            search_dao: 검색 관련 데이터접근객체
+            params : 딕셔너리 패킹된 쿼리파라미터객체
+            db : 데이터베이스 연결객체
+        Returns :
+            search_products_results객체(검색어와 매칭된 상품 리스트)
+        Authors :
+            1218kim23@gmail.com(김기욱)
+        History :
+            2020-10-04 : 파라미터 형식 변경
+            2020-10-03 : 할인가 추가 로직 변경
+            2020-09-23 : 초기 생성
+        """
+        try :
+            search_products_results = self.search_dao.search_products(params, db)
+            if search_products_results:
+                for product in search_products_results:
+                    product['discounted_price'] = round(product['sale_price']*(100-product['discount_rate'])/100)
         
-        except:
-            raise
+        except :
+            traceback.print_exc()
         
-        else:
+        else :
             return search_products_results 
