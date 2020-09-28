@@ -492,16 +492,13 @@ ALTER TABLE users
         REFERENCES sellers (id) ON DELETE RESTRICT ON UPDATE RESTRICT;
 CREATE TABLE shipping_informations
 (
-    `id`                 INT             NOT NULL    AUTO_INCREMENT, 
-    `name`               VARCHAR(64)     NOT NULL    COMMENT '수령인 이름', 
-    `phone_number`       VARCHAR(64)     NOT NULL    COMMENT '수취인 휴대폰', 
-    `address`            VARCHAR(256)    NOT NULL    COMMENT '주소', 
-    `shipping_memo`      VARCHAR(128)    NULL        COMMENT '배송 메모', 
-    `user_id`            INT             NOT NULL    COMMENT '유저아이디', 
-    `is_deleted`         TINYINT         NULL, 
-    `user_name`          VARCHAR(64)     NULL        COMMENT '주문자 이름', 
-    `user_phone_number`  VARCHAR(64)     NULL        COMMENT '주문자 휴대폰', 
-    `user_email`         VARCHAR(128)    NULL        COMMENT '주문자 이메일', 
+    `id`             INT             NOT NULL                   AUTO_INCREMENT,
+    `name`           VARCHAR(64)     NOT NULL                   COMMENT '수령인 이름',
+    `phone_number`   VARCHAR(64)     NOT NULL                   COMMENT '수취인 휴대폰',
+    `address`        VARCHAR(256)    NOT NULL                   COMMENT '주소',
+    `shipping_memo`  VARCHAR(128)    NULL                       COMMENT '배송 메모',
+    `user_id`        INT             NOT NULL                   COMMENT '유저아이디',
+    `is_deleted`     BOOLEAN         NULL        Default False,
     PRIMARY KEY (id)
 );
 ALTER TABLE shipping_informations COMMENT '배송지 정보';
