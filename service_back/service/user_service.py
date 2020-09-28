@@ -19,7 +19,11 @@ class UserService:
     # 기능: 로그인
     def sign_in(self, user_info, db):
         user_data = self.user_dao.sign_in(user_info, db)
-        if bcrypt.checkpw(user_info['password'].encode('utf-8'), user_data['password'].encode('utf-8')):
+        if user_data['is_deleted'] == 1:
+            access_token = None
+            return access_token
+
+        elif bcrypt.checkpw(user_info['password'].encode('utf-8'), user_data['password'].encode('utf-8')):
             access_token = jwt.encode({'ID' : user_data['id']}, SECRET_KEY['secret'], ALGORITHM['algorithm']).decode('utf-8')
             return access_token
 
@@ -41,3 +45,7 @@ class UserService:
         if google_user_info['email'] == user_info['email']:
             access_token = jwt.encode({'ID' : user_info['id']}, SECRET_KEY['secret'], ALGORITHM['algorithm']).decode('utf-8')
             return access_token
+
+    def shipping_information(self, user_info, db):
+        user_request = requests.get().json()
+        results = self.user_dao.shipping_information(user_info, user_request, db)

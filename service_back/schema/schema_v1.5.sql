@@ -37,7 +37,7 @@ CREATE TABLE sellers
 (
     `id`                           INT              NOT NULL    AUTO_INCREMENT COMMENT '셀러번호', 
     `register_date`                DATETIME         NOT NULL    DEFAULT NOW() COMMENT '등록일시', 
-    `seller_status_id`             INT              NOT NULL    COMMENT '셀러 상태 아이디', 
+    `seller_status_id`             INT              NULL        DEFAULT '1' COMMENT '셀러 상태 아이디', 
     `is_master`                    BOOLEAN          NOT NULL    DEFAULT False COMMENT '마스터', 
     `is_deleted`                   BOOLEAN          NOT NULL    DEFAULT False COMMENT '삭제 여부', 
     `seller_account`               VARCHAR(128)     NOT NULL    UNIQUE COMMENT '셀러 계정', 
@@ -94,9 +94,9 @@ ALTER TABLE sellers
 CREATE TABLE seller_managers
 (
     `id`            INT             NOT NULL    AUTO_INCREMENT, 
-    `name`          VARCHAR(64)     NOT NULL    COMMENT '이름', 
+    `name`          VARCHAR(64)     NULL        COMMENT '이름', 
     `phone_number`  VARCHAR(64)     NOT NULL    COMMENT '전화번호', 
-    `email`         VARCHAR(128)    NOT NULL    COMMENT '이메일', 
+    `email`         VARCHAR(128)    NULL        COMMENT '이메일', 
     `seller_id`     INT             NOT NULL    COMMENT '셀러아이디', 
     PRIMARY KEY (id)
 );
@@ -207,7 +207,7 @@ CREATE TABLE products
     `id`             INT             NOT NULL    AUTO_INCREMENT COMMENT 'pk', 
     `sale_amount`    INT             NOT NULL    DEFAULT 0 COMMENT '판매량', 
     `register_date`  DATETIME        NOT NULL    DEFAULT CURRENT_TIMESTAMP COMMENT '등록일', 
-    `code`           VARCHAR(128)    NOT NULL    COMMENT '상품코드', 
+    `code`           VARCHAR(128)    NOT NULL    UNIQUE COMMENT '상품코드', 
     `review_count`   INT             NOT NULL    DEFAULT 0 COMMENT '리뷰 개수', 
     `qna_count`      INT             NOT NULL    DEFAULT 0 COMMENT 'Q&A 개수', 
     `is_deleted`     BOOLEAN         NOT NULL    DEFAULT 0 COMMENT '삭제 여부', 
@@ -271,7 +271,7 @@ ALTER TABLE product_details
 CREATE TABLE product_images
 (
     `id`          INT            NOT NULL    AUTO_INCREMENT COMMENT 'pk',  
-    `image_path`  VARCHAR(2048)    NOT NULL    COMMENT 'URL', 
+    `image_path`  VARCHAR(2048)  NOT NULL    COMMENT 'URL', 
     `ordering`    TINYINT        NOT NULL    COMMENT '이미지 순서', 
     `product_id`  INT            NOT NULL    COMMENT '상품 아이디',
     PRIMARY KEY (id)
@@ -307,7 +307,7 @@ ALTER TABLE sizes COMMENT '상품 사이즈';
 CREATE TABLE options
 (
     `id`          INT    NOT NULL    AUTO_INCREMENT COMMENT 'pk', 
-    `stock`       INT    NULL        DEFAULT 0 COMMENT '재고', 
+    `stock`       INT    NOT NULL    DEFAULT 0 COMMENT '재고', 
     `product_id`  INT    NOT NULL    COMMENT '상품 아이디',
     `color_id`    INT    NOT NULL    COMMENT '색상 아이디', 
     `size_id`     INT    NOT NULL    COMMENT '사이즈 아이디', 
@@ -477,8 +477,7 @@ CREATE TABLE users
     `account_id`     VARCHAR(64)     NOT NULL                     COMMENT '회원 아이디',
     `register_date`  DATETIME        NOT NULL    Default NOW()    COMMENT '날짜 + 시간',
     `is_deleted`     BOOLEAN         NOT NULL    Default False,
-    `last_name`      VARCHAR(64)     NOT NULL                     COMMENT '성',
-    `first_name`     VARCHAR(64)     NOT NULL                     COMMENT '이름',
+    `name`     VARCHAR(64)           NOT NULL                     COMMENT '이름',
     `email`          VARCHAR(128)    NOT NULL                     COMMENT '이메일',
     `password`       VARCHAR(256)    NULL                         COMMENT '패스워드',
     `created_at`     DATETIME        NOT NULL    Default NOW()    COMMENT '선분이력시작일자',
@@ -493,13 +492,16 @@ ALTER TABLE users
         REFERENCES sellers (id) ON DELETE RESTRICT ON UPDATE RESTRICT;
 CREATE TABLE shipping_informations
 (
-    `id`             INT             NOT NULL                   AUTO_INCREMENT,
-    `name`           VARCHAR(64)     NOT NULL                   COMMENT '수령인 이름',
-    `phone_number`   VARCHAR(64)     NOT NULL                   COMMENT '수취인 휴대폰',
-    `address`        VARCHAR(256)    NOT NULL                   COMMENT '주소',
-    `shipping_memo`  VARCHAR(128)    NULL                       COMMENT '배송 메모',
-    `user_id`        INT             NOT NULL                   COMMENT '유저아이디',
-    `is_deleted`     BOOLEAN         NULL        Default False,
+    `id`                 INT             NOT NULL    AUTO_INCREMENT, 
+    `name`               VARCHAR(64)     NOT NULL    COMMENT '수령인 이름', 
+    `phone_number`       VARCHAR(64)     NOT NULL    COMMENT '수취인 휴대폰', 
+    `address`            VARCHAR(256)    NOT NULL    COMMENT '주소', 
+    `shipping_memo`      VARCHAR(128)    NULL        COMMENT '배송 메모', 
+    `user_id`            INT             NOT NULL    COMMENT '유저아이디', 
+    `is_deleted`         TINYINT         NULL, 
+    `user_name`          VARCHAR(64)     NULL        COMMENT '주문자 이름', 
+    `user_phone_number`  VARCHAR(64)     NULL        COMMENT '주문자 휴대폰', 
+    `user_email`         VARCHAR(128)    NULL        COMMENT '주문자 이메일', 
     PRIMARY KEY (id)
 );
 ALTER TABLE shipping_informations COMMENT '배송지 정보';

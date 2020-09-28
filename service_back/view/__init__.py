@@ -3,9 +3,10 @@ from .product_view import (
     ProductsView,
     CategorySetView)
 from .search_view  import SearchView
-from .user_view    import SignUp, SignIn, SocialSignUp, SocialSignIn
+from .user_view    import SignUp, SignIn, SocialSignUp, SocialSignIn, ShippingInformation
 
 def create_endpoints(app, services):
+    
     product_service = services.product_service
     search_service  = services.search_service
     user_service    = services.user_service
@@ -27,8 +28,6 @@ def create_endpoints(app, services):
     # 기능: 회원가입
     app.add_url_rule('/sign-up', view_func = SignUp.as_view('user_sign_up', user_service))
     app.add_url_rule('/sign-in', view_func = SignIn.as_view('user_sign_in', user_service))
-    # 작성자: 김태하
-    # 작성일: 2020.09.24.목
-    # 기능: 소셜회원가입, 소셜 로그인
     app.add_url_rule('/social-signup', view_func = SocialSignUp.as_view('user_social_sign_up', user_service))    
     app.add_url_rule('/social-signin', view_func = SocialSignIn.as_view('user_social_sign_in', user_service))
+    app.add_url_rule('/shipping-information', view_func = ShippingInformation.as_view('shipping_information', user_service))

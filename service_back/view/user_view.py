@@ -4,6 +4,7 @@ from flask import jsonify, request
 from flask.views import MethodView
 
 from pymysql import err
+from utils import login_confirm
 
 # 작성자: 김태하
 # 작성일: 2020.09.23.수
@@ -40,6 +41,8 @@ class SignIn(MethodView):
             db = connection.get_connection(config.database)
             user = request.json
             access_token = self.service.sign_in(user, db)
+            if access_token == None:
+                return jsonify({'message':'Withdrawn member'}), 401
         except:
             return jsonify({'message':'Unauthorized'}), 401
         else:
@@ -58,6 +61,7 @@ class SocialSignUp(MethodView):
         try:
             db = connection.get_connection(config.database)
             user_info = request.json
+            print(user_info)
             google_access_token = request.headers.get("Authorization", None)
             sign_up = self.service.social_sign_up(user_info, google_access_token, db)
         except:
@@ -85,5 +89,20 @@ class SocialSignIn(MethodView):
             return jsonify({'is_google': False}), 401
         else:
             return jsonify({'access_token': access_token}), 200
+        finally:
+            db.close()
+
+class ShippingInformation(MethodView):
+    def __init__(self, service):
+        self.service = service
+    
+    @login_confirm
+    def post(self, user_info, db):
+        try:
+            shipping_information = self.service.shipping_information(user_info, db)
+        except:
+            return jsonify({'message':'UNSUCCESS'}), 400
+        else:
+            return jsonify({'message': 'SUCCESS'}), 200
         finally:
             db.close()
