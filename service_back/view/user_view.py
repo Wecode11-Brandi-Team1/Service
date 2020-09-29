@@ -91,12 +91,18 @@ class SignIn(MethodView):
             db = connection.get_connection(config.database)
             user = request.json
             access_token = self.service.sign_in(user, db)
-            if access_token == None:
-                return jsonify({'message':'Withdrawn member'}), 401
+            if access_token == 'is_deleted':
+                return jsonify({'message':'탈퇴한 회원입니다.'}), 401
+
+            if access_token == 'no_user':
+                return jsonify({'message':'회원정보가 일치하지 않습니다.'}), 401
+        
         except:
             return jsonify({'message':'Unauthorized'}), 401
+
         else:
             return jsonify({'access_token':access_token}), 200
+
         finally:
             db.close()
 
@@ -123,12 +129,15 @@ class SocialSignUp(MethodView):
             user_info = request.json
             google_access_token = request.headers.get("Authorization", None)
             sign_up = self.service.social_sign_up(user_info, google_access_token, db)
+
         except:
             db.rollback()
             return jsonify({'message': 'UNSUCCESS'}), 400
+
         else:
             db.commit()
             return jsonify({'message': 'SUCCESS'}), 200
+
         finally:
             db.close()
 
@@ -151,10 +160,13 @@ class SocialSignIn(MethodView):
             db = connection.get_connection(config.database)
             google_access_token = request.headers.get("Authorization", None)
             access_token = self.service.social_sign_in(google_access_token, db)
+
         except:
             return jsonify({'is_google': True}), 401
+
         else:
             return jsonify({'access_token': access_token}), 200
+
         finally:
             db.close()
 
@@ -179,9 +191,12 @@ class ShippingInformation(MethodView):
         """
         try:
             shipping_information = self.service.shipping_information(user_info, db)
+
         except:
             return jsonify({'message':'UNSUCCESS'}), 400
+
         else:
             return jsonify({'message': 'SUCCESS'}), 200
+
         finally:
             db.close()

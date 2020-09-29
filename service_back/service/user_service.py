@@ -61,12 +61,15 @@ class UserService:
         """
         user_data = self.user_dao.sign_in(user_info, db)
         if user_data['is_deleted'] == 1:
-            access_token = None
+            access_token = 'is_deleted'
             return access_token
 
         elif bcrypt.checkpw(user_info['password'].encode('utf-8'), user_data['password'].encode('utf-8')):
             access_token = jwt.encode({'id' : user_data['id']}, SECRET_KEY['secret'], ALGORITHM['algorithm']).decode('utf-8')
             return access_token
+        
+        access_token = 'no_user'
+        return access_token
 
     def social_sign_up(self, user_info, google_access_token, db):
         """
