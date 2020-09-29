@@ -12,6 +12,7 @@ import Cart from '../views/Cart/Cart.vue'
 import Order from '../views/Order/Order.vue'
 import Mypage from '../views/Mypage/Mypage.vue'
 import Event from '../views/Event/Event.vue'
+import Search from '../views/Search/Search.vue'
 import GSignInButton from 'vue-google-signin-button'
 
 
@@ -22,7 +23,7 @@ export const router = new VueRouter({
   mode: "history",
   routes: [
     {
-      path: "/main",
+      path: "/",
       name: "Main",
       component: Main,
     },
@@ -80,6 +81,11 @@ export const router = new VueRouter({
       path: "/event",
       name: "Event",
       component: Event,
+    },
+    {
+      path: "/search",
+      name: "Search",
+      component: Search,
     },
   ],
 });
