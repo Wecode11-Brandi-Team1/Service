@@ -29,13 +29,16 @@ def login_confirm(original_function):
             if access_token:
                 db = connection.get_connection(database)
                 token_paylod = jwt.decode(access_token, SECRET_KEY['secret'], ALGORITHM['algorithm'])
-                user_info = UserDao.user_data(token_paylod, db)
+                user_info = UserDao.login_data(self, token_paylod, db)
                 return original_function(self, user_info, db)
             return jsonify({'message':'LOGIN_REQUIRED'}), 401
                     
         except (err.OperationalError, err.InternalError, err.ProgrammingError, err.IntegrityError) as e:
             message = {"error_number": e.args[0], "err_value": e.args[1]}
             return jsonify(message), 400
+
+        finally:
+            db.close()
 
     return wrapper
 

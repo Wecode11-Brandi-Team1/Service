@@ -3,7 +3,7 @@ import pymysql
 class UserDao:
     def sign_up(self, user_info, db): 
         """
-            일반 회원가입 - Persistence Layer(view)) function
+            일반 회원가입 - Persistence Layer(model)) function
             Args : 
                 user_info : 유저 정보
                 db : DATABASE Connection Instance
@@ -44,7 +44,7 @@ class UserDao:
  
     def sign_in(self, user_info, db):
         """
-            일반로그인 - Persistence Layer(view)) function
+            일반로그인 - Persistence Layer(model)) function
             Args : 
                 user_info : 유저 정보
                 db : DATABASE Connection Instance
@@ -65,7 +65,7 @@ class UserDao:
 
     def social_sign_up(self, user_info, db):
         """
-            소셜 회원가입 - Persistence Layer(view)) function
+            소셜 회원가입 - Persistence Layer(model)) function
             Args : 
                 user_info : 유저 정보
                 db : DATABASE Connection Instance
@@ -106,7 +106,7 @@ class UserDao:
 
     def social_sign_in(self, google_user_info, db):
         """
-            소셜로그인 - Persistence Layer(view)) function
+            소셜로그인 - Persistence Layer(model)) function
             Args : 
                 google_user_info : 구글 유저 정보
                 db : DATABASE Connection Instance
@@ -127,7 +127,7 @@ class UserDao:
 
     def user_data(self, user_info, db):
         """
-            최신 유저 정보 가져오기 - Persistence Layer(view)) function
+            최신 유저 정보 가져오기 - Persistence Layer(model)) function
             Args : 
                 user_info : 유저 정보
                 db : DATABASE Connection Instance
@@ -146,9 +146,9 @@ class UserDao:
             results = cursor.fetchone()
             return results
 
-    def shipping_information(self, user_info, user_request, db):
+    def shipping_information(self, user_info, db):
         """
-            배송지 정보 - Persistence Layer(view)) function
+            배송지 정보 - Persistence Layer(model)) function
             Args : 
                 user_info : 유저 정보
                 user_request : 클라이언트 요청
@@ -184,3 +184,25 @@ class UserDao:
                 )
             )
             return results
+
+    def login_data(self, user_info, db):
+        """
+            로그인 인증을 위한 유저 데이터 가져오기 - Persistence Layer(model)) function
+            Args : 
+                user_info : 유저 정보
+                db : DATABASE Connection Instance
+            Returns :
+
+            Author :
+                taeha7b@gmail.com (김태하)
+            History:
+                2020-09-29 (taeha7b@gmail.com (김태하)) : 초기생성
+        """
+        with db.cursor() as cursor:
+            sql = """
+            SELECT * from users where id=%s AND expired_at='9999-12-31 12:59:59';
+            """
+            cursor.execute(sql, (user_info['id']))
+            results = cursor.fetchone()
+            return results
+

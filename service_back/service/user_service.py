@@ -13,7 +13,7 @@ class UserService:
 
     def sign_up(self, user_info, db):
         """
-            일반 회원가입 - Business Layer(view)) function
+            일반 회원가입 - Business Layer(service)) function
             Args : 
                 user_info : 유저 정보
                 db : DATABASE Connection Instance
@@ -48,7 +48,7 @@ class UserService:
 
     def sign_in(self, user_info, db):
         """
-            일반 로그인 - Business Layer(view)) function
+            일반 로그인 - Business Layer(service)) function
             Args : 
                 user_info : 유저 정보
                 db : DATABASE Connection Instance
@@ -73,7 +73,7 @@ class UserService:
 
     def social_sign_up(self, user_info, google_access_token, db):
         """
-            소셜회원가입 - Business Layer(view)) function
+            소셜회원가입 - Business Layer(service)) function
             Args : 
                 user_info : 유저 정보
                 google_access_token : 구글 access_token
@@ -92,7 +92,7 @@ class UserService:
 
     def social_sign_in(self, google_access_token, db):
         """
-            소셜로그인 - Business Layer(view)) function
+            소셜로그인 - Business Layer(service)) function
             Args : 
                 google_access_token : 구글 access_token
                 db : DATABASE Connection Instance
@@ -111,7 +111,7 @@ class UserService:
 
     def shipping_information(self, user_info, db):
         """
-            배송지 정보 - Business Layer(view)) function
+            배송지 정보 - Business Layer(service)) function
             Args : 
                 user_info : 유저 정보
                 db : DATABASE Connection Instance

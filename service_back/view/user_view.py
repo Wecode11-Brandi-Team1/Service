@@ -68,9 +68,6 @@ class SignUp(MethodView):
         finally:
             db.close()
 
-# 작성자: 김태하
-# 작성일: 2020.09.23.수
-# 기능: 로그인
 class SignIn(MethodView):
     def __init__(self, service):
         self.service = service
@@ -79,7 +76,7 @@ class SignIn(MethodView):
         """
             일반 로그인 - Presentation Layer(view)) function
             Returns :
-                {'message':'Withdrawn member'} : 탈퇴한 회원이 로그인 시도를 하면 401코드와 함께 반환
+                {'message':'탈퇴한 회원입니다.'} : 탈퇴한 회원이 로그인 시도를 하면 401코드와 함께 반환
                 {'message':'Unauthorized'} : 예외 발생시 401코드와 함께 리턴
                 {'access_token':access_token} : 로그인에 문제가 없으면 access_token과 200코드가 함께 반환
             Author :
@@ -106,9 +103,6 @@ class SignIn(MethodView):
         finally:
             db.close()
 
-# 작성자: 김태하
-# 작성일: 2020.09.24.목
-# 기능: 소셜회원가입
 class SocialSignUp(MethodView):
     def __init__(self, service):
         self.service = service
@@ -197,6 +191,3 @@ class ShippingInformation(MethodView):
 
         else:
             return jsonify({'message': 'SUCCESS'}), 200
-
-        finally:
-            db.close()
