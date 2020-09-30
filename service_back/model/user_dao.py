@@ -146,7 +146,7 @@ class UserDao:
             results = cursor.fetchone()
             return results
 
-    def shipping_information(self, user_info, db):
+    def shipping_information(self, user_info, requestion, db):
         """
             배송지 정보 - Persistence Layer(model)) function
             Args : 
@@ -161,38 +161,35 @@ class UserDao:
                 2020-09-28 (taeha7b@gmail.com (김태하)) : 초기생성
         """
         with db.cursor() as cursor:
+            # print(user_info)
             sql = """
             INSERT INTO shipping_informations (
             name,
             phone_number,
-            adrress,
-            shipping_memo,
+            address,
             user_id,
             is_deleted,
-            ) VALUES (%s,%s,%s,%s,%s,False,%s,%s,%s)
+            is_default_address
+            ) VALUES (%s,%s,%s,%s,False,False)
             """
             results = cursor.execute(sql, 
                 (
-                    user_request['name'],
-                    user_request['phone_number'],
-                    user_request['adrress'],
-                    user_request['shipping_memo'],
-                    user_request['user_id'],
-                    user_request['user_name'],
-                    user_request['user_phone_number'],
-                    user_request['user_email']
+                    requestion['name'],
+                    requestion['phone_number'],
+                    requestion['address'],
+                    user_info['id']
                 )
             )
             return results
 
-    def login_data(self, user_info, db):
+    def user_data(self, token_paylod, db):
         """
-            로그인 인증을 위한 유저 데이터 가져오기 - Persistence Layer(model)) function
+            유저 데이터 가져오기 - Persistence Layer(model)) function
             Args : 
-                user_info : 유저 정보
+                token_paylod : {'id': value} 유저 테이블의 id와 value
                 db : DATABASE Connection Instance
             Returns :
-
+                해당 유저의 최신데이터 행
             Author :
                 taeha7b@gmail.com (김태하)
             History:
@@ -202,7 +199,7 @@ class UserDao:
             sql = """
             SELECT * from users where id=%s AND expired_at='9999-12-31 12:59:59';
             """
-            cursor.execute(sql, (user_info['id']))
+            cursor.execute(sql, (token_paylod['id']))
             results = cursor.fetchone()
             return results
 

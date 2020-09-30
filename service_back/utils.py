@@ -26,22 +26,15 @@ def login_confirm(original_function):
     def wrapper(self):
         try:
             access_token = request.headers.get("Authorization", None)
-            if access_token:
-                db = connection.get_connection(database)
-                token_paylod = jwt.decode(access_token, SECRET_KEY['secret'], ALGORITHM['algorithm'])
-                user_info = UserDao.login_data(self, token_paylod, db)
-                return original_function(self, user_info, db)
-            return jsonify({'message':'LOGIN_REQUIRED'}), 401
-                    
-        except (err.OperationalError, err.InternalError, err.ProgrammingError, err.IntegrityError) as e:
-            message = {"error_number": e.args[0], "err_value": e.args[1]}
-            return jsonify(message), 400
+            token_paylod = jwt.decode(access_token, SECRET_KEY['secret'], ALGORITHM['algorithm'])
+            # print(token_paylod)
+            return original_function(self, token_paylod)
 
-        finally:
-            db.close()
+        except Exception as e:
+            print(e)
+            return jsonify({'message':'LOGIN_REQUIRED'}), 401
 
     return wrapper
-
 
 class AccountValidattionError(Exception):
     """
@@ -131,5 +124,21 @@ def email_validate(value):
             2020-09-29 (taeha7b@gmail.com (김태하)) : 초기생성
     """
     regex = re.compile(r'^[a-zA-Z0-9+-_]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$')
+    if not regex.match(value):
+        return True
+
+def phone_num_validate(value):
+    """
+        유저 전화번호 유효성 검사 
+        Args:
+            유저 전화번호
+        Returns :
+            True : 유저 전화번호와 정규식이 일치하면 True를 반환함
+        Author :
+            taeha7b@gmail.com (김태하)
+        History:
+            2020-09-29 (taeha7b@gmail.com (김태하)) : 초기생성
+    """
+    regex = re.compile(r'(\d{3}).*(\d{4}).*(\d{4})')
     if not regex.match(value):
         return True

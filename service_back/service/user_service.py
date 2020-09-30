@@ -4,7 +4,8 @@ from config import SECRET_KEY, ALGORITHM, SOCIAL_TOKEN_URL
 from utils import (
     account_validate, 
     password_validate, 
-    email_validate
+    email_validate,
+    phone_num_validate
 )
 
 class UserService:
@@ -109,7 +110,7 @@ class UserService:
             access_token = jwt.encode({'id' : user_info['id']}, SECRET_KEY['secret'], ALGORITHM['algorithm']).decode('utf-8')
             return access_token
 
-    def shipping_information(self, user_info, db):
+    def shipping_information(self, token_paylod, requestion, db):
         """
             배송지 정보 - Business Layer(service)) function
             Args : 
@@ -122,5 +123,6 @@ class UserService:
             History:
                 2020-09-28 (taeha7b@gmail.com (김태하)) : 초기생성
         """
-        user_request = requests.get().json()
-        results = self.user_dao.shipping_information(user_info, user_request, db)
+        user_info = self.user_dao.user_data(token_paylod, db)
+        results = self.user_dao.shipping_information(user_info, requestion, db)
+        return results

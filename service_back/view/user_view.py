@@ -169,7 +169,7 @@ class ShippingInformation(MethodView):
         self.service = service
     
     @login_confirm
-    def post(self, user_info, db):
+    def post(self, token_paylod):
         """
             배송지 정보 - Presentation Layer(view)) function
             Args : 
@@ -184,10 +184,16 @@ class ShippingInformation(MethodView):
                 2020-09-28 (taeha7b@gmail.com (김태하)) : 초기생성
         """
         try:
-            shipping_information = self.service.shipping_information(user_info, db)
-
+            db = connection.get_connection(config.database)
+            requestion = request.json
+            shipping_information = self.service.shipping_information(token_paylod, requestion, db)
         except:
+            db.rollback()
             return jsonify({'message':'UNSUCCESS'}), 400
 
         else:
+            db.commit()
             return jsonify({'message': 'SUCCESS'}), 200
+
+        finally:
+            db.close()
