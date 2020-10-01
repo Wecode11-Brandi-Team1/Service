@@ -123,6 +123,16 @@ class UserService:
             History:
                 2020-09-28 (taeha7b@gmail.com (김태하)) : 초기생성
         """
-        user_info = self.user_dao.user_data(token_paylod, db)
-        results = self.user_dao.shipping_information(user_info, requestion, db)
-        return results
+        user_info = self.user_dao.authority_check(token_paylod, db)
+        count_shipping_information = self.user_dao.count_shipping_information(token_paylod, db)
+        if count_shipping_information['COUNT(*)'] < 5:
+            if  count_shipping_information['COUNT(*)'] == 0:
+                requestion['is_default_address'] = 1
+            requestion['is_default_address'] = 0
+            results = self.user_dao.shipping_information(user_info, requestion, db)
+            return results
+        return False
+
+    def lookup_shipping_information(self, token_paylod, db):
+        my_shipping_information = self.user_dao.lookup_shipping_information(token_paylod, db)
+        return my_shipping_information

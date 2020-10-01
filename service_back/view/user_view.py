@@ -187,13 +187,61 @@ class ShippingInformation(MethodView):
             db = connection.get_connection(config.database)
             requestion = request.json
             shipping_information = self.service.shipping_information(token_paylod, requestion, db)
-        except:
+            if shipping_information == False:
+                return jsonify({'message':'Shiiping information number must lower than 6'}), 400
+        except Exception as e:
+            print(e)
             db.rollback()
             return jsonify({'message':'UNSUCCESS'}), 400
 
         else:
             db.commit()
             return jsonify({'message': 'SUCCESS'}), 200
+
+        finally:
+            db.close()
+
+    @login_confirm
+    def get(self, token_paylod):
+        try:
+            db = connection.get_connection(config.database)
+            my_shipping_information = self.service.lookup_shipping_information(token_paylod, db)
+            if my_shipping_information == ():
+                return jsonify({'message':'No shipping information'}), 400
+            return jsonify(my_shipping_information)
+
+        except:
+            return jsonify({'message':'UNSUCCESS'}), 400
+
+        finally:
+            db.close()
+
+    @login_confirm
+    def put(self, token_paylod):
+        try:
+            db = connection.get_connection(config.database)
+            my_shipping_information = self.service.lookup_shipping_information(token_paylod, db)
+            if my_shipping_information == ():
+                return jsonify({'message':'No shipping information'}), 400
+            return jsonify(my_shipping_information)
+
+        except:
+            return jsonify({'message':'UNSUCCESS'}), 400
+
+        finally:
+            db.close()
+
+    @login_confirm
+    def delete(self, token_paylod):
+        try:
+            db = connection.get_connection(config.database)
+            my_shipping_information = self.service.lookup_shipping_information(token_paylod, db)
+            if my_shipping_information == ():
+                return jsonify({'message':'No shipping information'}), 400
+            return jsonify(my_shipping_information)
+
+        except:
+            return jsonify({'message':'UNSUCCESS'}), 400
 
         finally:
             db.close()

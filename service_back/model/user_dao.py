@@ -146,45 +146,9 @@ class UserDao:
             results = cursor.fetchone()
             return results
 
-    def shipping_information(self, user_info, requestion, db):
+    def authority_check(self, token_paylod, db):
         """
-            배송지 정보 - Persistence Layer(model)) function
-            Args : 
-                user_info : 유저 정보
-                user_request : 클라이언트 요청
-                db : DATABASE Connection Instance
-            Returns :
-
-            Author :
-                taeha7b@gmail.com (김태하)
-            History:
-                2020-09-28 (taeha7b@gmail.com (김태하)) : 초기생성
-        """
-        with db.cursor() as cursor:
-            # print(user_info)
-            sql = """
-            INSERT INTO shipping_informations (
-            name,
-            phone_number,
-            address,
-            user_id,
-            is_deleted,
-            is_default_address
-            ) VALUES (%s,%s,%s,%s,False,False)
-            """
-            results = cursor.execute(sql, 
-                (
-                    requestion['name'],
-                    requestion['phone_number'],
-                    requestion['address'],
-                    user_info['id']
-                )
-            )
-            return results
-
-    def user_data(self, token_paylod, db):
-        """
-            유저 데이터 가져오기 - Persistence Layer(model)) function
+            토큰의 id로 부터 유저 데이터 가져오기 - Persistence Layer(model)) function
             Args : 
                 token_paylod : {'id': value} 유저 테이블의 id와 value
                 db : DATABASE Connection Instance
@@ -203,3 +167,60 @@ class UserDao:
             results = cursor.fetchone()
             return results
 
+    def shipping_information(self, user_info, requestion, db):
+        """
+            배송지 정보 - Persistence Layer(model)) function
+            Args : 
+                user_info : 유저 정보
+                user_request : 클라이언트 요청
+                db : DATABASE Connection Instance
+            Returns :
+
+            Author :
+                taeha7b@gmail.com (김태하)
+            History:
+                2020-09-28 (taeha7b@gmail.com (김태하)) : 초기생성
+        """
+        with db.cursor() as cursor:
+            sql = """
+            INSERT INTO shipping_informations (
+            name,
+            phone_number,
+            user_id,
+            is_deleted,
+            is_default_address,
+            zip,
+            address,
+            detail_address
+            ) VALUES (%s,%s,%s,False,%s,%s,%s,%s)
+            """
+            results = cursor.execute(sql, 
+                (
+                    requestion['name'],
+                    requestion['phone_number'],
+                    user_info['id'],
+                    requestion['is_default_address'],
+                    requestion['zip'],
+                    requestion['address'],
+                    requestion['detail_address']
+                )
+            )
+            return results
+
+    def count_shipping_information(self, token_paylod, db):
+        with db.cursor() as cursor:
+            sql = """
+            SELECT COUNT(*) from shipping_informations where user_id=%s AND is_deleted=0;
+            """
+            cursor.execute(sql, (token_paylod['id']))
+            results = cursor.fetchone()
+            return results
+
+    def lookup_shipping_information(self ,token_paylod, db):
+        with db.cursor() as cursor:
+            sql = """
+            select * from shipping_informations where user_id=%s and is_deleted=0;
+            """
+            cursor.execute(sql, (token_paylod['id']))
+            results = cursor.fetchall()
+            return results
