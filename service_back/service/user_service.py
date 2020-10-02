@@ -66,7 +66,7 @@ class UserService:
             return access_token
 
         elif bcrypt.checkpw(user_info['password'].encode('utf-8'), user_data['password'].encode('utf-8')):
-            access_token = jwt.encode({'id' : user_data['id']}, SECRET_KEY['secret'], ALGORITHM['algorithm']).decode('utf-8')
+            access_token = jwt.encode({'id' : user_data['user_id']}, SECRET_KEY['secret'], ALGORITHM['algorithm']).decode('utf-8')
             return access_token
         
         access_token = 'no_user'
@@ -105,9 +105,12 @@ class UserService:
                 2020-09-24 (taeha7b@gmail.com (김태하)) : 초기생성
         """
         google_user_info = requests.get(SOCIAL_TOKEN_URL['google_token_url'] + google_access_token).json()
+        if 'error' in google_user_info:
+            return 'error'
+
         user_info = self.user_dao.social_sign_in(google_user_info, db)
         if google_user_info['email'] == user_info['email']:
-            access_token = jwt.encode({'id' : user_info['id']}, SECRET_KEY['secret'], ALGORITHM['algorithm']).decode('utf-8')
+            access_token = jwt.encode({'id' : user_info['user_id']}, SECRET_KEY['secret'], ALGORITHM['algorithm']).decode('utf-8')
             return access_token
 
     def shipping_information(self, token_paylod, requestion, db):
@@ -123,16 +126,26 @@ class UserService:
             History:
                 2020-09-28 (taeha7b@gmail.com (김태하)) : 초기생성
         """
-        user_info = self.user_dao.authority_check(token_paylod, db)
         count_shipping_information = self.user_dao.count_shipping_information(token_paylod, db)
         if count_shipping_information['COUNT(*)'] < 5:
             if  count_shipping_information['COUNT(*)'] == 0:
                 requestion['is_default_address'] = 1
-            requestion['is_default_address'] = 0
-            results = self.user_dao.shipping_information(user_info, requestion, db)
+            else: 
+                requestion['is_default_address'] = 0
+            results = self.user_dao.shipping_information(token_paylod, requestion, db)
             return results
         return False
 
     def lookup_shipping_information(self, token_paylod, db):
-        my_shipping_information = self.user_dao.lookup_shipping_information(token_paylod, db)
-        return my_shipping_information
+        results = self.user_dao.lookup_shipping_information(token_paylod, db)
+        return results
+
+    def delete_shipping_information(self, token_paylod, shipping_info_id, db):
+        results = self.user_dao.delete_shipping_information(token_paylod, shipping_info_id, db)
+        return results
+
+    def revise_shipping_information(self, token_paylod, requestion, db):
+        if requestion['is_default_address'] == 1:
+            self.user_dao.revise_default_address(token_paylod, requestion, db)
+        results = self.user_dao.revise_shipping_information(token_paylod, requestion, db)
+        return results

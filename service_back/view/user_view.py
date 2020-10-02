@@ -154,6 +154,8 @@ class SocialSignIn(MethodView):
             db = connection.get_connection(config.database)
             google_access_token = request.headers.get("Authorization", None)
             access_token = self.service.social_sign_in(google_access_token, db)
+            if access_token == 'error':
+                return jsonify({'message': 'Expired Google access token'}), 401
 
         except:
             return jsonify({'is_google': True}), 401
@@ -188,7 +190,7 @@ class ShippingInformation(MethodView):
             requestion = request.json
             shipping_information = self.service.shipping_information(token_paylod, requestion, db)
             if shipping_information == False:
-                return jsonify({'message':'Shiiping information number must lower than 6'}), 400
+                return jsonify({'message':'The number of shipping information must be less than 6.'}), 400
         except Exception as e:
             print(e)
             db.rollback()
@@ -220,13 +222,17 @@ class ShippingInformation(MethodView):
     def put(self, token_paylod):
         try:
             db = connection.get_connection(config.database)
-            my_shipping_information = self.service.lookup_shipping_information(token_paylod, db)
-            if my_shipping_information == ():
-                return jsonify({'message':'No shipping information'}), 400
-            return jsonify(my_shipping_information)
-
-        except:
+            shipping_info_id = request.json
+            results = self.service.revise_shipping_information(token_paylod, shipping_info_id, db)
+          
+        except Exception as e:
+            print(e)
+            db.rollback()
             return jsonify({'message':'UNSUCCESS'}), 400
+
+        else:
+            db.commit()
+            return jsonify({'message': 'SUCCESS'}), 200
 
         finally:
             db.close()
@@ -235,12 +241,16 @@ class ShippingInformation(MethodView):
     def delete(self, token_paylod):
         try:
             db = connection.get_connection(config.database)
-            my_shipping_information = self.service.lookup_shipping_information(token_paylod, db)
-            if my_shipping_information == ():
-                return jsonify({'message':'No shipping information'}), 400
-            return jsonify(my_shipping_information)
+            requestion = request.json
+            results = self.service.delete_shipping_information(token_paylod, requestion, db)
+            if results == 1:
+                db.commit()
+                return jsonify({'message': 'SUCCESS'}), 200
+            elif results == 0:
+                return jsonify({'message': 'No shipping_information'}), 400
 
         except:
+            db.rollback()
             return jsonify({'message':'UNSUCCESS'}), 400
 
         finally:

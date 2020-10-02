@@ -14,33 +14,43 @@ class UserDao:
             History:
                 2020-09-23 (taeha7b@gmail.com (김태하)) : 초기생성
         """
+
         with db.cursor() as cursor: 
-            sql = """
+
+            sql_1 = """ 
             INSERT INTO users (
+                register_date,
+                is_deleted
+            ) VALUES(NOW(),0)
+            """
+            results_1 = cursor.execute(sql_1)
+            lastrowid = cursor.lastrowid
+            sql_2 = """
+            INSERT INTO user_informations (
+            user_id,
             account_id,
-            register_date,
-            is_deleted,
             name,
             email,
-            password,
-            created_at,
-            expired_at,
             phone_number,
-            modifier_id
-            ) VALUES (%s,NOW(),False,%s,%s,%s,NOW(),%s,%s,%s)
+            password,
+            modifier_id,
+            created_at,
+            expired_at
+            ) VALUES (%s,%s,%s,%s,%s,%s,%s,NOW(),%s)
             """
-            results = cursor.execute(sql, 
+            results_2 = cursor.execute(sql_2, 
                 (
+                    lastrowid,
                     user_info['account'],
                     '일반가입회원',
                     user_info['email'],
-                    user_info['password'],
-                    '9999-12-31 12:59:59',
                     None,
-                    None
+                    user_info['password'],
+                    None,
+                    '9999-12-31 00:00:00'
                 )
             )
-            return results
+            return results_2
  
     def sign_in(self, user_info, db):
         """
@@ -56,9 +66,11 @@ class UserDao:
                 2020-09-23 (taeha7b@gmail.com (김태하)) : 초기생성
         """
         with db.cursor() as cursor: 
-            sql = """
-            SELECT id,password,is_deleted from users where account_id=%s AND expired_at='9999-12-31 12:59:59';
-            """
+            sql = """ SELECT user_id, is_deleted, account_id, password 
+                      from users INNER JOIN user_informations ON users.id=user_informations.user_id 
+                      where account_id=%s AND expired_at='9999-12-31 00:00:00';
+                 """
+
             cursor.execute(sql, (user_info['account']))
             results = cursor.fetchone()
             return results
@@ -77,32 +89,41 @@ class UserDao:
                 2020-09-24 (taeha7b@gmail.com (김태하)) : 초기생성
         """
         with db.cursor() as cursor:
-            sql = """
+            sql_1 = """ 
             INSERT INTO users (
+                register_date,
+                is_deleted
+            ) VALUES(NOW(),0)
+            """
+            results_1 = cursor.execute(sql_1)
+            lastrowid = cursor.lastrowid
+
+            sql_2 = """
+            INSERT INTO user_informations (
+            user_id,
             account_id,
-            register_date,
-            is_deleted,
             name,
             email,
-            password,
-            created_at,
-            expired_at,
             phone_number,
-            modifier_id
-            ) VALUES (%s,NOW(),False,%s,%s,%s,NOW(),%s,%s,%s)
+            password,
+            modifier_id,
+            created_at,
+            expired_at
+            ) VALUES (%s,%s,%s,%s,%s,%s,%s,NOW(),%s)
             """
-            results = cursor.execute(sql, 
+            results_2 = cursor.execute(sql_2, 
                 (
+                    lastrowid,
                     user_info['account'],
                     user_info['name'],
                     user_info['email'],
                     None,
-                    '9999-12-31 12:30:50',
                     None,
-                    None
+                    None,
+                    '9999-12-31 00:00:00'
                 )
             )
-            return results
+            return results_2
 
     def social_sign_in(self, google_user_info, db):
         """
@@ -119,7 +140,7 @@ class UserDao:
         """
         with db.cursor() as cursor:
             sql = """
-            SELECT id,email from users where email=%s AND expired_at='9999-12-31 12:59:59';
+            SELECT user_id,email from user_informations where email=%s AND expired_at='9999-12-31 00:00:00';
             """
             cursor.execute(sql, (google_user_info['email']))
             results = cursor.fetchone()
@@ -129,7 +150,7 @@ class UserDao:
         """
             최신 유저 정보 가져오기 - Persistence Layer(model)) function
             Args : 
-                user_info : 유저 정보
+                user_info : 유저 정보(계정 아이디와 이메일)
                 db : DATABASE Connection Instance
             Returns :
 
@@ -140,7 +161,7 @@ class UserDao:
         """
         with db.cursor() as cursor:
             sql = """
-            SELECT * from users where (account_id=%s OR email=%s) AND expired_at='9999-12-31 12:59:59';
+            SELECT * from user_informations where (account_id=%s OR email=%s) AND expired_at='9999-12-31 00:00:00';
             """
             cursor.execute(sql, (user_info['account'], user_info['email']))
             results = cursor.fetchone()
@@ -161,13 +182,13 @@ class UserDao:
         """
         with db.cursor() as cursor:
             sql = """
-            SELECT * from users where id=%s AND expired_at='9999-12-31 12:59:59';
+            SELECT * from users where id=%s AND expired_at='9999-12-31 00:00:00';
             """
             cursor.execute(sql, (token_paylod['id']))
             results = cursor.fetchone()
             return results
 
-    def shipping_information(self, user_info, requestion, db):
+    def shipping_information(self, token_paylod, requestion, db):
         """
             배송지 정보 - Persistence Layer(model)) function
             Args : 
@@ -187,20 +208,20 @@ class UserDao:
             name,
             phone_number,
             user_id,
-            is_deleted,
             is_default_address,
-            zip,
+            zip_code,
             address,
-            detail_address
-            ) VALUES (%s,%s,%s,False,%s,%s,%s,%s)
+            detail_address,
+            is_deleted
+            ) VALUES (%s,%s,%s,%s,%s,%s,%s,False)
             """
             results = cursor.execute(sql, 
                 (
                     requestion['name'],
                     requestion['phone_number'],
-                    user_info['id'],
+                    token_paylod['id'],
                     requestion['is_default_address'],
-                    requestion['zip'],
+                    requestion['zip_code'],
                     requestion['address'],
                     requestion['detail_address']
                 )
@@ -216,11 +237,58 @@ class UserDao:
             results = cursor.fetchone()
             return results
 
-    def lookup_shipping_information(self ,token_paylod, db):
+    def lookup_shipping_information(self, token_paylod, db):
         with db.cursor() as cursor:
             sql = """
             select * from shipping_informations where user_id=%s and is_deleted=0;
             """
             cursor.execute(sql, (token_paylod['id']))
             results = cursor.fetchall()
+            return results
+
+    def delete_shipping_information(self, token_paylod, shipping_info_id, db):
+        with db.cursor() as cursor:
+            sql = """
+            UPDATE shipping_informations SET is_deleted=1 where id=%s AND user_id=%s;
+            """
+            results = cursor.execute(sql, (shipping_info_id['id'], token_paylod['id']))
+            return results
+
+    def revise_shipping_information(self, token_paylod, requestion, db):
+        with db.cursor() as cursor:
+            sql = """
+            UPDATE shipping_informations SET
+            name=%s,
+            phone_number=%s,
+            is_default_address=%s,
+            zip_code=%s,
+            address=%s,
+            detail_address=%s
+            WHERE id=%s AND user_id=%s 
+            """
+            results = cursor.execute(sql, (
+                requestion['name'],
+                requestion['phone_number'],
+                requestion['is_default_address'],
+                requestion['zip_code'],
+                requestion['address'],
+                requestion['detail_address'],
+                requestion['id'], 
+                token_paylod['id'],
+            ))
+            return results
+
+    def revise_default_address(self, token_paylod, requestion, db):
+        with db.cursor() as cursor:
+            sql = """
+            UPDATE shipping_informations SET
+            is_default_address=%s
+            WHERE user_id=%s AND is_default_address=%s AND is_deleted=%s
+            """
+            results = cursor.execute(sql, (
+                0,
+                token_paylod['id'],
+                1,
+                0
+            ))
             return results
