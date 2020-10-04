@@ -278,7 +278,7 @@ class UserDao:
             ))
             return results
 
-    def revise_default_address(self, token_paylod, requestion, db):
+    def revise_default_address(self, token_paylod, db):
         with db.cursor() as cursor:
             sql = """
             UPDATE shipping_informations SET

@@ -146,6 +146,6 @@ class UserService:
 
     def revise_shipping_information(self, token_paylod, requestion, db):
         if requestion['is_default_address'] == 1:
-            self.user_dao.revise_default_address(token_paylod, requestion, db)
+            self.user_dao.revise_default_address(token_paylod, db)
         results = self.user_dao.revise_shipping_information(token_paylod, requestion, db)
         return results
