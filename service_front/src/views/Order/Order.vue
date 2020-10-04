@@ -1,20 +1,21 @@
 <template>
-  <div class="order-container">
-    <div class="page-title">
-      <h1>주문하기</h1>
+  <div>
+    <nav-bar></nav-bar>
+    <div class="order-container">
+      <div class="page-title">
+        <h1>주문하기</h1>
+      </div>
+      <order-info :orderlist="orderList"></order-info>
+      <orderer-info :ordererlist="ordererList"></orderer-info>
+      <ship-info :ordererlist="ordererList" :shiplist="shipList"></ship-info>
+      <pay-info :orderlist="orderList"></pay-info>
     </div>
-    <OrderInfo v-bind:orderlist="orderList"></OrderInfo>
-    <OrdererInfo v-bind:ordererlist="ordererList"></OrdererInfo>
-    <ShipInfo
-      v-bind:ordererlist="ordererList"
-      v-bind:shiplist="shipList"
-    ></ShipInfo>
-    <PayInfo v-bind:orderlist="orderList"></PayInfo>
   </div>
 </template>
 
 <script>
 import axios from "axios";
+import NavBar from "../../components/Nav/Nav.vue";
 import OrderInfo from "../../components/Order/OrderInfo.vue";
 import OrdererInfo from "../../components/Order/OrdererInfo.vue";
 import ShipInfo from "../../components/Order/ShipInfo.vue";
@@ -22,6 +23,7 @@ import PayInfo from "../../components/Order/PayInfo.vue";
 
 export default {
   components: {
+    NavBar,
     OrderInfo,
     OrdererInfo,
     ShipInfo,
@@ -48,10 +50,9 @@ export default {
     },
   }),
   created: function () {
-    axios
-      .get("public/data/mockData/order.json")
-      .then((res) => (this.orderList = res.data.data))
-      .catch();
+    if (localStorage.length > 0) {
+      this.orderList.push(localStorage.key("data"));
+    }
   },
 };
 </script>
@@ -60,7 +61,7 @@ export default {
 .page-title {
   display: flex;
   justify-content: center;
-  margin-bottom: 50px;
+  margin: 30px 0 50px 0;
   padding: 40px 0 20px 0;
   h1 {
     font-size: 1.9em;
