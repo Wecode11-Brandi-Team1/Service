@@ -2,16 +2,19 @@ from .product_view  import (
     MainProductsView, 
     ProductsView,
     ProductView,
-    CategorySetView)
+    CategorySetView
+    )
 from .user_view     import (
     SignUp, 
     SignIn, 
     SocialSignUp, 
     SocialSignIn,
-    ShippingInformation)
+    ShippingInformation,
+    )
 from .search_view   import SearchView
 from .question_view import QuestionView
 from .coupon_view   import CouponView, UserCouponView
+from .purchase_view import ProductPurchase
 
 def create_endpoints(app, services):
     product_service  = services.product_service
@@ -19,6 +22,8 @@ def create_endpoints(app, services):
     user_service     = services.user_service
     question_service = services.question_service
     coupon_service   = services.coupon_service
+    purchase_service = services.purchase_service
+
     # 작성자: 김기욱
     # 수정일: 2020.09.25 금
     # 카테고리 endpoint 추가
@@ -44,3 +49,7 @@ def create_endpoints(app, services):
     app.add_url_rule('/social-signup', view_func = SocialSignUp.as_view('user_social_sign_up', user_service))    
     app.add_url_rule('/social-signin', view_func = SocialSignIn.as_view('user_social_sign_in', user_service))
     app.add_url_rule('/shipping-information', view_func = ShippingInformation.as_view('shipping_information', user_service))
+    app.add_url_rule('/purchase', view_func = ProductPurchase.as_view('product_purchase', purchase_service))
+    # app.add_url_rule('/orders/<int:id>', view_func = MyOrder.as_view('my_order', purchase_service)) 
+    # app.add_url_rule('/order-cancellation', view_func = OrderCancellation.as_view('order_cancellation', purchase_service))
+    # app.add_url_rule('/refund', view_func = Refund.as_view('refund', purchase_service))
