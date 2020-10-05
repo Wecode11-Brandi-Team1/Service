@@ -55,8 +55,8 @@ class QuestionDao:
                     AND q.is_deleted = 0
                 """
                 # 내가 쓴 글 보기 필터링
-                if params['user_id']:
-                    sql += f" AND q.user_id = {params['user_id']}"
+                if params['u']:
+                    sql += f" AND q.user_id = {params['u']}"
 
                 sql += f" ORDER BY q.created_at DESC"
                 
@@ -65,6 +65,9 @@ class QuestionDao:
 
                 cursor.execute(qna_count, params["product_id"])
                 result = cursor.fetchone()
+
+                if not result:
+                    raise Exception('Query failed')
 
                 cursor.execute(sql+";", params['product_id'])
                 sql = cursor.fetchall()
@@ -80,12 +83,11 @@ class QuestionDao:
         else :
             return result
     
-    def insert_question(self, product_id, q_info, db):
+    def insert_question(self, params, db):
         """
         Args :
-            product_id : 상품아이디
-            q_info     : jsondata request(추가요청)
-            db         : 데이터베이스 연결 객체
+            params : 딕셔너리 패킹된 쿼리파라미터객체
+            db     : 데이터베이스 연결 객체
         Returns :
             None
         Authors :
@@ -112,8 +114,9 @@ class QuestionDao:
                     %s  
                 );
                 """
+                q_info = params['q_info']
                 sql = cursor.execute(sql, (
-                    product_id,
+                    params["product_id"],
                     q_info["user_id"],
                     q_info["question_content"],
                     q_info["question_type_id"],
@@ -128,22 +131,25 @@ class QuestionDao:
                 SET qna_count = qna_count+1
                 WHERE id = %s;
                 """
-                cursor.execute(count_up, product_id)
+                count_up = cursor.execute(count_up, params["product_id"])
+
+                if not count_up:
+                    raise Exception('Query failed')
 
         except :
             traceback.print_exc()
 
-    def delete_question(self, product_id, q, db):
+    def delete_question(self, params, db):
         """
         Args :
-            product_id : 상품아이디
-            q_info     : jsondata request(삭제요청)
-            db         : 데이터베이스 연결 객체
+            params : 딕셔너리 패킹된 쿼리파라미터객체
+            db     : 데이터베이스 연결 객체
         Returns :
             None
         Authors :
             1218kim23@gmail.com(김기욱)
         History :
+            2020-10-05 : 파라미터 형식 변경
             2020-10-04 : 초기생성
         """
         try :
@@ -155,7 +161,7 @@ class QuestionDao:
                     product_id = %s
                     AND id = %s;
                 """
-                sql = cursor.execute(sql, (product_id, q))
+                sql = cursor.execute(sql, (params['product_id'], params['q']))
             
                 if not sql:
                     raise Exception('Query failed')
@@ -165,7 +171,10 @@ class QuestionDao:
                 SET qna_count = qna_count-1
                 WHERE id = %s;
                 """
-                cursor.execute(count_down, product_id)
+                count_down = cursor.execute(count_down, params['product_id'])
+
+                if not count_down:
+                    raise Exception('Query failed')
 
         except :
             traceback.print_exc()

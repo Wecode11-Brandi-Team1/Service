@@ -7,7 +7,8 @@ from .user_view     import (
     SignUp, 
     SignIn, 
     SocialSignUp, 
-    SocialSignIn)
+    SocialSignIn,
+    ShippingInformation)
 from .search_view   import SearchView
 from .question_view import QuestionView
 

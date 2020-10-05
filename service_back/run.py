@@ -8,8 +8,8 @@ manager = Manager(app)
 @manager.command
 def run():
     app.run(
-        host='0.0.0.0', 
-        port=80,
+        host='10.251.1.146', 
+        port=5000,
         debug=True)
 
 if __name__ == '__main__':

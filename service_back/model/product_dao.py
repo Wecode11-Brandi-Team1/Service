@@ -46,8 +46,8 @@ class ProductDao:
                 cursor.execute(sql)
                 result = cursor.fetchall()
 
-                if not result:
-                    raise Exception('Query failed')
+                # if not result:
+                #     raise Exception('Query failed')
         
         except :
             traceback.print_exc()

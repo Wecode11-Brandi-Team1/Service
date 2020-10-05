@@ -43,6 +43,8 @@ def create_app(test_config = None):
     app = Flask(__name__)
     cache.init_app(app)
 
+    app.config['JSON_AS_ASCII'] = False
+
     #SetUp CORS
     CORS(app)
 

@@ -7,8 +7,8 @@ class QuestionService:
     def get_questions(self, params, db):
         """
         Args:
-            service    : 서비스 레이어 객체
-            product_id : 상품아이디
+            service : 서비스 레이어 객체
+            params  : 딕셔너리 패킹된 쿼리파라미터객체
         Returns:
             questions객체(상품아이디에 매칭되는 문의글리스트)
         Author:
@@ -25,40 +25,40 @@ class QuestionService:
         else :
             return questions
 
-    def insert_question(self, product_id, q_info, db):
+    def insert_question(self, params, db):
         """
         Args:
-            service    : 서비스 레이어 객체
-            product_id : 상품아이디
-            q_info     : jsondata request(추가요청)
+            service : 서비스 레이어 객체
+            params  : 딕셔너리 패킹된 쿼리파라미터객체
         Returns:
             None
         Author:
             김기욱(1218kim23@gmail.com)
         History:
+            2020-10-05(김기욱) : 파라미터 형식 변경
             2020-10-03(김기욱) : 초기 생성
         """
         try :
-            self.question_dao.insert_question(product_id, q_info, db)
+            self.question_dao.insert_question(params, db)
     
         except :
             traceback.print_exc()
     
-    def delete_question(self, product_id, q, db):
+    def delete_question(self, params, db):
         """
         Args:
-            service    : 서비스 레이어 객체
-            product_id : 상품아이디
-            q_info     : jsondata request(삭제요청)
+            service : 서비스 레이어 객체
+            params  : 딕셔너리 패킹된 쿼리파라미터객체 
         Returns:
             None
         Author:
             김기욱(1218kim23@gmail.com)
         History:
+            2020-10-05(김기욱) : 파라미터 형식 변경
             2020-10-04(김기욱) : 초기 생성
         """
         try :
-            self.question_dao.delete_question(product_id, q, db)
+            self.question_dao.delete_question(params, db)
        
         except :
             traceback.print_exc()

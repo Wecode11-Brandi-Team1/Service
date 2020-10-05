@@ -1,7 +1,7 @@
 import traceback
 
-from flask       import jsonify, request
-from flask.views import MethodView
+from flask         import jsonify, request
+from flask.views   import MethodView
 from flask_request_validator import (
     GET,
     PATH,
@@ -11,11 +11,13 @@ from flask_request_validator import (
 )
 
 import config, connection
+from cache import cache
 
 class MainProductsView(MethodView):
     def __init__(self, service):
         self.service = service
-        
+
+    # @cache.cached(40)
     def get(self):
         """
         Args:
@@ -47,6 +49,7 @@ class MainProductsView(MethodView):
         finally :
             db.close()
 
+
 class CategorySetView(MethodView):
     def __init__(self, service):
         self.service = service
@@ -65,7 +68,7 @@ class CategorySetView(MethodView):
         """
         try :
             db = connection.get_connection(config.database)
-            q     = int(request.args.get('q'))
+            q  = int(request.args.get('q')) 
             category_set = self.service.get_category_set(q, db)
         
         except :
