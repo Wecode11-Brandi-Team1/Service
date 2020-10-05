@@ -1,4 +1,5 @@
 import traceback
+import config, connection
 
 from flask         import jsonify, request
 from flask.views   import MethodView
@@ -17,7 +18,6 @@ class MainProductsView(MethodView):
     def __init__(self, service):
         self.service = service
 
-    # @cache.cached(40)
     def get(self):
         """
         Args:
@@ -36,12 +36,12 @@ class MainProductsView(MethodView):
             db = connection.get_connection(config.database)
             products = self.service.get_main_products(db)
 
-            if products == None:
+            if products is None:
                 # 요청한 데이터가 존재하지 않는 경우 에러 전달
                 return jsonify({'message':'VALUES DO NOT EXIST'}), 400
         
-        except :
-            traceback.print_exc()
+        except Exception as e:
+            return jsonify({'message':f'{e}'}), 400
         
         else :
             return jsonify({'data' : products}), 200
@@ -71,8 +71,8 @@ class CategorySetView(MethodView):
             q  = int(request.args.get('q')) 
             category_set = self.service.get_category_set(q, db)
         
-        except :
-            traceback.print_exc()
+        except Exception as e:
+            return jsonify({'message':f'{e}'}), 400
         
         else :
             return jsonify(category_set), 200
@@ -136,8 +136,8 @@ class ProductsView(MethodView):
             }
             products = self.service.get_products(params, db)
         
-        except :
-            traceback.print_exc()
+        except Exception as e:
+            return jsonify({'message':f'{e}'}), 400
         
         else :
             return jsonify(products), 200
@@ -166,8 +166,8 @@ class ProductView(MethodView):
             db = connection.get_connection(config.database)
             product = self.service.get_product(product_id, db)
         
-        except :
-            traceback.print_exc()
+        except Exception as e:
+            return jsonify({'message':f'{e}'}), 400
         
         else:
             return jsonify(product), 200

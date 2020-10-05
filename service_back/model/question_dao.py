@@ -32,7 +32,7 @@ class QuestionDao:
                     qt.name as question_type,
                     pd.name as product_name,
                     u.id as user_id,
-                    SUBSTR(REGEXP_REPLACE(ui.email, '(?<=.{3}).', '*'), 1, 6) as writer,
+                    ui.email as writer,
                     si.korean_name as seller_name
                 FROM 
                     questions q,
@@ -70,12 +70,11 @@ class QuestionDao:
                     raise Exception('Query failed')
 
                 cursor.execute(sql+";", params['product_id'])
-                sql = cursor.fetchall()
-
-                if not sql:
-                    raise Exception('Query failed')
-
-                result['questions'] = sql
+                sql_result = cursor.fetchall()
+                
+                # 신규상품의 경우 QNA가 부재할 수 있으므로 NONE값을 따로 예외처리하지않는다
+                result['user_id']   = params['user_id']
+                result['questions'] = sql_result
         
         except :
             traceback.print_exc()
@@ -115,15 +114,15 @@ class QuestionDao:
                 );
                 """
                 q_info = params['q_info']
-                sql = cursor.execute(sql, (
+                result = cursor.execute(sql, (
                     params["product_id"],
-                    q_info["user_id"],
+                    params["user_id"],
                     q_info["question_content"],
                     q_info["question_type_id"],
                     q_info["is_secreted"]
                 ))
-
-                if not sql:
+                
+                if not result:
                     raise Exception('Query failed')
 
                 count_up = """
@@ -131,9 +130,9 @@ class QuestionDao:
                 SET qna_count = qna_count+1
                 WHERE id = %s;
                 """
-                count_up = cursor.execute(count_up, params["product_id"])
+                count_result = cursor.execute(count_up, params["product_id"])
 
-                if not count_up:
+                if not count_result:
                     raise Exception('Query failed')
 
         except :
