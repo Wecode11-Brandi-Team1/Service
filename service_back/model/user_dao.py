@@ -246,12 +246,12 @@ class UserDao:
             results = cursor.fetchall()
             return results
 
-    def delete_shipping_information(self, token_paylod, shipping_info_id, db):
+    def delete_shipping_information(self, token_paylod, requestion, db):
         with db.cursor() as cursor:
             sql = """
             UPDATE shipping_informations SET is_deleted=1 where id=%s AND user_id=%s;
             """
-            results = cursor.execute(sql, (shipping_info_id['id'], token_paylod['id']))
+            results = cursor.execute(sql, (requestion, token_paylod['id']))
             return results
 
     def revise_shipping_information(self, token_paylod, requestion, db):

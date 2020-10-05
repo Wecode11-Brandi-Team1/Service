@@ -140,8 +140,8 @@ class UserService:
         results = self.user_dao.lookup_shipping_information(token_paylod, db)
         return results
 
-    def delete_shipping_information(self, token_paylod, shipping_info_id, db):
-        results = self.user_dao.delete_shipping_information(token_paylod, shipping_info_id, db)
+    def delete_shipping_information(self, token_paylod, requestion, db):
+        results = self.user_dao.delete_shipping_information(token_paylod, requestion, db)
         return results
 
     def revise_shipping_information(self, token_paylod, requestion, db):

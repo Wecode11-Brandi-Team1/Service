@@ -241,7 +241,7 @@ class ShippingInformation(MethodView):
     def delete(self, token_paylod):
         try:
             db = connection.get_connection(config.database)
-            requestion = request.json
+            requestion = int(request.args.get('id'))
             results = self.service.delete_shipping_information(token_paylod, requestion, db)
             if results == 1:
                 db.commit()
