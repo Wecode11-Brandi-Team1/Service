@@ -1,5 +1,8 @@
 <template>
   <div class="ship-info-wrap">
+    <div v-if="$store.state.showModal" @close="$store.state.showModal = false">
+      <address-modal></address-modal>
+    </div>
     <div class="ship-info-title-warp">
       <span class="ship-info-title">배송지 정보</span>
       <span class="same-as-orderer">
@@ -9,8 +12,11 @@
           @click="toggleCheck"
         />
         <span class="checked-true" v-else @click="toggleCheck" />
-        &nbsp; 주문자 정보와 동일</span
-      >
+        &nbsp; 주문자 정보와 동일
+        <div class="address-modal" id="show-modal" @click="$store.state.showModal = true">
+          입력하기
+        </div>
+      </span>
     </div>
     <span class="ship-info-table">
       <div class="name-row">
@@ -38,11 +44,12 @@
         <span class="address-input">
           <div class="address-wrap-top">
             <input
+              disabled
               v-model="shiplist.address.zonecode"
               class="postal-code"
               type="text"
             />&nbsp;&nbsp;<button
-              @click="handleWindow"
+              @click="switchDaumAddress"
               class="find-postcode"
               type="button"
             >
@@ -51,18 +58,27 @@
           </div>
           <div class="address-wrap-mid">
             <vue-daum-postcode
-              v-if="this.show === true"
+              v-if="this.showDaumAddress === true"
               @complete="shiplist.address = $event"
             />
-            <button @click="handleWindow" class="close-btn" type="button" />
+            <button
+              @click="switchDaumAddress"
+              class="close-btn"
+              type="button"
+            />
           </div>
           <div class="address-wrap-bottom">
             <input
+              disabled
               v-model="shiplist.address.address"
               class="address-city"
               type="text"
             />
-            <input class="address-detail" type="text" />
+            <input
+              v-model="shiplist.address_detail"
+              class="address-detail"
+              type="text"
+            />
           </div>
           <div class="attention">
             * 제주도, 도서 산간 지역 등은 배송이 하루 이상 추가 소요될 수
@@ -73,17 +89,18 @@
       <div class="delivery-row">
         <span class="delivery">배송메모</span>
         <span class="delivery-input">
-          <select v-model="selected" class="delivery-note">
-            <option value="">배송시 요청사항을 선택해주세요</option>
-            <option value="1">문 앞에 놓아주세요</option>
-            <option value="2">경비(관리)실에 맡겨주세요</option>
-            <option value="3">택배함에 넣어주세요</option>
-            <option value="4">직접 받겠습니다</option>
-            <option value="5">직접 입력</option>
+          <select v-model="$store.state.selected" class="delivery-note">
+            <option
+              v-for="option in options"
+              v-bind:value="option.value"
+              :key="option.value"
+            >
+              {{ option.text }}
+            </option>
           </select>
           <input
-            v-if="this.selected == 5"
-            v-model="shiplist.memo"
+            v-if="$store.state.selected == 5"
+            v-model="memo"
             type="text"
             class="direct-input"
             name="input-from-select"
@@ -98,16 +115,48 @@
 
 <script>
 import VueDaumPostcode from "vue-daum-postcode";
+import AddressModal from "../../components/Order/AddressModal.vue";
 
 export default {
+  components: {
+    AddressModal,
+  },
   data: () => ({
-    selected: "",
+    memo: "",
+    options: [
+      { text: "배송시 요청사항을 선택해주세요", value: "0" },
+      { text: "문 앞에 놓아주세요", value: "1" },
+      { text: "경비(관리)실에 맡겨주세요", value: "2" },
+      { text: "택배함에 넣어주세요", value: "3" },
+      { text: "직접 받겠습니다", value: "4" },
+      { text: "직접 입력", value: "5" },
+    ],
     checked: false,
-    show: false,
+    showDaumAddress: false,
   }),
   props: ["shiplist", "ordererlist"],
+  updated() {
+    if (this.$store.state.selected == 0) {
+      this.shiplist.memo = "";
+      this.memo = "";
+    } else if (this.$store.state.selected == 1) {
+      this.shiplist.memo = "문 앞에 놓아주세요";
+      this.memo = "";
+    } else if (this.$store.state.selected == 2) {
+      this.shiplist.memo = "경비(관리)실에 맡겨주세요";
+      this.memo = "";
+    } else if (this.$store.state.selected == 3) {
+      this.shiplist.memo = "택배함에 넣어주세요";
+      this.memo = "";
+    } else if (this.$store.state.selected == 4) {
+      this.shiplist.memo = "직접 받겠습니다";
+      this.memo = "";
+    } else if (this.$store.state.selected == 5) {
+      this.shiplist.memo = this.memo;
+    }
+  },
   methods: {
-    toggleCheck: function (e) {
+    toggleCheck(e) {
       e.preventDefault();
       if (this.ordererlist.name.length < 1) {
         alert("이름을 입력해주세요.");
@@ -133,18 +182,18 @@ export default {
         this.checked = true;
       }
     },
-    handleWindow: function (e) {
-      if (!this.show) {
-        this.show = true;
+    switchDaumAddress() {
+      if (!this.showDaumAddress) {
+        this.showDaumAddress = true;
       } else {
-        this.show = false;
+        this.showDaumAddress = false;
       }
     },
   },
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .ship-info-wrap {
   input {
     padding: 13px;
@@ -182,6 +231,12 @@ export default {
       }
       .checked-true {
         background-image: url("https://web-staging.brandi.co.kr/static/2020.7.3/images/checkbox_s.png");
+      }
+      div {
+        margin-left: 20px;
+        font-weight: bold;
+        color: #1e88e5;
+        cursor: pointer;
       }
     }
   }

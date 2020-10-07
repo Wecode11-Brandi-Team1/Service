@@ -42,12 +42,14 @@
         </li>
         <li class="price-container">
           <div class="price">
-            <p class="discount-rate" v-if="discount_rate">{{ discount_rate }}%</p>
+            <p class="discount-rate" v-if="discount_rate">
+              {{ discount_rate }}%
+            </p>
             <p class="final-price">
               {{
-              Number(sale_price * (1 - discount_rate / 100)).toLocaleString(
-              "en"
-              )
+                Number(sale_price * (1 - discount_rate / 100)).toLocaleString(
+                  "en"
+                )
               }}
               <span>원</span>
             </p>
@@ -69,7 +71,11 @@
         </li>
         <li class="option-choice">
           <div class="option-select-container">
-            <div class="option-default" id="color-choice" v-on:click="option_opener">
+            <div
+              class="option-default"
+              id="color-choice"
+              v-on:click="option_opener"
+            >
               <span id="color-choice">{{ option_color_child }}</span>
               <img
                 alt="arrow"
@@ -82,7 +88,9 @@
                 v-bind:id="option_color_child"
                 v-on:click="option_closer_color"
               >
-                <span v-bind:id="option_color_child">{{ option_color_child }}</span>
+                <span v-bind:id="option_color_child">{{
+                  option_color_child
+                }}</span>
                 <img
                   v-bind:id="option_color_child"
                   alt="arrow"
@@ -128,7 +136,9 @@
                 v-bind:id="option_size_child"
                 v-on:click="option_closer_size"
               >
-                <span v-bind:id="option_size_child">{{ option_size_child }}</span>
+                <span v-bind:id="option_size_child">{{
+                  option_size_child
+                }}</span>
                 <img
                   v-bind:id="option_size_child"
                   alt="arrow"
@@ -197,9 +207,9 @@
             </div>
             <span>
               {{
-              Number(
-              sale_price * (1 - discount_rate / 100) * list.quantity
-              ).toLocaleString("en")
+                Number(
+                  sale_price * (1 - discount_rate / 100) * list.quantity
+                ).toLocaleString("en")
               }}원
             </span>
           </div>
@@ -209,11 +219,11 @@
           <p>
             <span>
               {{
-              Number(
-              sale_price * (1 - discount_rate / 100) * sum_result
-              ).toLocaleString("en")
-              }}
-            </span>원
+                Number(
+                  sale_price * (1 - discount_rate / 100) * sum_result
+                ).toLocaleString("en")
+              }} </span
+            >원
           </p>
         </li>
         <li
@@ -347,6 +357,8 @@ export default {
             final_price: this.sale_price * (1 - this.discount_rate / 100),
             price: this.sale_price,
             discount_price: this.sale_price * (1 - this.discount_rate / 100),
+            seller_name: this.seller_name,
+            img_url: this.image_path[0],
           },
         ];
       }

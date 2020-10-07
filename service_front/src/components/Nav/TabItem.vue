@@ -1,5 +1,9 @@
 <template>
-  <span @click="test" @mouseover="$emit('input', id)" :class="[active, 'tab']">
+  <span
+    @mouseover="isHover"
+    @click="isClick"
+    :class="[checkHover, checkActive, checkDrop, 'tab']"
+  >
     {{ label }}
   </span>
 </template>
@@ -11,36 +15,40 @@ export default {
   },
   props: {
     id: Number,
-    label: String,
-    value: Number,
+    label: "",
   },
   computed: {
-    active() {
-      // return this.value === this.id ? "active" : false;
+    checkHover() {
+      if (this.id === 3 || this.id === 4 || this.id === 5) {
+        return this.$store.state.menutab.currentHover === this.id
+          ? "current-hover"
+          : false;
+      }
+    },
+    checkActive() {
+      return this.$store.state.menutab.activeTab === this.id
+        ? "active-tab"
+        : false;
+    },
+    checkDrop() {
+      if (
+        this.$store.state.menutab.currentHover === 3 ||
+        this.$store.state.menutab.currentHover === 4 ||
+        this.$store.state.menutab.currentHover === 5
+      ) {
+        return this.$store.state.menutab.activeTab === this.id ? "test" : false;
+      }
     },
   },
   methods: {
-    test() {
+    isHover() {
+      this.$store.state.menutab.currentHover = this.id;
+    },
+    isClick() {
       if (this.id === 0) {
-        this.value = this.id;
-        this.$router.push("main");
-        console.log(this.value);
-      } else if (this.id === 1) {
-        console.log(this.value);
-      } else if (this.id === 2) {
-        console.log(this.value);
-      } else if (this.id === 3) {
-        console.log(this.value);
-      } else if (this.id === 4) {
-        console.log(this.value);
-      } else if (this.id === 5) {
-        console.log(this.value);
-      } else if (this.id === 6) {
-        console.log(this.value);
+        this.$router.push("/");
       } else if (this.id === 7) {
-        console.log(this.value);
-      } else if (this.id === 8) {
-        console.log(this.value);
+        this.$router.push("/event");
       }
     },
   },
@@ -61,7 +69,16 @@ export default {
     border-bottom: 2px solid #ff1f4b;
   }
 }
-.active {
+.current-hover {
   border-bottom: 2px solid #ff1f4b;
+  color: #ff1f4b;
+}
+.active-tab {
+  border-bottom: 2px solid #ff1f4b;
+  color: #ff1f4b;
+}
+.test {
+  border-bottom: none;
+  color: black;
 }
 </style>

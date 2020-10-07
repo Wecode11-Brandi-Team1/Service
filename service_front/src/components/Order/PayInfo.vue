@@ -4,8 +4,8 @@
     <div class="pay-info-table">
       <div class="pay-row">
         <span class="total-price">총 상품 금액</span>
-        <span class="total-price-value"
-          >{{ (orderlist.price * orderlist.count).toLocaleString() }}원</span
+        <span v-if="orderlist.price === undefined" class="total-price-value"
+          >{{ this.totalPrice.toLocaleString() }}원</span
         >
       </div>
       <div class="pay-row">
@@ -15,12 +15,9 @@
       <div class="pay-row">
         <span class="last-price">예상 금액</span>
         <span class="last-price-value"
-          >{{ (orderlist.price * orderlist.count).toLocaleString() }}원</span
+          >{{ this.totalPrice.toLocaleString() }}원</span
         >
       </div>
-    </div>
-    <div class="purchase-wrap">
-      <button class="purchase">결제하기</button>
     </div>
   </div>
 </template>
@@ -28,10 +25,27 @@
 <script>
 export default {
   props: ["orderlist"],
+    computed: {
+    totalPrice() {
+      let sum = 0;
+      for (let i = 0; i < this.getData().length; i++) {
+        sum +=
+          parseFloat(this.getData()[i].price) *
+          parseFloat(this.getData()[i].quantity);
+      }
+
+      return sum;
+    },
+  },
+  methods: {
+    getData() {
+      return JSON.parse(localStorage.getItem("data"));
+    },
+  },
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .pay-info-wrap {
   .pay-info-title {
     margin-top: 90px;
@@ -59,19 +73,6 @@ export default {
         color: red;
       }
     }
-  }
-}
-.purchase-wrap {
-  display: flex;
-  justify-content: center;
-  margin: 50px 0;
-  .purchase {
-    width: 290px;
-    height: 79px;
-    padding: 25px;
-    font-size: 1.25em;
-    color: white;
-    background-color: black;
   }
 }
 </style>

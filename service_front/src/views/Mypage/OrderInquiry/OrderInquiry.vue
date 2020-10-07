@@ -100,16 +100,16 @@
           <ul>
             <li>
               <img src="https://web-staging.brandi.co.kr/static/20.08.01/images/f-market-icon-store-time@3x.png" />
-              <sapn>10:00-17:00 (점심시간 12:30-13:30), 주말 및 공휴일 휴무</sapn>
+              <span>10:00-17:00 (점심시간 12:30-13:30), 주말 및 공휴일 휴무</span>
             </li>
             <li>
               <img src="https://web-staging.brandi.co.kr/static/20.08.01/images/f-market-icon-store-call@3x.png" />
-              <sapn>1566 - 6575</sapn>
+              <span>1566 - 6575</span>
               <button>전화하기</button>
             </li>
             <li>
               <img src="https://web-staging.brandi.co.kr/static/20.08.01/images/customer-kakao@3x.png" />
-              <sapn>브랜디</sapn>
+              <span>브랜디</span>
               <button>카톡하기</button>
             </li>
           </ul>

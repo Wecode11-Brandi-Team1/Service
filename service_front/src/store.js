@@ -14,5 +14,14 @@ export const store = new Vuex.Store({
     signUpTabName: "",
     myPageTabName: "",
     myPageShow: true,
+    categoryShop: [],
+    categoryBrand: [],
+    categoryBeauty: [],
+    selected: 0, 
+    menutab: {
+      currentHover: 0,
+      activeTab: 0,
+    },
+    showModal: false,
   },
 });

@@ -4,10 +4,11 @@
       <article>
         <ul>
           <li>쇼핑몰 · 마켓</li>
-          <li>
-            <span>></span>카테고리
-          </li>
-          <li v-for="list in Object.values(this.$route.query).splice(0, 2)" v-bind:key="list">
+          <li><span>></span>카테고리</li>
+          <li
+            v-for="list in Object.values(this.$route.query).splice(0, 2)"
+            v-bind:key="list"
+          >
             <span v-if="this.$route.query.main_category">></span>
             {{ list }}
           </li>
@@ -26,14 +27,23 @@
                 checked: is_sale_list,
                 unchecked: !is_sale_list,
               }"
-            >✓</div>세일
+            >
+              ✓
+            </div>
+            세일
           </div>
           <h2>
             <span>CATEGORIES</span>
           </h2>
-          <div class="nav-box" id="전체" v-on:click="update_main_category">전체</div>
+          <div class="nav-box" id="전체" v-on:click="update_main_category">
+            전체
+          </div>
           <div v-for="list in datas.nav_list" v-bind:key="Object.keys(list)[0]">
-            <div class="nav-box" v-bind:id="Object.keys(list)[0]" v-on:click="update_main_category">
+            <div
+              class="nav-box"
+              v-bind:id="Object.keys(list)[0]"
+              v-on:click="update_main_category"
+            >
               {{ Object.keys(list)[0] }}
               <img
                 v-if="select_main_category === Object.keys(list)[0]"
@@ -86,7 +96,9 @@
               }"
               v-bind:id="list"
               v-on:click="fillering_what"
-            >{{ list }}</div>
+            >
+              {{ list }}
+            </div>
           </div>
         </article>
         <article class="product-list">
@@ -121,15 +133,7 @@ export default {
     datas: {
       nav_list: [],
       categories: ["main", "sub"],
-      product_list: {
-        id: "",
-        image_path: "",
-        seller_name: "",
-        product_name: "",
-        discount_rate: "",
-        sale_price: 0,
-        sale_amount: "",
-      },
+      product_list: {},
     },
   }),
   computed: {

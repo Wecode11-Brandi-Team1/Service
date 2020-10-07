@@ -10,34 +10,48 @@
           />
           상품
         </span>
-        <span></span>
       </div>
-      <div class="order-row">
-        <span class="brand">{{ orderlist.brand }}</span>
-        <span class="price">주문금액</span>
-      </div>
-      <div class="order-row">
-        <div class="product-wrap">
-          <span class="product-img">
-            <img alt="product image" :src="orderlist.img" />
-          </span>
-          <span class="product-info">
-            <ul>
-              <li>{{ orderlist.name }}</li>
-              <li class="grey">{{ orderlist.option }}</li>
-              <li class="grey">{{ orderlist.count }}개</li>
-            </ul>
-          </span>
+      <div class="product-list" v-for="item in getData()" :key="item.option_id">
+        <div class="order-row">
+          <span class="brand">{{ item.seller_name }}</span>
+          <span class="blank"></span>
+          <span class="blank"></span>
+          <span class="coupon">쿠폰적용</span>
+          <span class="price">주문금액</span>
         </div>
-        <span class="price-value"
-          >{{ (orderlist.price * orderlist.count).toLocaleString() }}원</span
-        >
+        <div class="order-row">
+          <div class="product-wrap">
+            <span class="product-img">
+              <img alt="product image" :src="item.img_url" />
+            </span>
+            <span class="product-info">
+              <ul>
+                <li>{{ item.orderer_name }}</li>
+                <li class="grey">{{ item.select_option }}</li>
+                <li class="grey">{{ item.quantity }}개</li>
+              </ul>
+            </span>
+          </div>
+          <span class="blank"></span>
+          <span class="coupon-label">
+            <span class="coupon-list"
+              ><select>
+                <option value="">쿠폰을 선택하세요</option>
+                <option>회원가입 축하쿠폰(2,000원 할인)</option>
+                <option>회원가입 축하쿠폰(2,000원 할인)</option>
+              </select></span
+            >
+          </span>
+          <span class="price-value"
+            >{{ (item.price * item.quantity).toLocaleString() }}원</span
+          >
+        </div>
       </div>
     </div>
     <div class="total-price-wrap">
       <span class="total-price">총 주문금액&nbsp;</span>
       <span class="total-price-value"
-        >{{ (orderlist.price * orderlist.count).toLocaleString() }}원</span
+        >{{ this.totalPrice.toLocaleString() }}원</span
       >
     </div>
   </div>
@@ -45,11 +59,27 @@
 
 <script>
 export default {
-  props: ["orderlist"],
+  computed: {
+    totalPrice() {
+      let sum = 0;
+      for (let i = 0; i < this.getData().length; i++) {
+        sum +=
+          parseFloat(this.getData()[i].price) *
+          parseFloat(this.getData()[i].quantity);
+      }
+
+      return sum;
+    },
+  },
+  methods: {
+    getData() {
+      return JSON.parse(localStorage.getItem("data"));
+    },
+  },
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .order-info-wrap {
   .order-info-title {
     margin-top: 25px;
@@ -60,6 +90,22 @@ export default {
   }
   .order-info-table {
     border-bottom: 1px solid black;
+    .coupon-label {
+      padding: 0;
+      background-color: #f5f5f5;
+      background-image: url("https://web-staging.brandi.co.kr/static/2020.7.3/images/ic-arrow-bl-down@3x.png");
+      background-size: 13px;
+      background-position: 95% 50%;
+      span {
+        margin: 0;
+        padding: 0;
+        select {
+          padding: 10px 30px;
+          font-size: 0.8em;
+          color: #9e9e9e;
+        }
+      }
+    }
     span {
       margin: auto 0;
       padding: 18px;

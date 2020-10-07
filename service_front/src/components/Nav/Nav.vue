@@ -1,19 +1,21 @@
 <template>
   <div>
-    <div class="nav-wrap">
+    <div class="nav-wrap" @mouseenter="resetHover">
       <div class="nav-left">
         <img
-          @click="$router.push('main')"
+          @click="$router.push('/')"
           alt="logo"
           src="https://web-staging.brandi.co.kr/static/2020.7.3/images/logo@3x.png"
         />
       </div>
       <div class="nav-center">
-        <label
-          ><button @click="pushResult" type="button" /><input
-            v-model="search"
+        <div class="label">
+          <button type="button" @click="move_search" /><input
             type="text"
-        /></label>
+            v-model="search"
+            v-on:keyup.enter="move_search"
+          />
+        </div>
       </div>
       <div class="nav-right">
         <ul>
@@ -23,23 +25,24 @@
           <li class="border">|</li>
           <li @click="$router.push('mypage')">마이페이지</li>
           <li class="border">|</li>
-          <li @click="$router.push('login')">로그인</li>
+          <li v-if="!this.$store.state.token" @click="$router.push('login')">
+            로그인
+          </li>
+          <li v-else @click="logout">로그아웃</li>
           <li class="border">|</li>
           <li>입점문의</li>
         </ul>
       </div>
     </div>
     <div class="nav-menu">
-      <tab-item
-        v-for="item in list"
-        v-bind="item"
-        :key="item.id"
-        v-model="currentId"
-      />
+      <tab-item v-for="item in menu" v-bind="item" :key="item.id" />
     </div>
     <tab-item-drop
-      :currentId="currentId"
-      v-if="currentId === 3 || currentId === 4 || currentId === 5"
+      v-if="
+        this.$store.state.menutab.currentHover === 3 ||
+        this.$store.state.menutab.currentHover === 4 ||
+        this.$store.state.menutab.currentHover === 5
+      "
     />
   </div>
 </template>
@@ -53,8 +56,7 @@ export default {
   data() {
     return {
       search: "",
-      currentId: 0,
-      list: [
+      menu: [
         { id: 0, label: "홈" },
         { id: 1, label: "랭킹" },
         { id: 2, label: "하루배송" },
@@ -67,13 +69,51 @@ export default {
       ],
     };
   },
-  computed: {},
+  created() {
+    if (this.$router.history.current.name === "Main") {
+      this.$store.state.menutab.activeTab = 0;
+    } else if (this.$router.history.current.name === "Event") {
+      this.$store.state.menutab.activeTab = 7;
+    } else {
+      this.$store.state.menutab.activeTab = null;
+    }
+    axios
+      // .get("http://10.251.1.146:5000/category?q=1")
+      .get("public/data/mockData/category1.json")
+      .then((res) => (this.$store.state.categoryShop = res.data.쇼핑몰));
+    axios
+      // .get("http://10.251.1.146:5000/category?q=4")
+      .get("public/data/mockData/category2.json")
+      .then(
+        (res) => (this.$store.state.categoryBrand = res.data.디자이너브랜드)
+      );
+    axios
+      // .get("http://10.251.1.146:5000/category?q=7")
+      .get("public/data/mockData/category3.json")
+      .then((res) => (this.$store.state.categoryBeauty = res.data.뷰티));
+  },
+
+  beforeUpdate() {
+    const categoryShop = { item: this.$store.state.categoryShop };
+    const categoryBrand = { item: this.$store.state.categoryBrand };
+    const categoryBeauty = { item: this.$store.state.categoryBeauty };
+    localStorage.setItem("categoryShop", JSON.stringify(categoryShop));
+    localStorage.setItem("categoryBrand", JSON.stringify(categoryBrand));
+    localStorage.setItem("categoryBeauty", JSON.stringify(categoryBeauty));
+  },
   methods: {
-    pushResult() {
-      if (this.search.length > 0) {
-        // this.$router.push(`search/?q=${this.search}&r"20`);
+    logout() {
+      this.$store.state.token = "";
+      this.$router.push("/");
+    },
+    resetHover() {
+      this.$store.state.menutab.currentHover = null;
+    },
+    move_search() {
+      if (this.search.length >= 1) {
+        this.$router.push({ name: "Search", query: { q: this.search } });
       } else {
-        alert("검색어를 입력해주세요.");
+        alert("검색어를 입력해주세요");
       }
     },
   },
@@ -102,7 +142,7 @@ export default {
   }
   .nav-center {
     margin: auto 0;
-    label {
+    .label {
       display: flex;
       justify-content: flex-start;
       width: 504px;
