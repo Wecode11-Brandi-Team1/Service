@@ -23,10 +23,12 @@ class ProductService:
             mostsold_products   = self.product_dao.get_most_sold_products(db)
             discounted_products = self.product_dao.get_discounted_products(db)
             #할인가격 추가(할인률*판매가격)
-            for product in mostsold_products :
-                product['discounted_price'] = round(product['sale_price']*(100-product['discount_rate'])/100)
-            for product in discounted_products :
-                product['discounted_price'] = round(product['sale_price']*(100-product['discount_rate'])/100)
+            if mostsold_products :
+                for product in mostsold_products :
+                    product['discounted_price'] = round(product['sale_price']*(100-product['discount_rate'])/100)
+            if discounted_products :
+                for product in discounted_products :
+                    product['discounted_price'] = round(product['sale_price']*(100-product['discount_rate'])/100)
             products = {
             #100개 이상 상품을 판매량이 높은 상품으로 규정하고 그 중 10개를 리스트에 넣음 
             'most_sold_products' : mostsold_products,

@@ -23,15 +23,15 @@ def login_confirm(original_function):
         History:
             2020-09-27 (taeha7b@gmail.com (김태하)) : 초기생성
     """
-    def wrapper(self):
+    def wrapper(self, *args, **kwargs):
         try:
-            access_token = request.headers.get("Authorization", None)
-            token_paylod = jwt.decode(access_token, SECRET_KEY['secret'], ALGORITHM['algorithm'])
-            return original_function(self, token_paylod)
+            access_token  = request.headers.get("Authorization", None)
+            token_payload = jwt.decode(access_token, SECRET_KEY['secret'], ALGORITHM['algorithm'])
+            return original_function(self, token_payload, *args, **kwargs)
 
         except Exception as e:
-            print(e)
-            return jsonify({'message':'LOGIN_REQUIRED'}), 401
+
+            return jsonify({'message':f'{e}'}), 401
 
     return wrapper
 
