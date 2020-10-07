@@ -27,7 +27,6 @@ def login_confirm(original_function):
         try:
             access_token = request.headers.get("Authorization", None)
             token_paylod = jwt.decode(access_token, SECRET_KEY['secret'], ALGORITHM['algorithm'])
-            # print(token_paylod)
             return original_function(self, token_paylod)
 
         except Exception as e:
