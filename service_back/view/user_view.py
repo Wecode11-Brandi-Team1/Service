@@ -20,10 +20,10 @@ class SignUp(MethodView):
         """
             일반 회원가입 - Presentation Layer(view)) function
             Returns :
-                {'message':'User account already exists'} : 아이디가 중복일 경우 409코드와 함께 반환
-                {'message':'User email already exists'} : 이메일이 중복일 경우 409코드와 함께 반환
-                {'message': e.message} : 유효성에 문제가 생길시 메시지와 400코드가 함께 반환 
-                {'message':'SUCCESS'} : 문제 없이 회원가입시 반환
+                아이디가 중복일 경우 409코드와 함께 {'message':'User account already exists'} 반환
+                이메일이 중복일 경우 409코드와 함께 {'message':'User email already exists'} 반환
+                유효성에 문제가 생길시 메시지와 400코드가 함께 {'message': e.message} 반환 
+                문제 없이 회원가입시 200코드와 함께 {'message':'SUCCESS'} 반환
             Author :
                 taeha7b@gmail.com (김태하)
             History:
@@ -76,9 +76,9 @@ class SignIn(MethodView):
         """
             일반 로그인 - Presentation Layer(view)) function
             Returns :
-                {'message':'탈퇴한 회원입니다.'} : 탈퇴한 회원이 로그인 시도를 하면 401코드와 함께 반환
-                {'message':'Unauthorized'} : 예외 발생시 401코드와 함께 리턴
-                {'access_token':access_token} : 로그인에 문제가 없으면 access_token과 200코드가 함께 반환
+                탈퇴한 회원이 로그인 시도를 하면 401코드와 함께 {'message':'탈퇴한 회원입니다.'} 반환
+                예외 발생시 401코드와 함께 {'message':'Unauthorized'} 반환
+                로그인에 문제가 없으면 access_token과 200코드가 함께 {'access_token':access_token} 반환
             Author :
                 taeha7b@gmail.com (김태하)
             History:
@@ -111,8 +111,8 @@ class SocialSignUp(MethodView):
         """
             소셜 회원가입 - Presentation Layer(view)) function
             Returns :
-                {'message': 'UNSUCCESS'} : 소셜 회원가입 문제 발생시 400코드와 함께 리턴
-                {'message': 'SUCCESS'} : 소셜 회원 가입에 문제가 없이 가입되면 200코드와 함께 반환
+                소셜 회원가입 문제 발생시 400코드와 함께 반환
+                소셜 회원 가입에 문제가 없이 가입되면 200코드와 함께 반환
             Author :
                 taeha7b@gmail.com (김태하)
             History:
@@ -143,8 +143,9 @@ class SocialSignIn(MethodView):
         """
             소셜 로그인 - Presentation Layer(view)) function
             Returns :
-                {'is_google': True} : 소셜 회원가입이 안되어 있으면 401코드와 함께 반환
-                {'access_token': access_token} : 소셜 로그인에 성공하면 access_token이 300코드와 함께 반환
+                소셜 회원가입이 안되어 있으면 401코드와 함께 {'is_google': True} 반환
+                소셜 로그인에 성공하면 access_token이 200코드와 함께 반환
+                만료된 구글 엑세스 토큰을 받으면 401코드와 함께 {'message': 'Expired Google access token'} 반환
             Author :
                 taeha7b@gmail.com (김태하)
             History:
@@ -173,13 +174,13 @@ class ShippingInformation(MethodView):
     @login_confirm
     def post(self, token_paylod):
         """
-            배송지 정보 - Presentation Layer(view)) function
+            배송지 정보 등록 - Presentation Layer(view)) function
             Args : 
-                user_info : 유저 정보
-                db : DATABASE Connection Instance
+                token_paylod : 유저 엑세스 토큰
             Returns :
-                {'message':'UNSUCCESS'} : 회원 정보를 못가져오는 예외 발생시 400코드와 함께 반환
-                {'message': 'SUCCESS'} : 배송지 정보를 가지고 오면 200코드와 함께 반환
+                 배송지 정보를 생성못하면 400코드와 함께 반환
+                 배송지 정보를 5개 이상 등록시 400 코드와 함께 메세지 반환
+                 배송지 정보 생성 성공시 200코드와 함께 {'message': 'SUCCESS'} 메세지 반환
             Author :
                 taeha7b@gmail.com (김태하)
             History:
@@ -192,9 +193,8 @@ class ShippingInformation(MethodView):
             if shipping_information == False:
                 return jsonify({'message':'The number of shipping information must be less than 6.'}), 400
         except Exception as e:
-            print(e)
             db.rollback()
-            return jsonify({'message':'UNSUCCESS'}), 400
+            return jsonify({'message':f'{e}'}), 400
 
         else:
             db.commit()
@@ -205,6 +205,18 @@ class ShippingInformation(MethodView):
 
     @login_confirm
     def get(self, token_paylod):
+        """
+            배송지 정보 가져오기 - Presentation Layer(view)) function
+            Args : 
+                token_paylod : 유저 엑세스 토큰
+            Returns :
+                배송지 정보 가져오는데 실패하면 400코드와 함께 반환
+                배송지 정보 가져오는데 성공하면 200코드와 함께 반환
+            Author :
+                taeha7b@gmail.com (김태하)
+            History:
+                2020-09-24 (taeha7b@gmail.com (김태하)) : 초기생성
+        """
         try:
             db = connection.get_connection(config.database)
             my_shipping_information = self.service.lookup_shipping_information(token_paylod, db)
@@ -220,15 +232,29 @@ class ShippingInformation(MethodView):
 
     @login_confirm
     def put(self, token_paylod):
+        """
+            배송지 정보 수정 - Presentation Layer(view)) function
+            Args : 
+                token_paylod : 유저 엑세스 토큰
+            Returns :
+                배송지 정보 수정 실패시 400코드와 함께 반환
+                배송지 정보 수정 성공하면 200코드와 함께 반환
+            Author :
+                taeha7b@gmail.com (김태하)
+            History:
+                2020-09-24 (taeha7b@gmail.com (김태하)) : 초기생성
+        """
         try:
             db = connection.get_connection(config.database)
             shipping_info_id = request.json
             results = self.service.revise_shipping_information(token_paylod, shipping_info_id, db)
-          
+            if results == 0:
+                db.rollback()
+                return jsonify({'message':'Unauthorized'}), 401
+
         except Exception as e:
-            print(e)
             db.rollback()
-            return jsonify({'message':'UNSUCCESS'}), 400
+            return jsonify({'message':f'{e}'}), 400
 
         else:
             db.commit()
@@ -239,19 +265,62 @@ class ShippingInformation(MethodView):
 
     @login_confirm
     def delete(self, token_paylod):
+        """
+            배송지 정보 삭제 - Presentation Layer(view)) function
+            Args : 
+                token_paylod : 유저 엑세스 토큰
+                쿼리스트링으로 삭제할 배송지의 id와 해당 배송지의 기본배송지 설정 유무를 받음
+            Returns :
+                배송지 정보가 문제 없이 삭제되면 200코드와 함께 반환
+                
+                <배송지 정보 삭제시 문제가 생기때 아래의 코드를 반환>
+                    1) 기본 배송지 변경 요청은 없었고, 배송지 정보 삭제 실패시
+                        'message': 'UNSUCCESS',
+                        'result of change default address': 2,
+                        'result of remove address': 0
+                    
+                    2) 기본 배송지 변경 요청이 있는데 변경은 성공하고, 배송지 정보 삭제 실패시
+                        'message': 'UNSUCCESS',
+                        'result of change default address': 1,
+                        'result of remove address': 0
+                    
+                    3) 기본 배송지 변경 요청이 있는데 변경 실패하고, 배송지 정보 삭제 실패시
+                        'message': 'UNSUCCESS',
+                        'result of change default address': 0,
+                        'result of remove address': 0
+
+            Author :
+                taeha7b@gmail.com (김태하)
+            History:
+                2020-10-07 (taeha7b@gmail.com (김태하)) : 기본 배송지를 삭제 하면 다른 배송지를 기본 배송지로 설정되게 수정
+                2020-09-24 (taeha7b@gmail.com (김태하)) : 초기생성
+        """
         try:
             db = connection.get_connection(config.database)
-            requestion = int(request.args.get('id'))
+            requestion= {
+                "id" : int(request.args.get('id')),
+                "is_default_address" : int(request.args.get('default'))
+            }
+         
             results = self.service.delete_shipping_information(token_paylod, requestion, db)
-            if results == 1:
+
+            if 1 <= results["change_default_address"] <= 2 and results["remove_address"] == 1:
                 db.commit()
                 return jsonify({'message': 'SUCCESS'}), 200
-            elif results == 0:
-                return jsonify({'message': 'No shipping_information'}), 400
+                
+            elif results["remove_address"] == 0:
+                db.rollback()
+                return jsonify(
+                    {   
+                      'message': 'UNSUCCESS',
+                      'result of change default address':results["change_default_address"],
+                      'result of remove address':results["remove_address"]
+                    }
+                ), 400
 
-        except:
+        except Exception as e:
             db.rollback()
-            return jsonify({'message':'UNSUCCESS'}), 400
+            return jsonify({'message':f'{e}'}), 400
 
         finally:
             db.close()

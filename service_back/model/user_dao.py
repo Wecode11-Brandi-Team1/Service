@@ -67,8 +67,9 @@ class UserDao:
         """
         with db.cursor() as cursor: 
             sql = """ SELECT user_id, is_deleted, account_id, password 
-                      from users INNER JOIN user_informations ON users.id=user_informations.user_id 
-                      where account_id=%s AND expired_at='9999-12-31 00:00:00';
+                      FROM users INNER JOIN user_informations 
+                      ON users.id=user_informations.user_id 
+                      WHERE account_id=%s AND expired_at='9999-12-31 00:00:00'
                  """
 
             cursor.execute(sql, (user_info['account']))
@@ -140,9 +141,14 @@ class UserDao:
         """
         with db.cursor() as cursor:
             sql = """
-            SELECT user_id,email from user_informations where email=%s AND expired_at='9999-12-31 00:00:00';
+            SELECT user_id,email 
+            FROM user_informations 
+            WHERE email=%s AND expired_at=%s
             """
-            cursor.execute(sql, (google_user_info['email']))
+            cursor.execute(sql, (
+                google_user_info['email'],
+                '9999-12-31 00:00:00'
+            ))
             results = cursor.fetchone()
             return results
 
@@ -161,9 +167,15 @@ class UserDao:
         """
         with db.cursor() as cursor:
             sql = """
-            SELECT * from user_informations where (account_id=%s OR email=%s) AND expired_at='9999-12-31 00:00:00';
+            SELECT * 
+            FROM user_informations 
+            WHERE (account_id=%s OR email=%s) AND expired_at=%s
             """
-            cursor.execute(sql, (user_info['account'], user_info['email']))
+            cursor.execute(sql, (
+                user_info['account'], 
+                user_info['email'], 
+                '9999-12-31 00:00:00'
+            ))
             results = cursor.fetchone()
             return results
 
@@ -182,15 +194,20 @@ class UserDao:
         """
         with db.cursor() as cursor:
             sql = """
-            SELECT * from users where id=%s AND expired_at='9999-12-31 00:00:00';
+            SELECT * 
+            FROM users 
+            WHERE id=%s AND expired_at=%s
             """
-            cursor.execute(sql, (token_paylod['id']))
+            cursor.execute(sql, (
+                token_paylod['id'],
+                '9999-12-31 00:00:00'
+            ))
             results = cursor.fetchone()
             return results
 
     def shipping_information(self, token_paylod, requestion, db):
         """
-            배송지 정보 - Persistence Layer(model)) function
+            배송지 정보 등록  - Persistence Layer(model)) function
             Args : 
                 user_info : 유저 정보
                 user_request : 클라이언트 요청
@@ -229,32 +246,120 @@ class UserDao:
             return results
 
     def count_shipping_information(self, token_paylod, db):
+        """
+            등록된 배송지 정보수 가져오기 - Persistence Layer(model)) function
+            Args : 
+                user_info : 유저 정보
+                user_request : 클라이언트 요청
+                db : DATABASE Connection Instance
+            Returns :
+
+            Author :
+                taeha7b@gmail.com (김태하)
+            History:
+                2020-09-28 (taeha7b@gmail.com (김태하)) : 초기생성
+        """
         with db.cursor() as cursor:
             sql = """
-            SELECT COUNT(*) from shipping_informations where user_id=%s AND is_deleted=0;
+            SELECT COUNT(*) as shipping_information_number 
+            FROM shipping_informations 
+            WHERE user_id=%s AND is_deleted=%s
             """
-            cursor.execute(sql, (token_paylod['id']))
+            cursor.execute(sql, (token_paylod['id'],0))
             results = cursor.fetchone()
             return results
 
     def lookup_shipping_information(self, token_paylod, db):
+        """
+            배송지 정보 가져오기 - Persistence Layer(model)) function
+            Args : 
+                token_paylod : 유저 엑세스 토큰
+                db : DATABASE Connection Instance
+            Returns :
+
+            Author :
+                taeha7b@gmail.com (김태하)
+            History:
+                2020-09-28 (taeha7b@gmail.com (김태하) : 초기생성
+        """
         with db.cursor() as cursor:
             sql = """
-            select * from shipping_informations where user_id=%s and is_deleted=0;
+            SELECT * 
+            FROM shipping_informations 
+            WHERE user_id=%s AND is_deleted=%s
             """
-            cursor.execute(sql, (token_paylod['id']))
+            cursor.execute(sql, (token_paylod['id'],0))
             results = cursor.fetchall()
             return results
 
-    def delete_shipping_information(self, token_paylod, requestion, db):
+    def normal_shipping_information(self, token_paylod, db):
+        """
+            배송지 정보 - Persistence Layer(model) function
+            Args : 
+                token_paylod : 유저 엑세스 토큰
+                db : DATABASE Connection Instance
+            Returns :
+
+            Author :
+                taeha7b@gmail.com (김태하)
+            History:
+                2020-10-07 (taeha7b@gmail.com (김태하) : 초기생성
+        """
         with db.cursor() as cursor:
             sql = """
-            UPDATE shipping_informations SET is_deleted=1 where id=%s AND user_id=%s;
+            SELECT id
+            FROM shipping_informations
+            WHERE user_id=%s AND is_deleted=%s AND is_default_address=%s
             """
-            results = cursor.execute(sql, (requestion, token_paylod['id']))
+            cursor.execute(sql, (
+                token_paylod['id'],
+                0,
+                0
+            ))
+            results = cursor.fetchone()
+            return results
+
+    def delete_shipping_information(self, token_paylod, requestion, db):
+        """
+            배송지 정보 - Persistence Layer(model) function
+            Args : 
+                token_paylod : 유저 엑세스 토큰
+                requestion : 식제할 배송지 정보에 대한 요청
+                db : DATABASE Connection Instance
+            Returns :
+
+            Author :
+                taeha7b@gmail.com (김태하)
+            History:
+                2020-09-28 (taeha7b@gmail.com (김태하) : 초기생성
+        """
+        with db.cursor() as cursor:
+            sql = """
+            UPDATE shipping_informations 
+            SET is_deleted=%s
+            WHERE id=%s AND user_id=%s
+            """
+            results = cursor.execute(sql, (
+            1,
+            requestion['id'],
+            token_paylod['id']
+            ))
             return results
 
     def revise_shipping_information(self, token_paylod, requestion, db):
+        """
+            배송지 정보 - Persistence Layer(model) function
+            Args : 
+                token_paylod : 유저 엑세스 토큰
+                requestion : 수정할 배송지 정보의 요청
+                db : DATABASE Connection Instance
+            Returns :
+
+            Author :
+                taeha7b@gmail.com (김태하)
+            History:
+                2020-09-28 taeha7b@gmail.com (김태하) : 초기생성
+        """
         with db.cursor() as cursor:
             sql = """
             UPDATE shipping_informations SET
@@ -279,6 +384,18 @@ class UserDao:
             return results
 
     def revise_default_address(self, token_paylod, db):
+        """
+            배송지 정보 - Persistence Layer(model) function
+            Args : 
+                token_paylod : 유저 엑세스 토큰
+                db : DATABASE Connection Instance
+            Returns :
+
+            Author :
+                taeha7b@gmail.com (김태하)
+            History:
+                2020-09-28 (taeha7b@gmail.com (김태하)) : 초기생성
+        """
         with db.cursor() as cursor:
             sql = """
             UPDATE shipping_informations SET
@@ -289,6 +406,37 @@ class UserDao:
                 0,
                 token_paylod['id'],
                 1,
+                0
+            ))
+            return results
+    
+    def change_default_address(self, token_paylod, requestion, normal_shipping_information, db):
+        """
+            일반 배송지 정보를 기본 배송지 정보 수정 - Persistence Layer(model) function
+            Args : 
+                token_paylod : 유저 엑세스 토큰
+                requestion : 수정할 배송지 정보에 대한 요청
+                normal_shipping_information : 일반배송지의 id
+                db : DATABASE Connection Instance
+            Returns :
+
+            Author :
+                taeha7b@gmail.com (김태하)
+            History:
+                2020-10-07 (taeha7b@gmail.com (김태하)) : 쿼리문 수정
+                2020-09-28 (taeha7b@gmail.com (김태하)) : 초기생성
+        """
+        with db.cursor() as cursor:
+            sql = """
+            UPDATE shipping_informations SET
+            is_default_address=%s
+            WHERE id=%s AND user_id=%s AND is_default_address=%s AND is_deleted=%s
+            """
+            results = cursor.execute(sql, (
+                1,
+                normal_shipping_information['id'],
+                token_paylod['id'],
+                0,
                 0
             ))
             return results

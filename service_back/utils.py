@@ -16,11 +16,12 @@ def login_confirm(original_function):
   
         Returns :
             original_function : 유효한 토큰일 경우 로그인한 유저 정보와 DB
-            jsonify({'message':'LOGIN_REQUIRED'}), 401 : 유효한 토큰이 아닐경우 메세지와 함께 401 코드를 클라이언트로 전달
+            에러코드 401 : 유효한 토큰이 아닐경우 메세지와 함께 401 코드를 클라이언트로 전달
             jsonify(message), 400 : 예외가 발생하면 예외코드와 예외명을 400 코드와 함께 클라이언트로 전달
         Author :
             taeha7b@gmail.com (김태하)
         History:
+            2020-10-07 (taeha7b@gmail.com (김태하)) : 불필요한 코드 삭제 및 파라미터 수정
             2020-09-27 (taeha7b@gmail.com (김태하)) : 초기생성
     """
     def wrapper(self, *args, **kwargs):

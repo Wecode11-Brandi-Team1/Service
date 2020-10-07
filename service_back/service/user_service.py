@@ -115,9 +115,36 @@ class UserService:
 
     def shipping_information(self, token_paylod, requestion, db):
         """
-            배송지 정보 - Business Layer(service)) function
+            배송지 정보 등록 - Business Layer(service)) function
             Args : 
-                user_info : 유저 정보
+                token_paylod : 유저 정보
+                requestion : 유저가 입력한 배송지 정보
+                db : DATABASE Connection Instance
+            Returns :
+
+            Author :
+                taeha7b@gmail.com (김태하)
+            History:
+                2020-09-28 (taeha7b@gmail.com (김태하)) : 초기생성
+        """
+        count_shipping_information = self.user_dao.count_shipping_information(token_paylod, db)
+        # 배송지 정보가 5개가 넘으면 등록할수 없다.
+        if count_shipping_information['shipping_information_number'] < 5:
+            # 처음 등록하는 배송지 정보인지 확인하여 처음 등록하면 기본 배송지로 설정해준다.
+            if  count_shipping_information['shipping_information_number'] == 0:
+                requestion['is_default_address'] = 1
+            else: 
+                # 처음 등록하는 배송지 정보가 아니라면 일반 배송지로 등록한다.
+                requestion['is_default_address'] = 0
+            results = self.user_dao.shipping_information(token_paylod, requestion, db)
+            return results
+        return False
+
+    def lookup_shipping_information(self, token_paylod, db):
+        """
+            배송지 정보 가져오기 - Business Layer(service)) function
+            Args : 
+                token_paylod : 유저 정보
                 db : DATABASE Connection Instance
             Returns :
    
@@ -126,26 +153,57 @@ class UserService:
             History:
                 2020-09-28 (taeha7b@gmail.com (김태하)) : 초기생성
         """
-        count_shipping_information = self.user_dao.count_shipping_information(token_paylod, db)
-        if count_shipping_information['COUNT(*)'] < 5:
-            if  count_shipping_information['COUNT(*)'] == 0:
-                requestion['is_default_address'] = 1
-            else: 
-                requestion['is_default_address'] = 0
-            results = self.user_dao.shipping_information(token_paylod, requestion, db)
-            return results
-        return False
-
-    def lookup_shipping_information(self, token_paylod, db):
         results = self.user_dao.lookup_shipping_information(token_paylod, db)
         return results
 
+
     def delete_shipping_information(self, token_paylod, requestion, db):
-        results = self.user_dao.delete_shipping_information(token_paylod, requestion, db)
+        """
+            배송지 정보 삭제 - Business Layer(service)) function
+            Args : 
+                token_paylod : 유저 정보
+                requestion : 유저가 입력한 배송지 정보
+                db : DATABASE Connection Instance
+            Returns :
+   
+            Author :
+                taeha7b@gmail.com (김태하)
+            History:
+                2020-09-28 (taeha7b@gmail.com (김태하)) : 초기생성
+        """
+        # 등록된 배송지 정보를 가져온다.
+        count_shipping_information = self.user_dao.count_shipping_information(token_paylod, db)
+        # 기본 배송지 수정 요청이 없을때 change_default_address를 2로 설정한다.
+        change_default_address = 2
+        
+        if 1 < count_shipping_information['shipping_information_number'] and requestion['is_default_address'] == 1:
+            # 배송지 정보가 여러개이고 삭제할 배송지가 기본 배송지 이면 일반 배송지 정보를 가져와서 해당 배송지를 기본 배송지로 바꿔준다.
+            # 이때 기본 배송지로 바꾸는게 성공하면 change_default_address가 1, 실패하면 change_default_address가 0이다.
+            normal_shipping_information = self.user_dao.normal_shipping_information(token_paylod, db)
+            change_default_address = self.user_dao.change_default_address(token_paylod, requestion, normal_shipping_information, db)
+
+        # 삭제 요청받은 배송지 정보를 삭제한다. 
+        # 이때 배송지 정보를 삭제하는것에 성공하면 remove_address가 1, 실패하면 remove_address가 0이다.
+        remove_address = self.user_dao.delete_shipping_information(token_paylod, requestion, db)
+        results = {"change_default_address" : change_default_address, "remove_address" : remove_address}
         return results
 
     def revise_shipping_information(self, token_paylod, requestion, db):
+        """
+            배송지 정보 수정 - Business Layer(service)) function
+            Args : 
+                token_paylod : 유저 정보
+                requestion : 유저가 입력한 배송지 정보
+                db : DATABASE Connection Instance
+            Returns :
+   
+            Author :
+                taeha7b@gmail.com (김태하)
+            History:
+                2020-09-28 (taeha7b@gmail.com (김태하)) : 초기생성
+        """
+        # 수정 하려는 배송지 정보가 기본 배송지인지 확인하고 기본 배송지이면 다른 배송지를 기본 배송지로 바꿔준다.
         if requestion['is_default_address'] == 1:
-            self.user_dao.revise_default_address(token_paylod, db)
+            results = self.user_dao.revise_default_address(token_paylod, db)
         results = self.user_dao.revise_shipping_information(token_paylod, requestion, db)
         return results
