@@ -284,7 +284,12 @@ class ShippingInformation(MethodView):
                         'result of change default address': 1,
                         'result of remove address': 0
                     
-                    3) 기본 배송지 변경 요청이 있는데 변경 실패하고, 배송지 정보 삭제 실패시
+                    3) 기본 배송지 변경 요청이 있는데 변경은 실패하고, 배송지 정보 삭제만 성공
+                        'message': 'UNSUCCESS',
+                        'result of change default address': 0,
+                        'result of remove address': 1
+
+                    4) 기본 배송지 변경 요청이 있는데 변경 실패하고, 배송지 정보 삭제 실패시
                         'message': 'UNSUCCESS',
                         'result of change default address': 0,
                         'result of remove address': 0
@@ -310,13 +315,11 @@ class ShippingInformation(MethodView):
                 
             elif results["remove_address"] == 0:
                 db.rollback()
-                return jsonify(
-                    {   
+                return jsonify({   
                       'message': 'UNSUCCESS',
                       'result of change default address':results["change_default_address"],
                       'result of remove address':results["remove_address"]
-                    }
-                ), 400
+                }), 400
 
         except Exception as e:
             db.rollback()

@@ -171,7 +171,7 @@ class UserService:
             History:
                 2020-09-28 (taeha7b@gmail.com (김태하)) : 초기생성
         """
-        # 등록된 배송지 정보를 가져온다.
+        # 등록된 배송지 정보의 개수를 가져온다.
         count_shipping_information = self.user_dao.count_shipping_information(token_paylod, db)
         # 기본 배송지 수정 요청이 없을때 change_default_address를 2로 설정한다.
         change_default_address = 2
