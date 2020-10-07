@@ -11,12 +11,14 @@ from .user_view     import (
     ShippingInformation)
 from .search_view   import SearchView
 from .question_view import QuestionView
+from .coupon_view   import CouponView
 
 def create_endpoints(app, services):
     product_service  = services.product_service
     search_service   = services.search_service
     user_service     = services.user_service
     question_service = services.question_service
+    coupon_service   = services.coupon_service
     # 작성자: 김기욱
     # 수정일: 2020.09.25 금
     # 카테고리 endpoint 추가
@@ -32,6 +34,7 @@ def create_endpoints(app, services):
     app.add_url_rule('/category', view_func=CategorySetView.as_view('category_set', product_service))
     app.add_url_rule('/search', view_func=SearchView.as_view('search', search_service))
     app.add_url_rule('/products/<int:product_id>/questions', view_func=QuestionView.as_view('question', question_service))
+    app.add_url_rule('/coupons', view_func=CouponView.as_view('coupon', coupon_service))
     # 작성자: 김태하
     # 작성일: 2020.09.23.수
     # 기능: 회원가입

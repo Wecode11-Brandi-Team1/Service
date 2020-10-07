@@ -9,12 +9,14 @@ from model         import (
     ProductDao, 
     SearchDao, 
     UserDao, 
-    QuestionDao)
+    QuestionDao,
+    CouponDao)
 from service       import (
     ProductService, 
     SearchService, 
     UserService, 
-    QuestionService)
+    QuestionService,
+    CouponService)
 
 import sentry_sdk
 from sentry_sdk.integrations.flask import FlaskIntegration
@@ -59,6 +61,7 @@ def create_app(test_config = None):
     search_dao   = SearchDao()
     user_dao     = UserDao()
     question_dao = QuestionDao()
+    coupon_dao   = CouponDao()
 
     #SetUp Business Layer
     services                  = Services
@@ -66,6 +69,7 @@ def create_app(test_config = None):
     services.search_service   = SearchService(search_dao)
     services.user_service     = UserService(user_dao)
     services.question_service = QuestionService(question_dao)
+    services.coupon_service   = CouponService(coupon_dao)
 
     #SetUp Presentation Layer
     create_endpoints(app, services)

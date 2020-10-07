@@ -46,8 +46,8 @@ class ProductDao:
                 cursor.execute(sql)
                 result = cursor.fetchall()
 
-                # if not result:
-                #     raise Exception('Query failed')
+                if not result:
+                    raise Exception('Query(get_most_sold_products) failed')
         
         except :
             traceback.print_exc()
@@ -100,7 +100,7 @@ class ProductDao:
                 result = cursor.fetchall()
 
                 if not result:
-                    raise Exception('Query failed') 
+                    raise Exception('Query(get_discounted_products) failed') 
         
         except :
             traceback.print_exc()
@@ -156,7 +156,7 @@ class ProductDao:
                 result = cursor.fetchall()
                 
                 if not result:
-                    raise Exception('Query failed') 
+                    raise Exception('Query(get_cateogory_set) failed') 
 
         except :
              traceback.print_exc()

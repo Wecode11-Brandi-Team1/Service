@@ -86,7 +86,7 @@ class QuestionView(MethodView):
             params = {
                 'product_id': args[0],
                 'q_info'    : args[1],
-                'user_id'   : token_payload["id"]
+                'user_id'   : token_payload['id']
             }
             self.service.insert_question(params, db)
         

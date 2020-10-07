@@ -45,15 +45,10 @@ class SearchView(MethodView):
             }
 
             search_stores_results   = self.service.search_stores(params, db)
-            if not search_stores_results :
-                search_stores_results = "검색된 스토어가 없습니다."
-
             search_products_results = self.service.search_products(params, db)
-            if not search_products_results :
-                search_products_results = '검색된 상품이 없습니다.'
-        
-        except :
-            traceback.print_exc()
+            
+        except Exception as e:
+            return jsonify({'message':f'{e}'}), 400
         
         else:
             return jsonify(

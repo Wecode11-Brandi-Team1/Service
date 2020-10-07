@@ -15,12 +15,15 @@ class SearchService:
         Authors :
             1218kim23@gmail.com(김기욱)
         History :
+            2020-10-07 : 예외처리 수정
             2020-10-04 : 파라미터 형식 변경
             2020-09-28 : 예외처리 수정(traceback 추가 *모든 함수 공통사항*)
             2020-09-23 : 초기 생성
         """
         try :
             search_stores_results = self.search_dao.search_stores(params, db)
+            if search_stores_results is None :
+                search_stores_results = "검색된 스토어가 없습니다."
        
         except :
             traceback.print_exc()
@@ -39,13 +42,16 @@ class SearchService:
         Authors :
             1218kim23@gmail.com(김기욱)
         History :
+            2020-10-07 : 예외처리 수정
             2020-10-04 : 파라미터 형식 변경
             2020-10-03 : 할인가 추가 로직 변경
             2020-09-23 : 초기 생성
         """
         try :
             search_products_results = self.search_dao.search_products(params, db)
-            if search_products_results:
+            if search_products_results is None :
+                search_products_results = '검색된 상품이 없습니다.'
+            else :
                 for product in search_products_results:
                     product['discounted_price'] = round(product['sale_price']*(100-product['discount_rate'])/100)
         
