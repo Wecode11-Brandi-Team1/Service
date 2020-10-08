@@ -156,7 +156,6 @@ class UserService:
         results = self.user_dao.lookup_shipping_information(token_paylod, db)
         return results
 
-
     def delete_shipping_information(self, token_paylod, requestion, db):
         """
             배송지 정보 삭제 - Business Layer(service)) function
@@ -169,24 +168,19 @@ class UserService:
             Author :
                 taeha7b@gmail.com (김태하)
             History:
+                2020-10-08 (taeha7b@gmail.com (김태하)) : 로직 변경 
                 2020-09-28 (taeha7b@gmail.com (김태하)) : 초기생성
         """
-        # 등록된 배송지 정보의 개수를 가져온다.
-        count_shipping_information = self.user_dao.count_shipping_information(token_paylod, db)
-        # 기본 배송지 수정 요청이 없을때 change_default_address를 2로 설정한다.
-        change_default_address = 2
-        
-        if 1 < count_shipping_information['shipping_information_number'] and requestion['is_default_address'] == 1:
-            # 배송지 정보가 여러개이고 삭제할 배송지가 기본 배송지 이면 일반 배송지 정보를 가져와서 해당 배송지를 기본 배송지로 바꿔준다.
-            # 이때 기본 배송지로 바꾸는게 성공하면 change_default_address가 1, 실패하면 change_default_address가 0이다.
-            normal_shipping_information = self.user_dao.normal_shipping_information(token_paylod, db)
-            change_default_address = self.user_dao.change_default_address(token_paylod, requestion, normal_shipping_information, db)
-
-        # 삭제 요청받은 배송지 정보를 삭제한다. 
-        # 이때 배송지 정보를 삭제하는것에 성공하면 remove_address가 1, 실패하면 remove_address가 0이다.
+        # 요청 받은 배송지 정보를 삭제한다.
         remove_address = self.user_dao.delete_shipping_information(token_paylod, requestion, db)
-        results = {"change_default_address" : change_default_address, "remove_address" : remove_address}
-        return results
+        # 기본 배송비 정보가 있는지 확인한다.
+        check_default_address = self.user_dao.check_default_address(token_paylod, db) 
+        # 만약에 기본 배송지가 없다면 최신 배송지 정보를 기본 배송지로 변경한다.
+        if check_default_address is None:
+            update_default_address = self.user_dao.update_default_address(token_paylod, db)
+            return update_default_address
+
+        return remove_address
 
     def revise_shipping_information(self, token_paylod, requestion, db):
         """
