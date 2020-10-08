@@ -292,33 +292,6 @@ class UserDao:
             results = cursor.fetchall()
             return results
 
-    def normal_shipping_information(self, token_paylod, db):
-        """
-            배송지 정보 - Persistence Layer(model) function
-            Args : 
-                token_paylod : 유저 엑세스 토큰
-                db : DATABASE Connection Instance
-            Returns :
-
-            Author :
-                taeha7b@gmail.com (김태하)
-            History:
-                2020-10-07 (taeha7b@gmail.com (김태하) : 초기생성
-        """
-        with db.cursor() as cursor:
-            sql = """
-            SELECT id
-            FROM shipping_informations
-            WHERE user_id=%s AND is_deleted=%s AND is_default_address=%s
-            """
-            cursor.execute(sql, (
-                token_paylod['id'],
-                0,
-                0
-            ))
-            results = cursor.fetchone()
-            return results
-
     def delete_shipping_information(self, token_paylod, requestion, db):
         """
             배송지 정보 - Persistence Layer(model) function
@@ -410,33 +383,47 @@ class UserDao:
             ))
             return results
     
-    def change_default_address(self, token_paylod, requestion, normal_shipping_information, db):
+    def check_default_address(self, token_paylod, db):
+        with db.cursor() as cursor:
+            sql = """
+            SELECT id,is_default_address
+            FROM shipping_informations
+            WHERE user_id=%s AND is_deleted=%s AND is_default_address=%s
+            ORDER BY id DESC
+            LIMIT 1 
+            """
+            cursor.execute(sql,(
+                token_paylod['id'],
+                0,
+                1
+            ))
+            results = cursor.fetchone()
+            return results
+
+    def update_default_address(self, token_paylod, db):
         """
             일반 배송지 정보를 기본 배송지 정보 수정 - Persistence Layer(model) function
             Args : 
                 token_paylod : 유저 엑세스 토큰
-                requestion : 수정할 배송지 정보에 대한 요청
-                normal_shipping_information : 일반배송지의 id
                 db : DATABASE Connection Instance
             Returns :
 
             Author :
                 taeha7b@gmail.com (김태하)
             History:
-                2020-10-07 (taeha7b@gmail.com (김태하)) : 쿼리문 수정
-                2020-09-28 (taeha7b@gmail.com (김태하)) : 초기생성
+                2020-10-08 (taeha7b@gmail.com (김태하)) : 초기생성
         """
         with db.cursor() as cursor:
             sql = """
-            UPDATE shipping_informations SET
-            is_default_address=%s
-            WHERE id=%s AND user_id=%s AND is_default_address=%s AND is_deleted=%s
+            UPDATE shipping_informations SET is_default_address = %s 
+            WHERE user_id = %s AND is_deleted = %s
+            ORDER BY id DESC LIMIT 1
             """
             results = cursor.execute(sql, (
                 1,
-                normal_shipping_information['id'],
                 token_paylod['id'],
-                0,
                 0
             ))
             return results
+
+    

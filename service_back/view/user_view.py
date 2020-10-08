@@ -269,61 +269,35 @@ class ShippingInformation(MethodView):
             배송지 정보 삭제 - Presentation Layer(view)) function
             Args : 
                 token_paylod : 유저 엑세스 토큰
-                쿼리스트링으로 삭제할 배송지의 id와 해당 배송지의 기본배송지 설정 유무를 받음
+                쿼리스트링으로 삭제할 배송지의 id를 받음
             Returns :
-                배송지 정보가 문제 없이 삭제되면 200코드와 함께 반환
-                
-                <배송지 정보 삭제시 문제가 생기때 아래의 코드를 반환>
-                    1) 기본 배송지 변경 요청은 없었고, 배송지 정보 삭제 실패시
-                        'message': 'UNSUCCESS',
-                        'result of change default address': 2,
-                        'result of remove address': 0
-                    
-                    2) 기본 배송지 변경 요청이 있는데 변경은 성공하고, 배송지 정보 삭제 실패시
-                        'message': 'UNSUCCESS',
-                        'result of change default address': 1,
-                        'result of remove address': 0
-                    
-                    3) 기본 배송지 변경 요청이 있는데 변경은 실패하고, 배송지 정보 삭제만 성공
-                        'message': 'UNSUCCESS',
-                        'result of change default address': 0,
-                        'result of remove address': 1
-
-                    4) 기본 배송지 변경 요청이 있는데 변경 실패하고, 배송지 정보 삭제 실패시
-                        'message': 'UNSUCCESS',
-                        'result of change default address': 0,
-                        'result of remove address': 0
-
+                배송지 정보가 문제 없이 삭제되면 200코드와 함께 메세지 반환
+                배송지 정보 삭제에 실패하면 400코드와 함께 메시지 반환
             Author :
                 taeha7b@gmail.com (김태하)
             History:
+                2020-10-08 (taeha7b@gmail.com (김태하)) : 로직 변경
                 2020-10-07 (taeha7b@gmail.com (김태하)) : 기본 배송지를 삭제 하면 다른 배송지를 기본 배송지로 설정되게 수정
                 2020-09-24 (taeha7b@gmail.com (김태하)) : 초기생성
         """
         try:
             db = get_connection()
             requestion= {
-                "id" : int(request.args.get('id')),
-                "is_default_address" : int(request.args.get('default'))
+                "id" : int(request.args.get('id'))
             }
          
             results = self.service.delete_shipping_information(token_paylod, requestion, db)
-
-            if 1 <= results["change_default_address"] <= 2 and results["remove_address"] == 1:
-                db.commit()
-                return jsonify({'message': 'SUCCESS'}), 200
-                
-            elif results["remove_address"] == 0:
+            if results == 0:
                 db.rollback()
-                return jsonify({   
-                      'message': 'UNSUCCESS',
-                      'result of change default address':results["change_default_address"],
-                      'result of remove address':results["remove_address"]
-                }), 400
-
+                return jsonify({'message':"SUCCESS"}), 200
+       
         except Exception as e:
             db.rollback()
             return jsonify({'message':f'{e}'}), 400
+
+        else:
+            db.commit()
+            return jsonify({'message': 'SUCCESS'}), 200
 
         finally:
             db.close()
