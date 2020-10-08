@@ -1,5 +1,4 @@
 import traceback
-import config, connection
 
 from flask                   import jsonify, request
 from flask.views             import MethodView
@@ -11,7 +10,9 @@ from flask_request_validator import (
     validate_params
 )
 
-from utils import login_confirm
+from connection import get_connection
+from utils      import login_confirm
+
 
 class QuestionView(MethodView):
     def __init__(self, service):
@@ -27,11 +28,11 @@ class QuestionView(MethodView):
     def get(self, token_payload, *args):
         """
         Args:
-            service    : 서비스 레이어 객체
-            product_id : 상품아이디
-            user_id    : 유저아이디(현재 로그인유저 기준)
-            u          : 유저아이디(필터링용)
-            limit      : 데이터 최대 갯수
+            service       : 서비스 레이어 객체
+            token_payload : 로그인데코레이터로 반환된 user_id 
+            product_id    : 상품아이디
+            u             : 유저아이디(필터링용)
+            limit         : 데이터 최대 갯수
         Returns:
             200:    
                 상품아이디에 매칭되는 Questions JSONDATA
@@ -40,11 +41,11 @@ class QuestionView(MethodView):
         Author:
             김기욱(1218kim23@gmail.com)
         History:
-            2020-10-06(김기욱) : 로그인데코레이터 추가
+            2020-10-06(김기욱) : 로그인데코레이터 기반 로직으로 수정
             2020-10-03(김기욱) : 초기 생성
         """
         try :
-            db = connection.get_connection(config.database)
+            db = get_connection()
             params = {
                 'product_id': args[0],
                 'u'         : args[1],
@@ -70,19 +71,27 @@ class QuestionView(MethodView):
     def post(self, token_payload, *args):
         """
         Args:
-            service    : 서비스 레이어 객체
-            product_id : 상품아이디
-            q_info     : JSON_DATA
+            service       : 서비스 레이어 객체
+            token_payload : 로그인데코레이터로 반환된 user_id 
+            product_id    : 상품아이디
+            q_info        : JSON_DATA
+            {questions:    
+                {"question_content": 문의글 내용
+                 "question_type_id": 문의글 종류(상품문의, 조회/반품, 불량/오배송 등)
+                 "is_secreted"     : 비밀글 여부}}
         Returns:
             200:    
                 {'message':'SUCCESS'}
+            400:
+                EXCEPTION MESSAGE
         Author:
             김기욱(1218kim23@gmail.com)
         History:
+            2020-10-06(김기욱) : 로그인데코레이터 기반 로직으로 수정
             2020-10-03(김기욱) : 초기 생성
         """
         try :
-            db = connection.get_connection(config.database)
+            db = get_connection()
             params = {
                 'product_id': args[0],
                 'q_info'    : args[1],
@@ -114,19 +123,22 @@ class QuestionView(MethodView):
     def delete(self, token_payload, *args):
         """
         Args:
-            service    : 서비스 레이어 객체
-            product_id : 상품아이디
-            q          : 문의글아이디
+            service       : 서비스 레이어 객체
+            token_payload : 로그인데코레이터로 반환된 user_id 
+            product_id    : 상품아이디
+            q             : 문의글아이디
         Returns:
             200:    
                 {'message':'SUCCESS'}
+            400:
+                EXCEPTION MESSAGE
         Author:
             김기욱(1218kim23@gmail.com)
         History:
             2020-10-04(김기욱) : 초기 생성
         """
         try :
-            db = connection.get_connection(config.database)
+            db = get_connection()
             params = {
                 'product_id': args[0],
                 'q'         : args[1]

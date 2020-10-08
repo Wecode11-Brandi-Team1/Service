@@ -22,7 +22,7 @@ class SearchService:
         """
         try :
             search_stores_results = self.search_dao.search_stores(params, db)
-            if search_stores_results is None :
+            if not search_stores_results :
                 search_stores_results = "검색된 스토어가 없습니다."
        
         except :
@@ -49,7 +49,7 @@ class SearchService:
         """
         try :
             search_products_results = self.search_dao.search_products(params, db)
-            if search_products_results is None :
+            if not search_products_results :
                 search_products_results = '검색된 상품이 없습니다.'
             else :
                 for product in search_products_results:

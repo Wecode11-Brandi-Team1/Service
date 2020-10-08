@@ -20,7 +20,7 @@ class CouponDao:
                     c.id as coupon_id,
                     ct.name as coupon_type,
                     ci.name as coupon_issue,
-                    cd.name, 
+                    cd.name as coupon_name, 
                     cd.discount_price,
                     cd.minimum_price,
                     cd.use_count,
@@ -44,9 +44,8 @@ class CouponDao:
                     AND cd.valid_started_at <= NOW()
                     AND NOW() < cd.valid_ended_at
                 ORDER BY
-                    cd.discount_price ASC;
+                    cd.discount_price DESC;
                 """
-
                 cursor.execute(sql)
                 coupons = cursor.fetchall()
                 #쿠폰리스트는 None값이 반환 가능하므로 None값 예외처리 해주지 않는다
@@ -70,7 +69,7 @@ class CouponDao:
         """
         try :
             with db.cursor() as cursor:
-                user_get_coupon = """
+                sql = """
                 INSERT INTO user_coupons(
                     user_id,
                     coupon_id
@@ -79,7 +78,7 @@ class CouponDao:
                     %s
                 );
                 """
-                result = cursor.execute(user_get_coupon, (
+                result = cursor.execute(sql, (
                     params['user_id'],
                     params['coupon_id']
                 ))
@@ -92,7 +91,7 @@ class CouponDao:
                         id = %s
                         AND is_downloadable = 1
                         AND download_started_at <= NOW()
-                        AND NOW() < download_expired_at;
+                        AND NOW() < download_ended_at;
                     """
                     count_result = cursor.execute(count_up, (params['coupon_id']))
                     
@@ -101,3 +100,110 @@ class CouponDao:
 
         except :
             traceback.print_exc()
+
+    def get_downloaded_coupons(self, user_id, db):
+        """
+        Args :
+            user_id : 유저아이디
+            db      : 데이터베이스 연결 객체
+        Returns :
+            다운로드 받은 쿠폰리스트
+        Authors :
+            1218kim23@gmail.com(김기욱)
+        History :
+            2020-10-08 : 초기생성
+        """
+        try :
+            with db.cursor() as cursor:
+                sql = """
+                SELECT 
+                    c.id as coupon_id,
+                    cd.name as coupon_name, 
+                    cd.discount_price,
+                    cd.minimum_price,
+                    date_format(cd.valid_started_at, '%%Y.%%m.%%d') as valid_started_at,
+                    date_format(cd.valid_ended_at, '%%Y.%%m.%%d') as valid_ended_at
+                FROM 
+                    coupons c,
+                    coupon_details cd,
+                    user_coupons uc
+                WHERE
+                    cd.coupon_id = c.id
+                    AND uc.coupon_id = c.id
+                    AND uc.user_id = %s
+                    AND uc.is_deleted = 0
+                ORDER BY
+                    cd.valid_ended_at ASC,
+                    cd.discount_price DESC;
+                """
+
+                cursor.execute(sql, user_id)
+                coupons = cursor.fetchall()
+                #쿠폰리스트는 None값이 반환 가능하므로 None값 예외처리 해주지 않는다
+
+        except :
+            traceback.print_exc()
+        
+        else :
+            return coupons
+
+    def use_downloaded_coupons(self, params, db):
+        """
+        Args :
+            c   : 쿠폰아이디
+            db  : 데이터베이스 연결 객체
+        Returns :
+        Authors :
+            1218kim23@gmail.com(김기욱)
+        History :
+            2020-10-08 : 초기생성
+        """
+        try :
+            with db.cursor() as cursor:
+                sql = """
+                UPDATE user_coupons 
+                SET is_deleted = 1
+                WHERE 
+                    user_id = %s
+                    AND coupon_id = %s;
+                """
+                sql = cursor.execute(sql, (params['user_id'], params['coupon_id']))
+            
+                if not sql:
+                    raise Exception('Query failed')
+
+        except :
+            traceback.print_exc()
+
+    def check_downloaded_coupons(self, user_id, db):
+        """
+        Args :
+            user_id : 유저아이디
+            db      : 데이터베이스 연결 객체
+        Returns :
+            다운로드 받은 쿠폰리스트
+        Authors :
+            1218kim23@gmail.com(김기욱)
+        History :
+            2020-10-08 : 초기생성
+        """
+        try :
+            with db.cursor() as cursor:
+                sql = """
+                SELECT 
+                    uc.coupon_id 
+                FROM 
+                    user_coupons uc
+                WHERE
+                    uc.user_id = %s;
+                """
+                cursor.execute(sql, user_id)
+                result = cursor.fetchall()
+                #쿠폰리스트는 None값이 반환 가능하므로 None값 예외처리 해주지 않는다
+
+        except :
+            traceback.print_exc()
+        
+        else :
+            return result
+

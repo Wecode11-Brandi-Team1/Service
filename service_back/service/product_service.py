@@ -103,7 +103,7 @@ class ProductService:
         """
         try :
             product_data = self.product_dao.get_products(params, db)
-            if product_data is not None :
+            if product_data :
                 for product in product_data :
                     product['discounted_price'] = round(product['sale_price']*(100-product['discount_rate'])/100)
 

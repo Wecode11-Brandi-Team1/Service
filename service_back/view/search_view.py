@@ -9,13 +9,14 @@ from flask_request_validator import (
     JSON,
     validate_params
 )
-import config, connection
+from connection  import get_connection
 
 
 class SearchView(MethodView):
     def __init__(self, service):
         self.service = service
     
+    #표시되는 데이터 갯수는 50개가 default지만 필요에 따라 쿼리파라미터로 수정이 가능하다
     @validate_params(
         Param('limit', GET, int, default = 50, required = False),
         Param('q', GET, str, required = True)
@@ -38,7 +39,7 @@ class SearchView(MethodView):
             2020-09-23 : 초기 생성
         """
         try:
-            db = connection.get_connection(config.database)
+            db = get_connection()
             params = {
                 'limit' :args[0], 
                 'q'     :args[1]

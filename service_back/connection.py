@@ -1,7 +1,8 @@
 import pymysql
+from config import database as db
 
-def get_connection(db):
-    return pymysql.connect(
+def get_connection():
+    connection = pymysql.connect(
         host        = db['host'],
         port        = db['port'],
         user        = db['user'],
@@ -11,3 +12,5 @@ def get_connection(db):
         cursorclass = pymysql.cursors.DictCursor,
         autocommit  = False
     )
+
+    return connection

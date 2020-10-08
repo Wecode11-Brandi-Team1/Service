@@ -14,11 +14,12 @@ class QuestionService:
         Author:
             김기욱(1218kim23@gmail.com)
         History:
+            2020-10-05(김기욱) : 아이디마스킹 및 비밀글처리 로직 추가
             2020-10-03(김기욱) : 초기 생성
         """
         try :
             questions = self.question_dao.get_questions(params, db)
-            if questions is not None:
+            if questions :
                 for question in questions['questions']:
                     # 현재 로그인한 유저가 아닌 비밀글들 비밀글 처리
                     if question['is_secreted'] == 1 and params['user_id'] != question['user_id']:

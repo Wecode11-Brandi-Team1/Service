@@ -1,5 +1,4 @@
 import traceback
-import config, connection
 
 from flask         import jsonify, request
 from flask.views   import MethodView
@@ -11,8 +10,8 @@ from flask_request_validator import (
     validate_params
 )
 
-import config, connection
-from cache import cache
+from connection import get_connection
+from cache      import cache
 
 class MainProductsView(MethodView):
     def __init__(self, service):
@@ -33,7 +32,7 @@ class MainProductsView(MethodView):
             2020-09-22(김기욱) : 초기 생성
         """
         try :
-            db = connection.get_connection(config.database)
+            db = get_connection()
             products = self.service.get_main_products(db)
 
             if products is None:
@@ -53,8 +52,11 @@ class MainProductsView(MethodView):
 class CategorySetView(MethodView):
     def __init__(self, service):
         self.service = service
-
-    def get(self):
+        
+    @validate_params(
+        Param('q', GET, int, required = True)
+    )
+    def get(self, q):
         """
         Args:
             service: 서비스 레이어 객체
@@ -67,8 +69,7 @@ class CategorySetView(MethodView):
             2020-09-25(김기욱) : 초기 생성
         """
         try :
-            db = connection.get_connection(config.database)
-            q  = int(request.args.get('q')) 
+            db           = get_connection()
             category_set = self.service.get_category_set(q, db)
         
         except Exception as e:
@@ -121,7 +122,7 @@ class ProductsView(MethodView):
             2020-09-28(김기욱) : 초기 생성
         """
         try :
-            db = connection.get_connection(config.database)
+            db = get_connection()
             #통과한 파라미터들을 딕셔너리 패킹
             params = {
                 'limit'         :args[0],
@@ -149,6 +150,9 @@ class ProductView(MethodView):
     def __init__(self, service):
         self.service = service
     
+    @validate_params(
+        Param('product_id', PATH, int, required = True)
+    )
     def get(self, product_id):
         """
         Args:
@@ -163,7 +167,7 @@ class ProductView(MethodView):
             2020-09-29(김기욱) : 초기 생성
         """
         try :
-            db = connection.get_connection(config.database)
+            db = get_connection()
             product = self.service.get_product(product_id, db)
         
         except Exception as e:

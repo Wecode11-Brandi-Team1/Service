@@ -1,5 +1,3 @@
-import config, connection
-
 from flask import jsonify, request
 from flask.views import MethodView
 
@@ -10,6 +8,8 @@ from utils import (
     PasswordValidattionError, 
     EmailValidattionError
 )
+
+from connection import get_connection
 
 class SignUp(MethodView):
 
@@ -30,7 +30,7 @@ class SignUp(MethodView):
                 2020-09-23 (taeha7b@gmail.com (김태하)) : 초기생성
         """
         try:
-            db = connection.get_connection(config.database)
+            db = get_connection()
             user_info = request.json
             sign_up = self.service.sign_up(user_info, db)
             if sign_up == 'User account already exists':
@@ -85,7 +85,7 @@ class SignIn(MethodView):
                 2020-09-23 (taeha7b@gmail.com (김태하)) : 초기생성
         """
         try:
-            db = connection.get_connection(config.database)
+            db = get_connection()
             user = request.json
             access_token = self.service.sign_in(user, db)
             if access_token == 'is_deleted':
@@ -119,7 +119,7 @@ class SocialSignUp(MethodView):
                 2020-09-24 (taeha7b@gmail.com (김태하)) : 초기생성
         """
         try:
-            db = connection.get_connection(config.database)
+            db = get_connection()
             user_info = request.json
             google_access_token = request.headers.get("Authorization", None)
             sign_up = self.service.social_sign_up(user_info, google_access_token, db)
@@ -152,7 +152,7 @@ class SocialSignIn(MethodView):
                 2020-09-24 (taeha7b@gmail.com (김태하)) : 초기생성
         """
         try:
-            db = connection.get_connection(config.database)
+            db = get_connection()
             google_access_token = request.headers.get("Authorization", None)
             access_token = self.service.social_sign_in(google_access_token, db)
             if access_token == 'error':
@@ -187,7 +187,7 @@ class ShippingInformation(MethodView):
                 2020-09-28 (taeha7b@gmail.com (김태하)) : 초기생성
         """
         try:
-            db = connection.get_connection(config.database)
+            db = get_connection()
             requestion = request.json
             shipping_information = self.service.shipping_information(token_paylod, requestion, db)
             if shipping_information == False:
@@ -218,7 +218,7 @@ class ShippingInformation(MethodView):
                 2020-09-24 (taeha7b@gmail.com (김태하)) : 초기생성
         """
         try:
-            db = connection.get_connection(config.database)
+            db = get_connection()
             my_shipping_information = self.service.lookup_shipping_information(token_paylod, db)
             if my_shipping_information == ():
                 return jsonify({'message':'No shipping information'}), 400
@@ -245,7 +245,7 @@ class ShippingInformation(MethodView):
                 2020-09-24 (taeha7b@gmail.com (김태하)) : 초기생성
         """
         try:
-            db = connection.get_connection(config.database)
+            db = get_connection()
             shipping_info_id = request.json
             results = self.service.revise_shipping_information(token_paylod, shipping_info_id, db)
             if results == 0:
@@ -301,7 +301,7 @@ class ShippingInformation(MethodView):
                 2020-09-24 (taeha7b@gmail.com (김태하)) : 초기생성
         """
         try:
-            db = connection.get_connection(config.database)
+            db = get_connection()
             requestion= {
                 "id" : int(request.args.get('id')),
                 "is_default_address" : int(request.args.get('default'))

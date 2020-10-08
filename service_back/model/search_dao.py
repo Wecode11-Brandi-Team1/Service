@@ -19,7 +19,7 @@ class SearchDao:
         """
         try :
             with db.cursor() as cursor:
-                sql = f"""
+                sql = """
                 SELECT DISTINCT
                     s.id as seller_id,
                     si.profile_image,
@@ -29,11 +29,11 @@ class SearchDao:
                     seller_informations si
                 WHERE
                     s.id = si.seller_id
-                    AND si.korean_name LIKE '%{params['q']}%'
+                    AND si.korean_name LIKE %s
                 LIMIT
-                    {params['limit']};
+                    %s;
                 """ 
-                cursor.execute(sql)
+                cursor.execute(sql,('%'+params['q']+'%', params['limit']))
                 result = cursor.fetchall()
                 #검색기능은 None값이 반환 가능하므로 따로 예외처리 해주지 않는다
 
@@ -59,7 +59,7 @@ class SearchDao:
         """
         try :
             with db.cursor() as cursor:
-                sql = f"""
+                sql = """
                 SELECT DISTINCT
                     si.korean_name as seller_name,
                     p.id as product_id,
@@ -67,8 +67,7 @@ class SearchDao:
                     pi.image_path,
                     pd.name as product_name,
                     pd.discount_rate,
-                    pd.sale_price,
-                    pd.sale_price*((100-pd.discount_rate)/100) as discounted_price
+                    pd.sale_price
                 FROM 
                     products p,
                     product_images pi,
@@ -81,11 +80,11 @@ class SearchDao:
                     AND pi.product_id = p.id
                     AND pd.product_id = p.id
                     AND pi.ordering = 1
-                    AND (si.korean_name LIKE '%{params['q']}%' OR pd.name LIKE '%{params['q']}%')
+                    AND (si.korean_name LIKE %s OR pd.name LIKE %s)
                 LIMIT
-                    {params['limit']};
+                    %s;
                 """
-                cursor.execute(sql)
+                cursor.execute(sql,('%'+params['q']+'%', '%'+params['q']+'%', params['limit']))
                 result = cursor.fetchall()
                 #검색기능은 None값이 반환 가능하므로 따로 예외처리 해주지 않는다
         

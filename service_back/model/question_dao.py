@@ -22,7 +22,6 @@ class QuestionDao:
                 FROM products p
                 WHERE p.id = %s
                 """
-                
                 sql = """
                 SELECT 
                     q.id as question_id,
@@ -92,6 +91,7 @@ class QuestionDao:
         Authors :
             1218kim23@gmail.com(김기욱)
         History :
+            2020-10-07 : qna_count증가로직 -> SQL Trigger사용으로 변경
             2020-10-03 : 초기생성
         """
         try :
@@ -125,16 +125,6 @@ class QuestionDao:
                 if not result:
                     raise Exception('Query failed')
 
-                count_up = """
-                UPDATE products
-                SET qna_count = qna_count+1
-                WHERE id = %s;
-                """
-                count_result = cursor.execute(count_up, params["product_id"])
-
-                if not count_result:
-                    raise Exception('Query failed')
-
         except :
             traceback.print_exc()
 
@@ -148,6 +138,7 @@ class QuestionDao:
         Authors :
             1218kim23@gmail.com(김기욱)
         History :
+            2020-10-07 : qna_count감소로직 -> SQL Trigger사용으로 변경
             2020-10-05 : 파라미터 형식 변경
             2020-10-04 : 초기생성
         """
@@ -163,16 +154,6 @@ class QuestionDao:
                 sql = cursor.execute(sql, (params['product_id'], params['q']))
             
                 if not sql:
-                    raise Exception('Query failed')
-                
-                count_down = """
-                UPDATE products
-                SET qna_count = qna_count-1
-                WHERE id = %s;
-                """
-                count_down = cursor.execute(count_down, params['product_id'])
-
-                if not count_down:
                     raise Exception('Query failed')
 
         except :
