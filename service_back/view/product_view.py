@@ -11,6 +11,7 @@ from flask_request_validator import (
 )
 
 from connection import get_connection
+from utils      import catch_exception
 from cache      import cache
 
 class MainProductsView(MethodView):
@@ -52,7 +53,8 @@ class MainProductsView(MethodView):
 class CategorySetView(MethodView):
     def __init__(self, service):
         self.service = service
-        
+
+    @catch_exception
     @validate_params(
         Param('q', GET, int, required = True)
     )
@@ -85,8 +87,9 @@ class ProductsView(MethodView):
     def __init__(self, service):
         self.service = service
 
-    #Validation_params 데코레이터를 통해 유효성 검사 후 통과한 파라미터들만 튜플로 반환
+    @catch_exception
     @validate_params(
+    #Validation_params 데코레이터를 통해 유효성 검사 후 통과한 파라미터들만 튜플로 반환
         Param('limit',  GET, int, default = 100, required = False),
         Param('offset', GET, int, required = False),
         Param('sp_id',  GET, int, required = False),
@@ -150,6 +153,7 @@ class ProductView(MethodView):
     def __init__(self, service):
         self.service = service
     
+    @catch_exception
     @validate_params(
         Param('product_id', PATH, int, required = True)
     )

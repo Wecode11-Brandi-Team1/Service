@@ -65,18 +65,20 @@ class QuestionDao:
                 cursor.execute(qna_count, params["product_id"])
                 result = cursor.fetchone()
 
+                #count는 무조건 존재해야 하므로 예외처리
                 if not result:
-                    raise Exception('Query failed')
+                    raise Exception('QUERY FAILED')
 
                 cursor.execute(sql+";", params['product_id'])
+                # 신규상품의 경우 QNA가 부재할 수 있으므로 NONE값을 따로 예외처리하지않는다
                 sql_result = cursor.fetchall()
                 
-                # 신규상품의 경우 QNA가 부재할 수 있으므로 NONE값을 따로 예외처리하지않는다
                 result['user_id']   = params['user_id']
                 result['questions'] = sql_result
         
         except :
             traceback.print_exc()
+            raise
         
         else :
             return result
@@ -121,12 +123,10 @@ class QuestionDao:
                     q_info["question_type_id"],
                     q_info["is_secreted"]
                 ))
-                
-                if not result:
-                    raise Exception('Query failed')
-
+     
         except :
             traceback.print_exc()
+            raise Exception('INSERTION QUERY FAILED')
 
     def delete_question(self, params, db):
         """
@@ -154,7 +154,8 @@ class QuestionDao:
                 sql = cursor.execute(sql, (params['product_id'], params['q']))
             
                 if not sql:
-                    raise Exception('Query failed')
+                    raise Exception('INVALID PRODUCT OR COUPON ID')
 
         except :
             traceback.print_exc()
+            raise

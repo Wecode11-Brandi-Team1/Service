@@ -52,6 +52,7 @@ class CouponDao:
 
         except :
             traceback.print_exc()
+            raise
         
         else :
             return coupons
@@ -65,6 +66,7 @@ class CouponDao:
         Authors :
             1218kim23@gmail.com(김기욱)
         History :
+            2020-10-09 : 다운로드횟수 카운팅 SQL trigger 추가
             2020-10-07 : 초기생성
         """
         try :
@@ -83,23 +85,9 @@ class CouponDao:
                     params['coupon_id']
                 ))
 
-                if result:
-                    count_up = """
-                    UPDATE coupon_details
-                    SET download_count = download_count+1
-                    WHERE
-                        id = %s
-                        AND is_downloadable = 1
-                        AND download_started_at <= NOW()
-                        AND NOW() < download_ended_at;
-                    """
-                    count_result = cursor.execute(count_up, (params['coupon_id']))
-                    
-                else :
-                    raise Exception('Query(download_coupons) failed')
-
         except :
             traceback.print_exc()
+            raise Exception('INVALID COUPON ID')
 
     def get_downloaded_coupons(self, user_id, db):
         """
@@ -150,12 +138,13 @@ class CouponDao:
     def use_downloaded_coupons(self, params, db):
         """
         Args :
-            c   : 쿠폰아이디
-            db  : 데이터베이스 연결 객체
+            params : 딕셔너리 패킹된 쿼리파라미터객체 
+            db     : 데이터베이스 연결 객체
         Returns :
         Authors :
             1218kim23@gmail.com(김기욱)
         History :
+            2020-10-09 : 사용횟수 카운팅 SQL trigger 추가
             2020-10-08 : 초기생성
         """
         try :
@@ -168,12 +157,13 @@ class CouponDao:
                     AND coupon_id = %s;
                 """
                 sql = cursor.execute(sql, (params['user_id'], params['coupon_id']))
-            
-                if not sql:
-                    raise Exception('Query failed')
+                # None값이 발생하면 ERROR이므로 reraise 실행
+                if not sql :
+                    raise Exception('INVALID COUPON ID')
 
         except :
             traceback.print_exc()
+            raise 
 
     def check_downloaded_coupons(self, user_id, db):
         """
@@ -203,7 +193,7 @@ class CouponDao:
 
         except :
             traceback.print_exc()
+            raise
         
         else :
             return result
-

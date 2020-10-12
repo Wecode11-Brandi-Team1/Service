@@ -14,6 +14,7 @@ class QuestionService:
         Author:
             김기욱(1218kim23@gmail.com)
         History:
+            2020-10-12(김기욱) : 예외처리 추가
             2020-10-05(김기욱) : 아이디마스킹 및 비밀글처리 로직 추가
             2020-10-03(김기욱) : 초기 생성
         """
@@ -22,17 +23,18 @@ class QuestionService:
             if questions :
                 for question in questions['questions']:
                     # 현재 로그인한 유저가 아닌 비밀글들 비밀글 처리
-                    if question['is_secreted'] == 1 and params['user_id'] != question['user_id']:
+                    if question['is_secreted'] != 0 and params['user_id'] != question['user_id']:
                         question['question_content'] = "비밀글입니다."
                     
                     # 아이디 마스킹(문자열에서 3번째 자리 이후로 *표시, 전체 글자수는 6자 제한)
                     question['writer'] = re.sub('(?<=.{3}).', '*', question['writer'])[:6]
             
             else:
-                raise Exception
+                questions = "등록된 상품문의가 없습니다."
 
         except :
             traceback.print_exc()
+            raise 
        
         else :
             return questions
@@ -46,6 +48,7 @@ class QuestionService:
         Author:
             김기욱(1218kim23@gmail.com)
         History:
+            2020-10-12(김기욱) : 예외처리 추가
             2020-10-05(김기욱) : 파라미터 형식 변경
             2020-10-03(김기욱) : 초기 생성
         """
@@ -54,6 +57,7 @@ class QuestionService:
             
         except :
             traceback.print_exc()
+            raise 
     
     def delete_question(self, params, db):
         """
@@ -64,6 +68,7 @@ class QuestionService:
         Author:
             김기욱(1218kim23@gmail.com)
         History:
+            2020-10-12(김기욱) : 예외처리 추가
             2020-10-05(김기욱) : 파라미터 형식 변경
             2020-10-04(김기욱) : 초기 생성
         """
@@ -72,3 +77,4 @@ class QuestionService:
        
         except :
             traceback.print_exc()
+            raise 

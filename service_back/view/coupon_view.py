@@ -11,7 +11,7 @@ from flask_request_validator import (
 )
 
 from connection import get_connection
-from utils      import login_confirm
+from utils      import login_confirm, catch_exception
 
 class CouponView(MethodView):
     def __init__(self, service):
@@ -45,6 +45,7 @@ class CouponView(MethodView):
         finally:
             db.close() 
 
+    @catch_exception
     @validate_params(
         Param('c', GET, int, required = True)
     )
@@ -129,6 +130,7 @@ class UserCouponView(MethodView):
         finally:
             db.close()
     
+    @catch_exception
     @validate_params(
         Param('c', GET, int, required = True)
     )

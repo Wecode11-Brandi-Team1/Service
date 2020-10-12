@@ -14,6 +14,7 @@ class CouponService:
         Authors :
             1218kim23@gmail.com(김기욱)
         History :
+            2020-10-12 : 예외처리 추가
             2020-10-07 : 초기 생성
         """
         try :
@@ -23,6 +24,7 @@ class CouponService:
        
         except :
             traceback.print_exc()
+            raise 
        
         else :
             return coupons
@@ -37,6 +39,7 @@ class CouponService:
         Authors :
             1218kim23@gmail.com(김기욱)
         History :
+            2020-10-12 : 예외처리 추가
             2020-10-07 : 초기 생성
         """
         try :
@@ -44,6 +47,7 @@ class CouponService:
             
         except :
             traceback.print_exc()
+            raise 
     
     def get_downloaded_coupons(self, user_id, db):
         """
@@ -56,6 +60,7 @@ class CouponService:
         Authors :
             1218kim23@gmail.com(김기욱)
         History :
+            2020-10-12 : 예외처리 추가
             2020-10-09 : 초기 생성
         """
         try :
@@ -71,6 +76,7 @@ class CouponService:
        
         except :
             traceback.print_exc()
+            raise 
        
         else :
             return coupons
@@ -92,6 +98,7 @@ class CouponService:
             
         except :
             traceback.print_exc()
+            raise 
 
     def check_downloaded_coupons(self, user_id, db):
         """
@@ -103,16 +110,19 @@ class CouponService:
         Authors :
             1218kim23@gmail.com(김기욱)
         History :
+            2020-10-12 : 예외처리 추가
             2020-10-08 : 초기 생성
         """
         try :
             coupons = self.coupon_dao.check_downloaded_coupons(user_id, db)
-            result  = [coupon['coupon_id'] for coupon in coupons]
+            if coupons:
+                result  = [coupon['coupon_id'] for coupon in coupons]
+            else : 
+                result = []
             
         except :
             traceback.print_exc()
+            raise 
 
         else :
             return result
-
-    

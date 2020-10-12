@@ -45,11 +45,11 @@ def create_app(test_config = None):
         2020-10-02 : ASCCI형식 False로 변경(김기욱)
         2020-09-17 : 초기 생성(김기욱 김태하)
     """
-    cache = Cache(config={'CACHE_TYPE': 'simple'})
-    app = Flask(__name__)
-    cache.init_app(app)
 
+    app = Flask(__name__)
     app.config['JSON_AS_ASCII'] = False
+    app.config['CACHE_TYPE'] = 'simple'
+    app.cache = Cache(app)
 
     #SetUp CORS
     CORS(app)

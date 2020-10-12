@@ -1,4 +1,4 @@
-import re
+import re, traceback
 import json, jwt
 import connection
 
@@ -142,4 +142,84 @@ def phone_num_validate(value):
     regex = re.compile(r'(\d{3}).*(\d{4}).*(\d{4})')
     if not regex.match(value):
         return True
-    
+
+def catch_exception(f, *args, **kwargs):
+    """
+        decorator API
+            Args:
+                에러들을 받는다.
+            Retruns:
+                return f(*args, **kwargs) -> 데코레이터를 발행해준다.
+                jsonify({"message" : f"INVALID_PARAMETER_{e.args[0]}"}), 400 -> 해당 에러 메시지 내용과 400에러
+            Authors:
+                wldus9503@gmail.com(이지연)
+            History:
+                2020-09-29(wldus9503@gmail.com) : 데코레이터 초기 생성
+    """
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        try:
+            return f(*args, **kwargs)
+        except Exception as e:
+            traceback.print_exc()
+            if len(e.args)==0:
+                return jsonify({"message" : "INVALID_PARAMETER"}), 400
+            return jsonify({"message" : f"INVALID_PARAMETER_{e.args[0]}"}), 405
+    return wrapper
+
+
+"""
+SQL triggers list
+
+#1 : QNA가 추가되면 qna_count값을 +1하는 트리거
+DELIMITER $$
+
+CREATE TRIGGER qna_count_up
+AFTER INSERT ON questions FOR EACH ROW
+BEGIN
+	IF NEW.id IS NOT NULL THEN
+		UPDATE products as p SET qna_count = qna_count +1 WHERE p.id = NEW.product_id;
+	END IF;
+END $$
+
+DELIMITER ;
+
+#2 : QNA가 삭제되면 qna_count값을 -1하는 트리거
+DELIMITER $$
+
+CREATE TRIGGER qna_count_down
+AFTER UPDATE ON questions FOR EACH ROW
+BEGIN
+	IF NEW.is_deleted = 1 THEN
+		UPDATE products as p SET qna_count = qna_count -1 WHERE p.id = OLD.product_id;
+	END IF;
+END $$
+
+DELIMITER ;
+
+#3 : 쿠폰을 다운로드하면 download_count값을 +1하는 트리거
+DELIMITER $$
+
+CREATE TRIGGER coupon_download_count_up
+AFTER INSERT ON user_coupons FOR EACH ROW
+BEGIN
+	IF NEW.id IS NOT NULL THEN
+		UPDATE coupon_details as cd SET download_count = download_count +1 WHERE cd.coupon_id = NEW.coupon_id;
+	END IF;
+END $$
+
+DELIMITER ;
+
+#4 : 다운로드한 쿠폰을 사용하면 use_count값을 +1하는 트리거
+DELIMITER $$
+
+CREATE TRIGGER coupon_use_count_up
+AFTER UPDATE ON user_coupons FOR EACH ROW
+BEGIN
+	IF NEW.is_deleted = 1 THEN
+		UPDATE coupon_details SET use_count = use_count +1 WHERE coupon_id = OLD.coupon_id;
+	END IF;
+END $$
+
+DELIMITER ;
+""" 

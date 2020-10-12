@@ -11,14 +11,13 @@ from flask_request_validator import (
 )
 
 from connection import get_connection
-from utils      import login_confirm
-
+from utils      import login_confirm, catch_exception
 
 class QuestionView(MethodView):
     def __init__(self, service):
         self.service = service
     
-    
+    @catch_exception
     @validate_params(
         Param('product_id', PATH, int, required = True),
         Param('u', GET, str, required = False),
@@ -37,7 +36,7 @@ class QuestionView(MethodView):
             200:    
                 상품아이디에 매칭되는 Questions JSONDATA
             400: 
-                모든 레이어에서 raise 된 Error
+                모든 레이어에서 raise 된 ERROR
         Author:
             김기욱(1218kim23@gmail.com)
         History:
@@ -63,6 +62,7 @@ class QuestionView(MethodView):
         finally:
             db.close() 
     
+    @catch_exception
     @validate_params(
         Param('product_id', PATH, int, required = True),
         Param('questions', JSON, dict, required = True)
@@ -83,7 +83,8 @@ class QuestionView(MethodView):
             200:    
                 {'message':'SUCCESS'}
             400:
-                EXCEPTION MESSAGE
+                KEY ERROR
+                그 외 모든 레이어에서 raise 된 ERROR
         Author:
             김기욱(1218kim23@gmail.com)
         History:
@@ -99,15 +100,14 @@ class QuestionView(MethodView):
             }
             self.service.insert_question(params, db)
         
-        except KeyError:
+        except KeyError as k:
             db.rollback()
-            return jsonify({'message':'KEYERROR'}), 400
+            return jsonify({'message':f'{k}'}), 400
            
         except Exception as e:
             db.rollback()
             return jsonify({'message':f'{e}'}), 400
             
-        
         else:
             db.commit()
             return jsonify({'message':'SUCCESS'}), 201
@@ -115,6 +115,7 @@ class QuestionView(MethodView):
         finally:
             db.close()
 
+    @catch_exception
     @validate_params(
         Param('product_id', PATH, int, required = True),
         Param('q', GET, int, required = True)
@@ -155,4 +156,3 @@ class QuestionView(MethodView):
         
         finally:
             db.close()
-    

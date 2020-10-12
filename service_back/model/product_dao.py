@@ -45,9 +45,7 @@ class ProductDao:
                 """
                 cursor.execute(sql)
                 result = cursor.fetchall()
-
-                if not result:
-                    raise Exception('Query(get_most_sold_products) failed')
+                # None값이 반환 가능하므로 따로 예외처리 해주지 않는다
         
         except :
             traceback.print_exc()
@@ -98,9 +96,7 @@ class ProductDao:
                 """
                 cursor.execute(sql)
                 result = cursor.fetchall()
-
-                if not result:
-                    raise Exception('Query(get_discounted_products) failed') 
+                # None값이 반환 가능하므로 따로 예외처리 해주지 않는다
         
         except :
             traceback.print_exc()
@@ -155,11 +151,13 @@ class ProductDao:
                 cursor.execute(sql, q)
                 result = cursor.fetchall()
                 
+                #쿼리실패가 발생가능한 경우는 부정확한 아이디 입력이므로 이에대한 예외처리 실행
                 if not result:
-                    raise Exception('Query(get_cateogory_set) failed') 
-
+                    raise Exception('INVALID SELLER_PROPERTY ID') 
+        
         except :
              traceback.print_exc()
+             raise
         
         else :
             return result
@@ -247,10 +245,11 @@ class ProductDao:
                 result = cursor.fetchall()
 
                 if not result:
-                    raise Exception('Query failed')
+                    raise Exception('QUERY FAILED')
             
         except :
              traceback.print_exc()
+             raise
         
         else :
             return result
@@ -323,6 +322,9 @@ class ProductDao:
                 product = cursor.execute(product, product_id)
                 product = cursor.fetchone()
 
+                if not product:
+                    raise Exception('INVALID PRODUCT ID')
+
                 images = cursor.execute(image, product_id)
                 images = cursor.fetchall()
                 images = [image["image_path"] for image in images]
@@ -336,6 +338,7 @@ class ProductDao:
                
         except :
              traceback.print_exc()
+             raise
         
         else :
             return product

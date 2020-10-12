@@ -27,6 +27,7 @@ class SearchService:
        
         except :
             traceback.print_exc()
+            raise 
        
         else :
             return search_stores_results
@@ -57,6 +58,7 @@ class SearchService:
         
         except :
             traceback.print_exc()
+            raise 
         
         else :
             return search_products_results 

@@ -26,9 +26,16 @@ class ProductService:
             if mostsold_products :
                 for product in mostsold_products :
                     product['discounted_price'] = round(product['sale_price']*(100-product['discount_rate'])/100)
+            else : 
+                mostsold_products = "판매량 높은 상품이 존재하지 않습니다."
+
             if discounted_products :
                 for product in discounted_products :
                     product['discounted_price'] = round(product['sale_price']*(100-product['discount_rate'])/100)
+
+            else : 
+                mostsold_products = "할인상품이 존재하지 않습니다."
+
             products = {
             #100개 이상 상품을 판매량이 높은 상품으로 규정하고 그 중 10개를 리스트에 넣음 
             'most_sold_products' : mostsold_products,
@@ -38,6 +45,7 @@ class ProductService:
 
         except :
             traceback.print_exc()
+            raise 
 
         else :
             return products
@@ -62,13 +70,13 @@ class ProductService:
             # Pandas 중복제거 기능을 통해 first_cateogory의 이름을 모아놓은 리스트패킹
             fc_names  = pandas.unique([category['fc_name'] for category in categories]).tolist()
             # 쿼리스트링에 따라 매칭되는 first_category_id값 변환
-            if q == 1  :
+            if q == 1 :
                 category_set = { 
                 seller_property : [
                     {fc_name : [category['sc_name'] for category in categories if category['fc_id'] == i+1]} 
                     for i, fc_name in enumerate(fc_names)]
                 }
-            if q == 4  :
+            if q == 4 :
                 category_set = { 
                 seller_property : [
                     {fc_name : [category['sc_name'] for category in categories if category['fc_id'] == i+12]} 
@@ -83,6 +91,7 @@ class ProductService:
 
         except :
             traceback.print_exc()
+            raise 
        
         else:
             return category_set
@@ -106,9 +115,13 @@ class ProductService:
             if product_data :
                 for product in product_data :
                     product['discounted_price'] = round(product['sale_price']*(100-product['discount_rate'])/100)
+            
+            else : 
+                product_data = "해당 카테고리에 맞는 상품이 존재하지 않습니다."
 
         except :
             traceback.print_exc()
+            raise 
        
         else :
             return product_data
@@ -131,6 +144,7 @@ class ProductService:
         
         except :
             traceback.print_exc()
+            raise 
         
         else :
             return product

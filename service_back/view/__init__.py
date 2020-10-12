@@ -25,14 +25,8 @@ def create_endpoints(app, services):
     purchase_service = services.purchase_service
 
     # 작성자: 김기욱
-    # 수정일: 2020.09.25 금
-    # 카테고리 endpoint 추가
-
-    # 수정일: 2020.09.23 수
-    # 검색 endpoint 추가
-    
-    # 작성일: 2020.09.22.화
-    # 상품 리스트 데이터 endpoint 추가
+    # 기능: 상품/카테고리/검색/QNA/쿠폰
+    # app.add_url_rule('/', view_func = MainProductsView.as_view('mainproducts', product_service))
     app.add_url_rule('/', view_func = MainProductsView.as_view('mainproducts', product_service))
     app.add_url_rule('/products', view_func = ProductsView.as_view('products', product_service))
     app.add_url_rule('/products/<int:product_id>', view_func = ProductView.as_view('product', product_service))
@@ -42,7 +36,6 @@ def create_endpoints(app, services):
     app.add_url_rule('/coupons', view_func=CouponView.as_view('coupon', coupon_service))
     app.add_url_rule('/user/coupons', view_func=UserCouponView.as_view('user_coupon', coupon_service))
     # 작성자: 김태하
-    # 작성일: 2020.09.23.수
     # 기능: 회원가입
     app.add_url_rule('/sign-up', view_func = SignUp.as_view('user_sign_up', user_service))
     app.add_url_rule('/sign-in', view_func = SignIn.as_view('user_sign_in', user_service))

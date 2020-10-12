@@ -10,12 +10,13 @@ from flask_request_validator import (
     validate_params
 )
 from connection  import get_connection
-
+from utils       import catch_exception
 
 class SearchView(MethodView):
     def __init__(self, service):
         self.service = service
     
+    @catch_exception
     #표시되는 데이터 갯수는 50개가 default지만 필요에 따라 쿼리파라미터로 수정이 가능하다
     @validate_params(
         Param('limit', GET, int, default = 50, required = False),
