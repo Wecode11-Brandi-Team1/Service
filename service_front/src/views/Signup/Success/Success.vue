@@ -7,8 +7,8 @@
       <h5>지급받으신 혜택은 쿠폰함에서 확인 가능합니다</h5>
       <div class="line"></div>
       <div class="button-wrap">
-        <button>쿠폰 확인하기</button>
-        <router-link to="/main"><button>바로 쇼핑하기</button></router-link>
+        <router-link to="/mypage/coupon"><button>쿠폰 확인하기</button></router-link>
+        <router-link to="/"><button>바로 쇼핑하기</button></router-link>
       </div>
     </div>
   </div>
@@ -21,11 +21,11 @@ export default {
   }),
   mounted(){
     this.$store.state.signUpTabName = this.pageName;
-    history.pushState(null, null, location.href);
-    window.onpopstate = function(event) {
-      history.go(1);
-      alert('잘못된 접근입니다.');
-    };
+    // history.pushState(null, null, location.href);
+    // window.onpopstate = function(event) {
+    //   history.go(1);
+    //   alert('잘못된 접근입니다.');
+    // };
   }
 }
 </script>

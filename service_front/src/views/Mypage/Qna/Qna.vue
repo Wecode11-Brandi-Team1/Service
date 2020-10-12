@@ -13,6 +13,12 @@
               <dt>작성자</dt>
               <dt>작성일</dt>
             </dl>
+            <dl class="qna_question">
+              <dd>미답변</dd>
+              <dd>테스트테스트콘푸라이크냠냠</dd>
+              <dd></dd>
+              <dd>2020.09.24</dd>
+            </dl>
           </div>
       </div>
     </div>
@@ -22,11 +28,13 @@
 <script>
 export default {
   data:() => ({
-    pageName:'qna'
+    pageName:'qna',
+    mobilePageName:'상품 Q&A'
   }),
   mounted: function () {
     this.$store.state.myPageTabName = this.pageName;
     this.$store.state.myPageShow = true;
+    this.$store.state.mobilePageName = this.mobilePageName;
   }
 }
 </script>
@@ -104,6 +112,61 @@ export default {
   .mypage-wrap {
     max-width: 1300px;
     margin: 0 auto;
+  }
+}
+
+@media screen and (max-width: 400px){
+  .mypage-wrap {
+    max-width: 400px;
+    margin: 0 auto;
+    margin-top: 75px;
+
+    .qna-box{
+      h2{
+        display: none;
+      }
+
+      .qna-list{
+        .list-header{
+          display: none !important;
+        }
+        
+        .qna_question{
+          border-top: 1px solid #000;
+          display: flex !important;
+          flex-direction: column;
+          
+          dd{
+            width: 100%;
+            display: block !important;
+            margin-bottom: 0px;
+
+            &:first-child{
+              text-align: left;
+              font-weight: 700;
+              border-bottom: none;
+            }
+
+            &:nth-child(2){
+              text-align: left;
+              font-size: 15px;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              border-bottom: none;
+            }
+
+            &:nth-child(3){
+              padding: 0;
+              border-bottom: none;
+            }
+
+            &:nth-child(4){
+              text-align: right;
+            }
+          }
+        }
+      }
+    }
   }
 }
 </style>

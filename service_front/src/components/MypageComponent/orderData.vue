@@ -1,25 +1,23 @@
 <template>
   <div class="delivery-wrap">
-    <div class="delivery-title">브랜디 배송 상품</div>
-    <div class="delivery-icon"><img src="https://web-staging.brandi.co.kr/static/2020.7.3/images/ic-seller-xl@3x.png" />상품</div>
     <div class="order-item">
       <dl>
-        <dt><a>{{ propsdata.data ? propsdata.data[0].korean_name : ''}}</a></dt>
+        <dt><a>{{ propsdata.seller_name }}</a></dt>
         <dt></dt>
         <dt>주문금액</dt>
         <dt>진행상황</dt>
       </dl>
       <dl class="order-info">
         <dd>
-          <img :src="propsdata.data ? propsdata.data[0].main_img : ''" />
+          <img :src="propsdata.images" />
         </dd>
         <dd>
-          <span class="item-title">{{ propsdata.data ? propsdata.data[0].name : '' }}</span>
-          <span>{{ propsdata.data ? propsdata.data[0].option_color : '' }}/{{ propsdata.data ? propsdata.data[0].option_size : '' }}</span>
-          <span>{{ propsdata.data ? propsdata.data[0].units : '' }} 개</span>
+          <span class="item-title">{{ propsdata.product_name }}</span>
+          <span>{{ propsdata.color }}/{{ propsdata.size }}</span>
+          <span>{{ propsdata.quantity }} 개</span>
         </dd>
         <dd>
-          <strong>{{ propsdata.data ? Number(propsdata.data[0].price).toLocaleString() : '' }} 원</strong>
+          <strong>{{ Number(propsdata.final_price).toLocaleString() }} 원</strong>
         </dd>
         <dd>
           <strong>상품준비중</strong>

@@ -4,15 +4,21 @@
       <div class="order-no-data" v-if="viewNoData">
         주문한 상품이 없습니다.
       </div>
-      <h2 v-if="viewData" class="order-title">{{ productData.data ? productData.data[0].created_at : '' }}<span></span> 
-      {{ productData.data ? productData.data[0].order_detail_id : '' }}<router-link to="/order/detail"><div class="btn-order">주문상세보기<img src="https://web-staging.brandi.co.kr/static/2020.7.3/images/ic-titleic-detailpage-moreaction@3x.png" /></div></router-link></h2>
-      <orderData v-if="viewData" v-bind:propsdata="productData"></orderData>
-      <div class="buttons-box" v-if="viewData">
-        <button class="refundBtn" @click="refundBtn">환불요청</button>
-        <button class="cancelBtn" @click="cancelBtn">주문취소</button>
+      <div v-if="viewData">
+        <div v-for="orderItem in productData" v-bind:key="orderItem.id">
+          <h2 class="order-title">{{ orderItem.order_date }}<span></span> 
+          {{ orderItem.order_number }}<router-link to="/order/detail"><div class="btn-order">주문상세보기<img src="https://web-staging.brandi.co.kr/static/2020.7.3/images/ic-titleic-detailpage-moreaction@3x.png" /></div></router-link></h2>
+          <div class="delivery-title">브랜디 배송 상품</div>
+          <div class="delivery-icon"><img src="https://web-staging.brandi.co.kr/static/2020.7.3/images/ic-seller-xl@3x.png" />상품</div>
+          <orderData v-bind:propsdata="detailItem" v-for="detailItem in orderItem.order_details" v-bind:key="detailItem.id"></orderData>
+          <div class="buttons-box">
+            <button class="refundBtn" @click="refundBtn">환불요청</button>
+            <button class="cancelBtn" @click="cancelBtn">주문취소</button>
+          </div>
+        </div>
       </div>
     </div>
-
+    <!-- mobile 레이아웃 -->
     <div class="mobile-box">
         <div class="mobile-iconbox">
           <ul>
@@ -20,22 +26,26 @@
               <div class="text-box">
                 <img src="https://web-staging.brandi.co.kr/static/2020.7.3/images/ic-my-point-s@3x.png" />
                 <br/>
-                <span>포인트 <p class="point-color">1</p></span>
+                <span>포인트 <p class="point-color"></p></span>
               </div>
             </li>
             <li>
+              <router-link to="/mypage/coupon">
               <div class="text-box">
                 <img src="https://web-staging.brandi.co.kr/static/2020.7.3/images/ic-mypage-coupon-s@3x.png" />
                 <br/>
-                <span>쿠폰 <p class="point-color">1</p></span>
+                <span>쿠폰 <p class="point-color">{{ $store.state.couponNum }}</p></span>
               </div>
+              </router-link>
             </li>
             <li>
+              <router-link to="/mypage">
               <div class="text-box">
                 <img src="https://web-staging.brandi.co.kr/static/2020.7.3/images/ic-mypage-orderlist-s@3x.png" />
                 <br/>
                 <span>주문/배송조회</span>
               </div>
+              </router-link>
             </li>
           </ul>
         </div>
@@ -45,28 +55,36 @@
           <div class="shopping-box">
             <ul>
               <li>
-                <a>
-                  <img src="https://web-staging.brandi.co.kr/static/20.08.01/images/ic-myshopping-basket@3x.png" />
-                  <span>장바구니 <p class="num-color">1</p></span>
-                </a>
+                <div>
+                  <a>
+                    <img src="https://web-staging.brandi.co.kr/static/20.08.01/images/ic-myshopping-basket@3x.png" />
+                    <span>장바구니 <p class="num-color">1</p></span>
+                  </a>
+                </div>
               </li>
               <li>
-                <a>
+                <router-link to="/mypage/qna">
+                <div>
                   <img src="https://web-staging.brandi.co.kr/static/20.08.01/images/ic-myshopping-qna@3x.png" />
                   <span>Q&A</span>
-                </a>
+                </div>
+                </router-link>
               </li>
               <li>
-                <a>
-                  <img src="https://web-staging.brandi.co.kr/static/20.08.01/images/ic-myshopping-faq@3x.png" />
-                  <span>FAQ</span>
-                </a>
+                <div>
+                  <a>
+                    <img src="https://web-staging.brandi.co.kr/static/20.08.01/images/ic-myshopping-faq@3x.png" />
+                    <span>FAQ</span>
+                  </a>
+                </div>
               </li>
               <li>
-                <a>
-                  <img src="https://web-staging.brandi.co.kr/static/20.08.01/images/ic-myshopping-basket-copy@3x.png" />
-                  <span>로그아웃</span>
-                </a>
+                <div>
+                  <a>
+                    <img src="https://web-staging.brandi.co.kr/static/20.08.01/images/ic-myshopping-basket-copy@3x.png" />
+                    <span>로그아웃</span>
+                  </a>
+                </div>
               </li>
             </ul>
           </div>
@@ -125,9 +143,10 @@ import OrderData from '../../../components/MypageComponent/orderData.vue';
 export default {
   data:() => ({
     pageName:'orderList',
-    viewNoData:false,
-    viewData:false,
-    productData:[]
+    viewNoData: false,
+    viewData: false,
+    productData: [],
+    mobilePageName: '',
   }),
   props:['propsdata'],
   components:{
@@ -149,10 +168,10 @@ export default {
     this.$store.state.myPageTabName = this.pageName;
     this.$store.state.myPageShow = true;
     axios({
-      url: 'http://10.251.1.113:5000/api/order/item',
+      url: 'http://10.251.1.174/orders',
       method: 'GET',
       headers: { 
-        'Authorization': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjozMTZ9.S9rb5I0Z7Ud5hEbaYhKqqnUZpKNkwFQbkrjoM6grtX0'
+        'Authorization': this.$cookies.get('accesstoken')
       }
     })
     .then((response) => {
@@ -218,6 +237,27 @@ export default {
     }
   }
 
+  .delivery-title{
+    font-size: 26px;
+    font-weight: bold;
+    border-bottom: 1px solid #000;
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+
+  .delivery-icon{
+    font-size: 21px;
+    font-weight: bold;
+    padding: 21px 0px;
+
+    img{
+      height: 27px;
+      vertical-align: text-bottom;
+      margin-bottom: 2px;
+      margin-right: 2px;
+    }
+  }
+
   .buttons-box{
     width: 100%;
     text-align: right;
@@ -251,10 +291,14 @@ export default {
       }
     }
   }
+
+  .mobile-box{
+    display: none;
+  }
 }
 
 @media screen and (min-width: 769px){
-  .mypage-wrap{
+  .order-inquiry-wrapp{
     max-width: 1300px;
     margin: 0 auto;
 
@@ -265,13 +309,17 @@ export default {
 }
 
 @media screen and (max-width: 400px){
-  .mypage-wrap{
+  .order-inquiry-wrap{
+    margin: 55px 0 180px 0;
+
     .order-no-data{
       display: none;
     }
 
-    .mobile-iconbox{
+    .mobile-box{
       display: block;
+
+      .mobile-iconbox{
 
       ul{
         width: 100%;
@@ -287,8 +335,13 @@ export default {
           display: flex;
           align-items: center;
           justify-content: center;
-          text-align: center;
+          text-align: center;    color: #1e1e1e;
           font-size: 14px;
+          color: #1e1e1e;
+
+          a{
+            color: #1e1e1e;
+          }
 
           &:nth-child(2){
             border-left: 1px solid #e1e1e1;
@@ -339,14 +392,17 @@ export default {
         li{
           height: 52px;
           display: flex;
+          align-items: center;
           border-top: solid 1px #e1e1e1;
           border-bottom: solid 1px #e1e1e1;
           line-height: 15px;
+          color: #1e1e1e;
 
           a{
             padding: 7px 10px;
             font-size: 13px;
             line-height: 15px;
+            color: #1e1e1e;
 
             img{
               width: 40px;
@@ -452,6 +508,7 @@ export default {
         margin: 6px 0;
       }
     }
+  }
   }
 }
 

@@ -27,6 +27,7 @@ export default {
   flex-direction: column;
   justify-items: center;
   align-items: center;
+  margin: 50px 0;
 
   .page-title{
     margin-bottom: 30px;

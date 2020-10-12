@@ -1,23 +1,37 @@
 <template>
   <div class="mypage-wrap">
+    <div class="moblieNav">
+      <MobileNav></MobileNav>
+    </div>
     <div class="page-title" v-if="$store.state.myPageShow">
       <h1>마이페이지</h1>
     </div>
       <IconBox v-if="$store.state.myPageShow"></IconBox>
       <router-view></router-view>
+      <div class="tabBarNav">
+        <TabBarNav></TabBarNav>
+    </div>
   </div>
 </template>
 
 <script>
 import IconBox from '../../components/MypageComponent/IconBox.vue';
+import MobileNav from '../../components/MobileNav/MobileNav.vue';
+import TabBarNav from '../../components/TabBarNav/TabBarNav.vue';
 
 export default {
   data:() => ({
-    pageName:'orderList',
+    pageName:'mypage',
     productData:[]
   }),
   components:{
     IconBox,
+    MobileNav,
+    TabBarNav
+  },
+  mounted: function () {
+    this.$store.state.mobilePageName = this.pageName;
+    this.$store.state.isTabBar = this.pageName;
   },
 }
 </script>
@@ -44,6 +58,14 @@ export default {
   .mypage-wrap{
     max-width: 1300px;
     margin: 0 auto;
+
+    .moblieNav{
+      display: none;
+    }
+
+    .tabBarNav{
+      display: none;
+    }
   }
 }
 
@@ -52,6 +74,14 @@ export default {
   .mypage-wrap{
     .page-title{
       display: none;
+    }
+
+    .moblieNav{
+      display: block;
+    }
+
+    .tabBarNav{
+      display: block;
     }
   }
 }

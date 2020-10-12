@@ -1,0 +1,64 @@
+[
+  {
+    "id": 1,
+    "order_date": "2020.10.10",
+    "order_details": [
+      {
+        "color": "Gray",
+        "final_price": 32000,
+        "images": "https://wecode11-brandi.s3.ap-northeast-2.amazonaws.com/e8a468df-7979-4c20-986d-b54486ce6bba_roid_1.jpg",
+        "option_id": 1,
+        "order_detail_number": "B2020101000000001",
+        "order_detail_statuses_id": 1,
+        "product_name": "로이드 린넨노카라반팔자켓",
+        "quantity": 1,
+        "seller_name": "이지연1",
+        "size": "Free"
+      },
+      {
+        "color": "Gray",
+        "final_price": 32000,
+        "images": "https://wecode11-brandi.s3.ap-northeast-2.amazonaws.com/e8a468df-7979-4c20-986d-b54486ce6bba_roid_1.jpg",
+        "option_id": 1,
+        "order_detail_number": "B2020101000000002",
+        "order_detail_statuses_id": 1,
+        "product_name": "로이드 린넨노카라반팔자켓",
+        "quantity": 1,
+        "seller_name": "이지연1",
+        "size": "Free"
+      }
+    ],
+    "order_number": "20201010000000001"
+  },
+  {
+    "id": 2,
+    "order_date": "2020.10.11",
+    "order_details": [
+      {
+        "color": "Gray",
+        "final_price": 32000,
+        "images": "https://wecode11-brandi.s3.ap-northeast-2.amazonaws.com/e8a468df-7979-4c20-986d-b54486ce6bba_roid_1.jpg",
+        "option_id": 1,
+        "order_detail_number": "B2020101100000001",
+        "order_detail_statuses_id": 1,
+        "product_name": "로이드 린넨노카라반팔자켓",
+        "quantity": 1,
+        "seller_name": "이지연1",
+        "size": "Free"
+      },
+      {
+        "color": "Gray",
+        "final_price": 32000,
+        "images": "https://wecode11-brandi.s3.ap-northeast-2.amazonaws.com/e8a468df-7979-4c20-986d-b54486ce6bba_roid_1.jpg",
+        "option_id": 1,
+        "order_detail_number": "B2020101100000002",
+        "order_detail_statuses_id": 1,
+        "product_name": "로이드 린넨노카라반팔자켓",
+        "quantity": 1,
+        "seller_name": "이지연1",
+        "size": "Free"
+      }
+    ],
+    "order_number": "20201011000000002"
+  }
+]

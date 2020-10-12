@@ -11,8 +11,9 @@
             </dl>
           </div>
         </div>
+        <div v-if="isCoupon">
         <div class="coupon">
-          <h2>발급받은 쿠폰 <strong>1</strong><span><span class="coupon-Star">* </span>유효기간이 30일 지난 쿠폰은 목록에서 삭제됩니다.</span></h2>
+          <h2>발급받은 쿠폰 <strong>{{ couponData.the_number_of_coupons }}</strong><span><span class="coupon-star">* </span>유효기간이 30일 지난 쿠폰은 목록에서 삭제됩니다.</span></h2>
           <div class="coupon-list">
             <dl class="list-header">
               <dt>쿠폰명</dt>
@@ -20,13 +21,14 @@
               <dt>사용조건</dt>
               <dt>유효기간</dt>
             </dl>
-            <dl>
-              <dd>회원가입 축하쿠폰</dd>
-              <dd>2,000원 할인</dd>
-              <dd>[쇼핑몰 쿠폰] 15,000원 이상 구매시</dd>
-              <dd>2020.01.16 ~ 2020.10.20</dd>
+            <dl v-for="(data,index) in couponData.coupons" v-bind:key="data.id">
+              <dd>{{ couponData.coupons[index].coupon_name }}</dd>
+              <dd>{{ Number(couponData.coupons[index].discount_price).toLocaleString() }}원 할인</dd>
+              <dd>[전체 쿠폰] {{ Number(couponData.coupons[index].minimum_price).toLocaleString() }} 이상 구매시</dd>
+              <dd>{{ couponData.coupons[index].valid_ended_at }} ~ {{ couponData.coupons[index].valid_started_at }}</dd>
             </dl>
           </div>
+        </div>
         </div>
       </div>
     </div>
@@ -34,13 +36,42 @@
 </template>
 
 <script>
+import { axios } from '../../../plugins/axios'
+
 export default {
   data:() => ({
-    pageName:'coupon'
+    pageName:'coupon',
+    couponData:[],
+    isCoupon: true,
+    mobilePageName:'쿠폰함'
   }),
   mounted: function () {
     this.$store.state.myPageTabName = this.pageName;
     this.$store.state.myPageShow = true;
+    this.$store.state.mobilePageName = this.mobilePageName;
+
+    axios({
+      url: 'http://10.251.1.113:5000/user/coupons',
+      method: 'GET',
+      headers: { 
+        'Authorization': this.$cookies.get('accesstoken') 
+        //this.$cookies.get("accesstoken")
+      }
+    })
+    .then((response) => {
+      console.log(response.data);
+      this.couponData = response.data;
+      this.$store.state.couponNum = response.data.the_number_of_coupons;
+
+      if(response.data === "쿠폰이 존재하지 않습니다."){
+        this.isCoupon = false;
+        alert('쿠폰이 존재하지 않습니다.');
+      }
+    })
+    .catch((error) => {
+      alert('쿠폰이 존재하지 않습니다.');
+      this.isCoupon = false;
+    })
   }
 }
 </script>
@@ -162,24 +193,80 @@ export default {
   .mypage-wrap {
     max-width: 400px;
     margin: 0 auto;
+    margin-top: 55px;
 
     .page-box{
       .coupon-box{
-        .coupon-box{
-          .register{
-            h2{
-              font-size: 18.5px;
+        .register{
+          h2{
+            font-size: 18.5px;
+          }
+
+          .register-table{
+            dt{
+              font-size: 12px;
+              margin-right: 15px;
             }
 
-            .register-table{
-              dt{
-                font-size: 12px;
-                margin-right: 15px;
-              }
+            dd{
+              max-width: 400px;
+              font-size: 12px;
+            }
+          }
+        }
 
+        .coupon{
+          h2{
+            font-size: 18.5px;
+
+            span{
+              display: block;
+              font-size: 12px;
+              padding-left: 0;
+              margin-top: 10px;
+            }
+
+            .coupon-star{
+              display: none;
+            }
+          }
+
+          .coupon-list{
+            .list-header{
+              display: none;
+            }
+
+            dl{
               dd{
-                max-width: 400px;
-                font-size: 12px;
+                display: flex;
+                flex-direction: column;
+                text-align: left;
+                margin: 0px;
+
+                &:nth-child(1){
+                  font-size: 17.5px;
+                  border: none;
+                  padding: 20px 20px 0 20px;
+                }
+
+                &:nth-child(2){
+                  font-size: 23px;
+                  font-weight: 500;
+                  padding: 0px 20px;
+                  border: none;
+                  margin-bottom: 8px;
+                }
+
+                &:nth-child(3){
+                  font-size: 13px;
+                  padding: 0px 20px;
+                  border: none;
+                }
+
+                &:nth-child(4){
+                  font-size: 13px;
+                  padding: 0px 20px 20px 20px;
+                }
               }
             }
           }
@@ -187,5 +274,9 @@ export default {
       }
     }
   }
+}
+
+[v-cloak] {
+  display: none;
 }
 </style>

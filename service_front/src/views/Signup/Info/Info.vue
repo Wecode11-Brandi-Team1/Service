@@ -55,7 +55,7 @@ export default {
       }else if(this.password.length >= 20 && !this.$store.state.isGoogle){
         alert('비밀번호는 8~20자 영문 대소문자, 숫자, 특수문자를 사용해 주세요.')
       }else if(!this.$store.state.isGoogle){
-        axios.post('http://10.251.1.146:5000/sign-up', {
+        axios.post('http://10.251.1.174:5000/sign-up', {
           account: this.account,
           email: this.email,
           password: this.password,
@@ -77,7 +77,7 @@ export default {
         const headers = {
           headers: { 'Authorization': this.$store.state.googleToken}
         }
-        axios.post('http://10.251.1.146:5000/social-signup', {
+        axios.post('http://10.251.1.174:5000/social-signup', {
           account: this.account
         }, headers)
         .then((response) => {

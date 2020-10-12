@@ -23,7 +23,7 @@
             <a :class="['icon-wrap', isActive[$store.state.myPageTabName][2]]" v-if="$store.state.myPageTabName">
               <img src="https://web-staging.brandi.co.kr/static/2020.7.3/images/ic-mypage-coupon-s@3x.png" />
               <br/>
-              <span>쿠폰 <p class="point-color">{{ number.num2 }}</p></span>
+              <span>쿠폰 <p class="point-color">{{ $store.state.couponNum }}</p></span>
             </a>
           </router-link>
         </li>

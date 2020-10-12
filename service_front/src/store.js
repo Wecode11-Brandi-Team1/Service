@@ -23,5 +23,9 @@ export const store = new Vuex.Store({
       activeTab: 0,
     },
     showModal: false,
+    couponNum: "",
+    mobilePageName: "",
+    isMypage: false,
+    isTabBar:""
   },
 });

@@ -37,57 +37,24 @@ export default {
         "766168086002-nlrgc0u79p1mjd7etd18trul3lu961nj.apps.googleusercontent.com",
     },
   }),
-  methods: {
-    loginSubmit() {
-      if (!this.account) {
-        alert("아이디를 입력하세요");
-      } else if (this.account && !this.password) {
-        alert("비밀번호를 입력하세요");
-      } else {
-        axios
-          .post("http://10.251.1.146:5000/sign-in", {
-            account: this.account,
-            password: this.password,
-          })
-          .then((response) => {
-            if (response.data.access_token) {
-              this.$store.state.token = response.data.access_token;
-              alert("로그인에 성공하였습니다.");
-              console.log(response.data.access_token);
-              this.$router.push({ path: "/" });
-            } else {
-              alert("아이디와 비밀번호를 확인해주세요.");
-            }
-          })
-          .catch((error) => {
-            if (
-              error.response &&
-              error.response.data.message === "탈퇴한 회원입니다."
-            ) {
-              alert("탈퇴한 회원입니다. 회원가입을 진행해주세요.");
-            } else if (
-              error.response &&
-              error.response.data.message === "회원정보가 일치하지 않습니다."
-            ) {
-              alert(
-                "회원정보가 일치하지 않습니다. 아이디와 비밀번호를 확인해주세요."
-              );
-            }
-          });
-      }
-    },
-
-    onSignInSuccess(googleUser) {
-      const accessToken = googleUser.getAuthResponse(true).access_token;
-      const headers = {
-        headers: { Authorization: accessToken },
-      };
-      axios
-        .post("http://10.251.1.146:5000/social-signin", null, headers)
+  methods:{
+    loginSubmit(){
+      if(!this.account){
+        alert('아이디를 입력하세요');
+      }else if(this.account && !this.password){
+        alert('비밀번호를 입력하세요')
+      }else{
+        axios.post('http://10.251.1.174:5000/sign-in', {
+          account: this.account,
+          password: this.password
+        })
         .then((response) => {
           if (response.data.access_token) {
-            this.$store.state.token = response.data.access_token;
-            this.$router.push({ path: "/" });
+            alert('로그인에 성공하였습니다.');
+            this.$cookies.set("accesstoken", response.data.access_token);
+            this.$router.push({path: '/'});
+          }else{
+            alert('아이디와 비밀번호를 확인해주세요.');
           }
         })
         .catch((error) => {
@@ -98,9 +65,31 @@ export default {
             this.$router.push({ path: "/signup" });
           }
         });
-    },
-  },
-};
+    }},
+    
+    onSignInSuccess (googleUser) {
+      const accessToken = googleUser.getAuthResponse(true).access_token;
+      const headers = {
+        headers: { 'Authorization': accessToken }
+      }
+      axios.post('http://10.251.1.174:5000/social-signin', null, headers)
+      .then((response) => {
+        if(response.data.access_token){
+          this.$cookies.set("accesstoken", "response.data.access_token");
+          this.$router.push({path: '/'});
+        }
+      })
+      .catch((error) => {
+        if (error.response && error.response.status === 401) {
+          this.$store.state.googleToken = accessToken;
+          this.$store.state.isGoogle = true;
+          alert('회원정보가 없습니다. 회원가입을 진행해주세요.');
+          this.$router.push({path: '/signup'});
+        }
+    })
+  }
+}
+}
 </script>
 
 <style lang="scss" scoped>
