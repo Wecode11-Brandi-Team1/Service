@@ -15,7 +15,9 @@ from .search_view   import SearchView
 from .question_view import QuestionView
 from .coupon_view   import CouponView, UserCouponView
 from .purchase_view import ProductPurchase
+from cache          import cache
 
+# @cache.cached(timeout=500)
 def create_endpoints(app, services):
     product_service  = services.product_service
     search_service   = services.search_service

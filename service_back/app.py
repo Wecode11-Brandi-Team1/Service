@@ -2,7 +2,6 @@ import config
 
 from flask         import Flask
 from flask_cors    import CORS
-from flask_caching import Cache
   
 from view          import create_endpoints
 from model         import (
@@ -24,6 +23,7 @@ from service       import (
 
 import sentry_sdk
 from sentry_sdk.integrations.flask import FlaskIntegration
+from cache import cache
 
 sentry_sdk.init(
     dsn="https://5cc349d8de88441c9c3427c07077f3a9@o453871.ingest.sentry.io/5443008",
@@ -49,7 +49,7 @@ def create_app(test_config = None):
     app = Flask(__name__)
     app.config['JSON_AS_ASCII'] = False
     app.config['CACHE_TYPE'] = 'simple'
-    app.cache = Cache(app)
+    cache.init_app(app)
 
     #SetUp CORS
     CORS(app)

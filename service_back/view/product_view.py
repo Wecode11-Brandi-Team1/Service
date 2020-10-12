@@ -18,6 +18,7 @@ class MainProductsView(MethodView):
     def __init__(self, service):
         self.service = service
 
+    @cache.cached(timeout=30)
     def get(self):
         """
         Args:
@@ -58,6 +59,7 @@ class CategorySetView(MethodView):
     @validate_params(
         Param('q', GET, int, required = True)
     )
+    @cache.cached(timeout=100)
     def get(self, q):
         """
         Args:
@@ -100,6 +102,7 @@ class ProductsView(MethodView):
         Param('is_new',   GET, bool, required = False),
         Param('is_cheap', GET, bool, required = False)
     )
+    @cache.cached(timeout=30)
     def get(self, *args):
         """
         Args:
@@ -157,6 +160,7 @@ class ProductView(MethodView):
     @validate_params(
         Param('product_id', PATH, int, required = True)
     )
+    @cache.cached(timeout=30)
     def get(self, product_id):
         """
         Args:
