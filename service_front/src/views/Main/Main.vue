@@ -1,9 +1,9 @@
 <template>
   <div class="main">
     <header class="rollingbanner-container">
-      <a href="?">
+      <div class="rollingbanner-photo-container">
         <img alt="rolling banner" v-bind:src="rolling_banner_image" />
-      </a>
+      </div>
       <div class="slide-button">
         <div class="spot" href="?"></div>
       </div>
@@ -105,7 +105,6 @@ export default {
 
   a {
     color: inherit;
-
     &:hover {
       color: inherit;
       text-decoration: none;
@@ -116,6 +115,11 @@ export default {
     position: relative;
     margin-bottom: 30px;
     padding-bottom: 24px;
+
+    .rollingbanner-photo-container {
+      display: flex;
+      justify-content: center;
+    }
 
     img {
       max-width: 100%;
