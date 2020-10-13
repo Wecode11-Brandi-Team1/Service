@@ -464,8 +464,14 @@ export default {
       console.log(click_location - this.mouse_location);
     },
     save_product_data: function () {
-      localStorage.setItem("data", JSON.stringify(this.result_option));
-      console.log(localStorage.data);
+      let product_data = this.result_option;
+      if (localStorage.data) {
+        product_data.push(JSON.parse(localStorage.getItem("data")));
+        localStorage.setItem("data", JSON.stringify(product_data));
+      } else {
+        localStorage.setItem("data", JSON.stringify(product_data));
+      }
+      alert("주문하기에 담았습니다.");
     },
     coupon_downloader: function (obj) {
       axios
