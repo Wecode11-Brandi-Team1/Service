@@ -116,6 +116,7 @@ class CouponService:
     
     def use_downloaded_coupons(self, params, db):
         """
+        다운로드한 쿠폰 사용 - Business Layer(Service) function
         Args :
             coupons_dao : 쿠폰 관련 데이터접근객체
             params      : 딕셔너리 패킹된 쿼리파라미터객체

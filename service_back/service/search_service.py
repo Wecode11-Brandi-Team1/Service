@@ -6,6 +6,7 @@ class SearchService:
 
     def search_stores(self, params, db):
         """
+        스토어 검색 - Business Layer(Service) function
         Args :
             search_dao: 검색 관련 데이터접근객체
             params : 딕셔너리 패킹된 쿼리파라미터객체
@@ -34,6 +35,7 @@ class SearchService:
 
     def search_products(self, params, db):
         """
+        상품 검색 - Business Layer(Service) function
         Args :
             search_dao: 검색 관련 데이터접근객체
             params : 딕셔너리 패킹된 쿼리파라미터객체

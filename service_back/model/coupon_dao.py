@@ -174,7 +174,7 @@ class CouponDao:
 
     def use_downloaded_coupons(self, params, db):
         """
-        다운로드한 쿠폰 조회 - Persistence Layer(Model) function
+        다운로드한 쿠폰 사용 - Persistence Layer(Model) function
         Args :
             params : 딕셔너리 패킹된 쿼리파라미터객체 
             db     : 데이터베이스 연결 객체

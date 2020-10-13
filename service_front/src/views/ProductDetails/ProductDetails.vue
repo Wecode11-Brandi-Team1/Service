@@ -49,10 +49,7 @@
                   v-bind:value="select_category"
                   v-on:click="category_selecter"
                 />
-                <div
-                  class="select-question-list-container"
-                  v-if="is_category_open"
-                >
+                <div class="select-question-list-container" v-if="is_category_open">
                   <div class="select-question-list">
                     <input
                       type="button"
@@ -70,10 +67,7 @@
           <li>
             <div>내용</div>
             <div>
-              <textarea
-                placeholder="내용을 입력해 주세요."
-                v-on:change="input_main_text"
-              ></textarea>
+              <textarea placeholder="내용을 입력해 주세요." v-on:change="input_main_text"></textarea>
             </div>
           </li>
           <li>
@@ -117,10 +111,7 @@
               <span>작성일</span>
             </div>
           </li>
-          <li
-            v-for="(list, idx) in this.QA_list.questions"
-            v-bind:key="list[1]"
-          >
+          <li v-for="(list, idx) in this.QA_list.questions" v-bind:key="list[1]">
             <div>
               <span>{{ list.question_type }}</span>
             </div>
@@ -130,8 +121,7 @@
             <div>
               <span
                 v-if="!list.is_secreted || list.user_id === QA_list.user_id"
-                >{{ list.question_content }}</span
-              >
+              >{{ list.question_content }}</span>
               <span v-if="list.is_secreted && list.user_id !== QA_list.user_id">
                 <img
                   alt="lock"
@@ -328,10 +318,11 @@ export default {
       this.offset = (e.target.value - 1) * this.limit;
       axios
         .get(
-          `${config.API}/products/1/questions?offset=${this.offset}&limit=${this.limit}`,
+          `http://192.168.7.5:5000/products/1/questions?offset=${this.offset}&limit=${this.limit}`,
           {
             headers: {
-              Authorization: localStorage.getItem("token"),
+              Authorization:
+                "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6Mn0.YHNEVqI1PLALLTpPVComx3VMQZkV0z4CzT_SQk88yY0",
             },
           }
         )
@@ -341,19 +332,24 @@ export default {
       this.see_my_question = !this.see_my_question;
       if (!this.see_my_question) {
         axios
-          .get(`${config.API}/products/1/questions?limit=10`, {
+          .get(`http://192.168.7.5:5000/products/1/questions?limit=10`, {
             headers: {
-              Authorization: localStorage.getItem("token"),
+              Authorization:
+                "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6Mn0.YHNEVqI1PLALLTpPVComx3VMQZkV0z4CzT_SQk88yY0",
             },
           })
           .then((res) => (this.QA_list = res.data));
       } else {
         axios
-          .get(`${config.API}/products/1/questions?u=${this.QA_list.user_id}`, {
-            headers: {
-              Authorization: localStorage.getItem("token"),
-            },
-          })
+          .get(
+            `http://192.168.7.5:5000/products/1/questions?u=${this.QA_list.user_id}`,
+            {
+              headers: {
+                Authorization:
+                  "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6Mn0.YHNEVqI1PLALLTpPVComx3VMQZkV0z4CzT_SQk88yY0",
+              },
+            }
+          )
           .then((res) => (this.QA_list = res.data));
       }
     },
@@ -386,7 +382,7 @@ export default {
       }
       axios
         .post(
-          `${config.API}/products/1/questions`,
+          `http://192.168.7.5:5000/products/1/questions`,
           {
             questions: {
               question_type_id: this.QA_category.indexOf(this.select_category),
@@ -396,16 +392,18 @@ export default {
           },
           {
             headers: {
-              Authorization: localStorage.getItem("token"),
+              Authorization:
+                "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6Mn0.YHNEVqI1PLALLTpPVComx3VMQZkV0z4CzT_SQk88yY0",
             },
           }
         )
         .then((res) => console.log(res))
         .then(() =>
           axios
-            .get(`${config.API}/products/1/questions?limit=10`, {
+            .get(`http://192.168.7.5:5000/products/1/questions?limit=10`, {
               headers: {
-                Authorization: localStorage.getItem("token"),
+                Authorization:
+                  "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6Mn0.YHNEVqI1PLALLTpPVComx3VMQZkV0z4CzT_SQk88yY0",
               },
             })
             .then((res) => (this.QA_list = res.data))
@@ -434,17 +432,22 @@ export default {
     delete_question(num) {
       let question_id = Number(num);
       axios
-        .delete(`${config.API}/products/1/questions?q=${question_id}`, {
-          headers: {
-            Authorization: localStorage.getItem("token"),
-          },
-        })
+        .delete(
+          `http://192.168.7.5:5000/products/1/questions?q=${question_id}`,
+          {
+            headers: {
+              Authorization:
+                "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6Mn0.YHNEVqI1PLALLTpPVComx3VMQZkV0z4CzT_SQk88yY0",
+            },
+          }
+        )
         .then((res) => console.log(res))
         .then(() =>
           axios
-            .get(`${config.API}/products/1/questions?limit=10`, {
+            .get(`http://192.168.7.5:5000/products/1/questions?limit=10`, {
               headers: {
-                Authorization: localStorage.getItem("token"),
+                Authorization:
+                  "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6Mn0.YHNEVqI1PLALLTpPVComx3VMQZkV0z4CzT_SQk88yY0",
               },
             })
             .then((res) => (this.QA_list = res.data))
@@ -454,12 +457,13 @@ export default {
   },
   created: function () {
     axios
-      .get(`${config.API}/products/${this.$route.params.id}`)
+      .get(`http://192.168.7.5:5000/products/${this.$route.params.id}`)
       .then((res) => (this.datas = res.data));
     axios
-      .get(`${config.API}/products/1/questions?limit=5`, {
+      .get(`http://192.168.7.5:5000/products/1/questions?limit=5`, {
         headers: {
-          Authorization: localStorage.getItem("token"),
+          Authorization:
+            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6Mn0.YHNEVqI1PLALLTpPVComx3VMQZkV0z4CzT_SQk88yY0",
         },
       })
       .then((res) => (this.QA_list = res.data));
