@@ -124,7 +124,7 @@
 
 <script>
 import axios from "axios";
-import config from "../../api/apiConfig";
+import {config} from "../../api/apiConfig";
 
 export default {
   name: "",

@@ -9,7 +9,30 @@
       <button @click="$store.state.showModal = false"><img alt="close" src="https://www.brandi.co.kr/static/2020.7.3/images/ic-popup-exit.png" /></button>
       </div>
       <div class="contents" v-if="addTab === false">
-        <div class="list">저장된 배송지 정보가 없습니다</div>
+        <div class="list">
+          <div v-if="this.$store.state.showAddressInfo.length > 0">
+          <ul class="address-card" v-for="item in $store.state.showAddressInfo" :key="Object.keys(item).value">
+            <li>
+              <div class="name">{{item.name}}</div>
+              <div class="address">{{item.address}}</div>
+              <div class="detail-address">{{item.detail_address}}</div>
+              <div class="phone">{{item.phone_number}}</div>
+              <div class="btn-list">
+                <div class="left">
+                  <button class="delete-btn" @click="deleteAddressData({item})">삭제</button>
+                  <button class="modify-btn" @click="modifyTab = true">수정</button>
+                </div>
+                <div class="right">
+                  <button class="choose-btn" @click="pasteAddressData({item})">선택</button>
+                </div>
+              </div>
+            </li>
+            </ul>
+            </div>
+            <div v-else>
+              저장된 배송지가 없습니다
+            </div>
+        </div>
       </div>
       <div class="contents" v-else>
         <span class="address-input-wrap">
@@ -63,18 +86,21 @@
       </div>
       <div class="footer" v-else>
         <button class="cancel-btn" @click="addTab = false">취소</button>
-        <button class="complete-btn">완료</button>
+        <button class="complete-btn" @click="pushAddressData">완료</button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import axios from "axios";
+import {config} from "../../api/apiConfig"
 import VueDaumPostcode from "vue-daum-postcode";
 
 export default {
   data: () => ({
     addTab: false,
+    modifyTab: false,
     showDaumAddressModal: false,
     addressList: {
       name: "",
@@ -85,7 +111,27 @@ export default {
       address_detail: "",
     }
   }),
-  methods: {  
+  created() {
+    const accessToken = this.$cookies.get('accesstoken')
+      const headers = {
+        headers: { Authorization: accessToken },
+      };
+        axios
+        .get(`${config.API}shipping-information`, headers)
+        .then((res) => (this.$store.state.showAddressInfo = res.data));
+        },
+  updated() {
+  },
+  methods: {
+    updateData() {
+      const accessToken = this.$cookies.get('accesstoken')
+      const headers = {
+        headers: { Authorization: accessToken },
+      };
+        axios
+        .get(`${config.API}shipping-information`, headers)
+        .then((res) => (this.$store.state.showAddressInfo = res.data));
+    },
     switchDaumAddressModal() {
       if (!this.showDaumAddressModal) {
         this.showDaumAddressModal = true;
@@ -93,27 +139,74 @@ export default {
         this.showDaumAddressModal = false;
       }
     },
-    pushData() {
-      const accessToken =
-        "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6Mn0.YHNEVqI1PLALLTpPVComx3VMQZkV0z4CzT_SQk88yY0";
+    pushAddressData() {
+      this.addTab = false
+      const accessToken = this.$cookies.get('accesstoken')
       const headers = {
         headers: { Authorization: accessToken },
       };
       const list = {
-        name: this.shipList.name,
+        name: this.addressList.name,
         phone_number:
-          this.shipList.phone1 +
+          this.addressList.phone1 +
           "-" +
-          this.shipList.phone2 +
+          this.addressList.phone2 +
           "-" +
-          this.shipList.phone3,
-        zip_code: this.shipList.address.zonecode,
-        address: this.shipList.address.address,
-        detail_address: this.shipList.address_detail,
+          this.addressList.phone3,
+        zip_code: this.addressList.address.zonecode,
+        address: this.addressList.address.address,
+        detail_address: this.addressList.address_detail,
       };
       axios
-        .post("http://10.251.1.174:5000/address", list, headers)
-        .then((response) => {});
+        .post(`${config.API}shipping-information`, list, headers)
+        .then(reponese => this.updateData())
+    },
+    pasteAddressData(data) {
+      const phoneNum = data.item.phone_number 
+        this.$store.state.shipList.name = data.item.name;
+        this.$store.state.shipList.address.zonecode = data.item.zip_code;
+        this.$store.state.shipList.address.address = data.item.address;
+        this.$store.state.shipList.address_detail = data.item.detail_address;
+        this.$store.state.shipList.phone1 = phoneNum.slice(0, 3);
+        this.$store.state.shipList.phone2 = phoneNum.slice(4, 8);
+        this.$store.state.shipList.phone3 = phoneNum.slice(9, 13);
+        this.$store.state.showModal = false
+        // console.log(`${this.$store.state.shipList.phone1}-${this.$store.state.shipList.phone2}-${this.$store.state.shipList.phone3}`);
+    },
+    deleteAddressData(data) {
+      this.addTab = false
+      const accessToken = this.$cookies.get('accesstoken')
+      const headers = {
+        headers: { Authorization: accessToken },
+      };
+      axios
+        .delete(`${config.API}shipping-information?id=${data.item.id}`, headers)
+        .then(reponese => this.updateData())
+        
+    },
+    modifyAddressData() {
+      this.addTab = false
+      const accessToken = this.$cookies.get('accesstoken')
+      const headers = {
+        headers: { Authorization: accessToken },
+      };
+      const list = {
+        name: this.addressList.name,
+        phone_number:
+          this.addressList.phone1 +
+          "-" +
+          this.addressList.phone2 +
+          "-" +
+          this.addressList.phone3,
+        zip_code: this.addressList.address.zonecode,
+        address: this.addressList.address.address,
+        detail_address: this.addressList.address_detail,
+      };
+      axios
+        .post(`${config.API}shipping-information`, list, headers)
+        .then((response) => {
+
+        });
     },
   },
 };
@@ -129,18 +222,18 @@ export default {
   left: 0;
   z-index: 99999;
   .address-modal-container {
-    position: absolute;
-    top: 10%; 
-    right: 40%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
     display: flex;
     flex-direction: column;
-    width: 500px;
-    padding: 20px;
+    padding: 20px 0 20px 0;
     background-color: white;
     .header {
       display: flex;
       justify-content: space-between;
-      padding: 15px;
+      padding: 0 15px 15px 15px;
       font-size: 1.6em;
       font-weight: bold;
       border-bottom: 1px solid #e1e1e1;
@@ -149,7 +242,51 @@ export default {
       width: 500px;
       max-height: 702px;
       overflow: scroll;
+      .list {
+        padding: 20px;
+        ul {
+          display: flex;
+          justify-content: center;
+          margin: 5px 0 5px 0;
+        }
+        li {
+          width: 436px;
+          height: 267px;
+          margin: 0;
+          padding: 25px;
+          border: 1px solid #bdbdbd;
+          border-radius: 4px;
+          .name {
+            font-size: 1.5em;
+            font-weight: bold;
+            line-height: 60px;
+          }
+          .address, .detail-address, .phone {
+            font-size: 1em;
+          }
+          .btn-list {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+            .delete-btn, .modify-btn {
+              width: 73px;
+              padding: 8px;
+              border: 1px solid #bdbdbd;
+              border-radius: 4px;
+            }
+            .choose-btn {
+              width: 73px;
+              padding: 8px;
+              border: 1px solid #bdbdbd;
+              border-radius: 4px;
+              color: white;
+              background-color: black;
+            }
+          }
+        }
+      }
       .address-input-wrap {
+        padding: 15px;
         input {
           width: 90%;
           height: 42px;
@@ -161,32 +298,29 @@ export default {
         }
         span {
           margin: auto 0;
-          padding: 15px;
+          padding: 5px;
         }
         .name-row,
         .phone-row {
           display: flex;
-          justify-content: end;
-          .name {
-            width: 221px;
+          justify-content: space-between;
+          .name, .phone {
+            width: 100px;
             font-weight: bold;
+            text-align: center;
           }
           .name-input {
-            width: 968px;
+            width: 100%;
             input {
               width: 90%;
               height: 42px;
             }
           }
-          .phone {
-            width: 221px;
-            font-weight: bold;
-          }
           .phone-input {
             display: flex;
             flex-direction: column;
             justify-content: space-around;
-            width: 968px;
+            width: 100%;
             text-indent: 0;
             input {
               width: 100px;
@@ -198,10 +332,10 @@ export default {
         .address-row {
           display: flex;
           justify-content: end;
-          height: inherit;
           .address {
-            width: 221px;
-            font-weight: bold;  
+            width: 100px;
+            font-weight: bold;
+            text-align: center;
           }
           .vue-daum-postcode {
             margin: 6px 20px 0 0;
@@ -219,9 +353,9 @@ export default {
             display: flex;
             flex-direction: column;
             justify-content: space-around;
-            width: 968px;
+            width: 100%;
             input {
-              width: 330px;
+              width: 90%;
               height: 42px;
               margin: 4px 0;
             }

@@ -113,7 +113,7 @@
 
 <script>
 import axios from "axios";
-import config from "../../api/apiConfig";
+import {config} from "../../api/apiConfig";
 import categoriesCard from "./ProductCard/CategoriesCard.vue";
 
 export default {
@@ -165,7 +165,7 @@ export default {
 
         axios
           .get(
-            `http://192.168.7.5:5000/products${this.$route.fullPath.replace(
+            `${config}products${this.$route.fullPath.replace(
               this.$route.path,
               ""
             )}`
@@ -211,7 +211,7 @@ export default {
       }
       axios
         .get(
-          `http://192.168.7.5:5000/products${this.$route.fullPath.replace(
+          `${config}products${this.$route.fullPath.replace(
             this.$route.path,
             ""
           )}`
@@ -227,7 +227,7 @@ export default {
       this.query_maker();
       axios
         .get(
-          `http://192.168.7.5:5000/products${this.$route.fullPath.replace(
+          `${config}products${this.$route.fullPath.replace(
             this.$route.path,
             ""
           )}`
@@ -241,7 +241,7 @@ export default {
 
       axios
         .get(
-          `http://192.168.7.5:5000/products${this.$route.fullPath.replace(
+          `${config}products${this.$route.fullPath.replace(
             this.$route.path,
             ""
           )}`
@@ -251,12 +251,12 @@ export default {
   },
   created: function () {
     axios
-      .get(`http://192.168.7.5:5000/category?q=${this.$route.params.id}`)
+      .get(`${config}category?q=${this.$route.params.id}`)
       .then((res) => (this.datas.nav_list = Object.values(res.data.쇼핑몰)));
 
     axios
       .get(
-        `http://192.168.7.5:5000/products${this.$route.fullPath.replace(
+        `${config}products${this.$route.fullPath.replace(
           this.$route.path,
           ""
         )}`

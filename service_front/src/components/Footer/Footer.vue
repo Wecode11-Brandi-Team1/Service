@@ -107,4 +107,9 @@ export default {};
       border-top: 1px solid #333;
     }
   }
+  @media screen and (max-width: 400px){
+  .footer-box{
+    display: none;
+  }
+}
 </style>

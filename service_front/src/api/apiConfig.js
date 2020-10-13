@@ -1,4 +1,4 @@
 export const config = {
   googleClientId: "{googleClientId}",
-  API: "http://3.128.33.10:8000",
+  API: "http://13.209.10.81:5000/",
 };

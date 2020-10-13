@@ -25,6 +25,7 @@
 
 <script>
 import { axios } from '../../../plugins/axios'
+import {config} from '../../../api/apiConfig'
 
 export default {
   data:() => ({
@@ -38,11 +39,10 @@ export default {
     this.$store.state.mobilePageName = this.mobilePageName;
 
     axios({
-      url: 'http://10.251.1.113:5000/products/1/questions?u=2',
+      url: `${config.API}products/1/questions?u=2`,
       method: 'GET',
       headers: { 
-        'Authorization': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6Mn0.YHNEVqI1PLALLTpPVComx3VMQZkV0z4CzT_SQk88yY0'
-        //this.$cookies.get("accesstoken")
+        'Authorization': this.$cookies.get("accesstoken")
       }
     })
     .then((response) => {

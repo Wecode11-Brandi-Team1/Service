@@ -21,11 +21,11 @@
         <ul>
           <li>찜</li>
           <li class="border">|</li>
-          <li>장바구니</li>
+          <li @click="$router.push('order')">장바구니</li>
           <li class="border">|</li>
           <li @click="$router.push('mypage')">마이페이지</li>
           <li class="border">|</li>
-          <li v-if="!this.$store.state.token" @click="$router.push('login')">
+          <li v-if="!this.$cookies.get('accesstoken')" @click="$router.push('login')">
             로그인
           </li>
           <li v-else @click="logout">로그아웃</li>
@@ -76,6 +76,7 @@
 
 <script>
 import axios from "axios";
+import {config} from "../../api/apiConfig"
 import TabItemDrop from "./TabItemDrop.vue";
 import TabItem from "./TabItem.vue";
 export default {
@@ -105,18 +106,15 @@ export default {
       this.$store.state.menutab.activeTab = null;
     }
     axios
-      // .get("http://10.251.1.146:5000/category?q=1")
-      .get("public/data/mockData/category1.json")
+      .get(`${config.API}category?q=1`)
       .then((res) => (this.$store.state.categoryShop = res.data.쇼핑몰));
     axios
-      // .get("http://10.251.1.146:5000/category?q=4")
-      .get("public/data/mockData/category2.json")
+      .get(`${config.API}category?q=4`)
       .then(
         (res) => (this.$store.state.categoryBrand = res.data.디자이너브랜드)
       );
     axios
-      // .get("http://10.251.1.146:5000/category?q=7")
-      .get("public/data/mockData/category3.json")
+      .get(`${config.API}category?q=7`)
       .then((res) => (this.$store.state.categoryBeauty = res.data.뷰티));
   },
 
@@ -130,8 +128,9 @@ export default {
   },
   methods: {
     logout() {
-      this.$store.state.token = "";
-      this.$router.push("/");
+      this.$cookies.remove('accesstoken');
+      alert("로그아웃 하였습니다");
+      this.$router.push({ path: "/" });
     },
     resetHover() {
       this.$store.state.menutab.currentHover = null;
@@ -180,11 +179,11 @@ export default {
       color: #1e1e1e;
       background-color: #eeeeee;
       button {
-        width: 22px;
-        height: 22px;
-        margin: auto 10;
+        width: 20px;
+        height: 20px;
+        margin: auto 10px;
         background-image: url("https://web-staging.brandi.co.kr/static/2020.7.3/images/a-action-bar-icon-search-nor.png");
-        background-size: 22px;
+        background-size: 20px;
         outline: none;
       }
       input {

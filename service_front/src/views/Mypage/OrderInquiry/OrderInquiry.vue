@@ -136,6 +136,7 @@
 
 <script>
 import { axios } from '../../../plugins/axios';
+import {config} from "../../../api/apiConfig"
 import OrderData from '../../../components/MypageComponent/orderData.vue';
 
 export default {
@@ -155,11 +156,10 @@ export default {
     this.$store.state.myPageTabName = this.pageName;
     this.$store.state.myPageShow = true;
     axios({
-      url: 'http://10.251.1.174:5000/orders',
+      url: `${config.API}orders`,
       method: 'GET',
       headers: { 
-        'Authorization': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6Mn0.YHNEVqI1PLALLTpPVComx3VMQZkV0z4CzT_SQk88yY0'
-        // 'Authorization': this.$cookies.get('accesstoken')
+        'Authorization': this.$cookies.get('accesstoken')
       }
     })
     .then((response) => {
@@ -174,11 +174,10 @@ export default {
     })
 
     axios({
-      url: 'http://10.251.1.174:5000/user/coupons',
+      url: `${config.API}user/coupons`,
       method: 'GET',
       headers: { 
-        'Authorization': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6Mn0.YHNEVqI1PLALLTpPVComx3VMQZkV0z4CzT_SQk88yY0'
-        //this.$cookies.get("accesstoken")
+        'Authorization': this.$cookies.get("accesstoken")
       }
     })
     .then((response) => {

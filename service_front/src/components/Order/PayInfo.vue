@@ -30,8 +30,8 @@ export default {
       let sum = 0;
       for (let i = 0; i < this.getData().length; i++) {
         sum +=
-          parseFloat(this.getData()[i].price) *
-          parseFloat(this.getData()[i].quantity);
+          (this.getData()[i].price) *
+          (this.getData()[i].quantity);
       }
 
       return sum;

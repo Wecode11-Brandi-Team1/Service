@@ -18,6 +18,18 @@ export const store = new Vuex.Store({
     categoryShop: [],
     categoryBrand: [],
     categoryBeauty: [],
+    addressInfo: [],
+    showAddressInfo: [],
+    shipList: {
+      name: "",
+      phone1: "",
+      phone2: "",
+      phone3: "",
+      phone_number: "",
+      address: [],
+      address_detail: "",
+      memo: "",
+    },
     selected: 0, 
     menutab: {
       currentHover: 0,
@@ -27,6 +39,6 @@ export const store = new Vuex.Store({
     couponNum: "",
     mobilePageName: "",
     isMypage: false,
-    isTabBar:""
+    isTabBar:"",
   },
 });

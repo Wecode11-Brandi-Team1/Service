@@ -22,18 +22,18 @@
       <div class="name-row">
         <span class="name">수령인</span>
         <span class="name-input"
-          ><input v-model="shiplist.name" type="text" placeholder="이름"
+          ><input v-model="$store.state.shipList.name" type="text" placeholder="이름"
         /></span>
       </div>
       <div class="phone-row">
         <span class="phone">휴대폰</span>
         <span class="phone-input"
           ><div class="phone-wrap">
-            <input v-model="shiplist.phone1" type="number" />&nbsp;-&nbsp;<input
-              v-model="shiplist.phone2"
+            <input v-model="$store.state.shipList.phone1" type="number" />&nbsp;-&nbsp;<input
+              v-model="$store.state.shipList.phone2"
               type="number"
             />&nbsp;-&nbsp;<input
-              v-model="shiplist.phone3"
+              v-model="$store.state.shipList.phone3"
               type="number"
             />&nbsp;&nbsp;
           </div></span
@@ -45,7 +45,7 @@
           <div class="address-wrap-top">
             <input
               disabled
-              v-model="shiplist.address.zonecode"
+              v-model="$store.state.shipList.address.zonecode"
               class="postal-code"
               type="text"
             />&nbsp;&nbsp;<button
@@ -59,7 +59,7 @@
           <div class="address-wrap-mid">
             <vue-daum-postcode
               v-if="this.showDaumAddress === true"
-              @complete="shiplist.address = $event"
+              @complete="$store.state.shipList.address = $event"
             />
             <button
               @click="switchDaumAddress"
@@ -70,12 +70,12 @@
           <div class="address-wrap-bottom">
             <input
               disabled
-              v-model="shiplist.address.address"
+              v-model="$store.state.shipList.address.address"
               class="address-city"
               type="text"
             />
             <input
-              v-model="shiplist.address_detail"
+              v-model="$store.state.shipList.address_detail"
               class="address-detail"
               type="text"
             />
@@ -134,25 +134,25 @@ export default {
     checked: false,
     showDaumAddress: false,
   }),
-  props: ["shiplist", "ordererlist"],
+  props: ["ordererlist"],
   updated() {
     if (this.$store.state.selected == 0) {
-      this.shiplist.memo = "";
+      this.$store.state.shipList.memo = "";
       this.memo = "";
     } else if (this.$store.state.selected == 1) {
-      this.shiplist.memo = "문 앞에 놓아주세요";
+      this.$store.state.shipList.memo = "문 앞에 놓아주세요";
       this.memo = "";
     } else if (this.$store.state.selected == 2) {
-      this.shiplist.memo = "경비(관리)실에 맡겨주세요";
+      this.$store.state.shipList.memo = "경비(관리)실에 맡겨주세요";
       this.memo = "";
     } else if (this.$store.state.selected == 3) {
-      this.shiplist.memo = "택배함에 넣어주세요";
+      this.$store.state.shipList.memo = "택배함에 넣어주세요";
       this.memo = "";
     } else if (this.$store.state.selected == 4) {
-      this.shiplist.memo = "직접 받겠습니다";
+      this.$store.state.shipList.memo = "직접 받겠습니다";
       this.memo = "";
     } else if (this.$store.state.selected == 5) {
-      this.shiplist.memo = this.memo;
+      this.$store.state.shipList.memo = this.memo;
     }
   },
   methods: {
@@ -169,16 +169,16 @@ export default {
         alert("전화번호를 입력해주세요.");
         this.checked = false;
       } else if (this.checked === true) {
-        this.shiplist.name = "";
-        this.shiplist.phone1 = "";
-        this.shiplist.phone2 = "";
-        this.shiplist.phone3 = "";
+        this.$store.state.shipList.name = "";
+        this.$store.state.shipList.phone1 = "";
+        this.$store.state.shipList.phone2 = "";
+        this.$store.state.shipList.phone3 = "";
         this.checked = false;
       } else {
-        this.shiplist.name = this.ordererlist.name;
-        this.shiplist.phone1 = this.ordererlist.phone1;
-        this.shiplist.phone2 = this.ordererlist.phone2;
-        this.shiplist.phone3 = this.ordererlist.phone3;
+        this.$store.state.shipList.name = this.ordererlist.name;
+        this.$store.state.shipList.phone1 = this.ordererlist.phone1;
+        this.$store.state.shipList.phone2 = this.ordererlist.phone2;
+        this.$store.state.shipList.phone3 = this.ordererlist.phone3;
         this.checked = true;
       }
     },
@@ -358,5 +358,10 @@ export default {
       }
     }
   }
+}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 </style>

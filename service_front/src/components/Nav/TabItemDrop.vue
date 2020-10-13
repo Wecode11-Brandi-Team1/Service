@@ -10,12 +10,11 @@
             class="header"
             v-for="(list, index) in item"
             :key="index"
-            @click="pageStatus"
           >
             {{ Object.keys(item)[0] }}
-            <a class="list" v-for="(content, index) in list" :key="index">
-              {{ content }}
-            </a>
+          </a>
+          <a class="list" v-for="(list, index) of item[Object.keys(item)]" :key="index" @click="goToSubCategory({item, index})">
+        {{list}}
           </a>
         </li>
       </ul>
@@ -92,8 +91,17 @@ export default {
     beautyData() {
       return JSON.parse(localStorage.getItem("categoryBeauty"));
     },
-    goToProduct() {
-      this.$router.push(`/products/${1}`);
+    goToMainCategory(index) {
+      // console.log("main",this.shopData().item.indexOf(Object.keys(index)));
+      // console.log(this.shopData().item.indexOf(Object.keys(index)));
+      // console.log(index);
+      // console.log(index);
+      // this.$router.push(`/products/${1}`);
+      // return this.$router.push({ name: "ProductList", query: { q: 123 } });
+    },
+    goToSubCategory(data) {
+    //   console.log("sub",data);
+      // this.$router.push(`/products/${1}/${1}`);
       // return this.$router.push({ name: "ProductList", query: { q: 123 } });
     },
   },
@@ -134,6 +142,7 @@ export default {
           font-weight: normal;
           line-height: 2;
           color: #737373;
+          cursor: pointer;
           &:hover {
             color: black;
           }

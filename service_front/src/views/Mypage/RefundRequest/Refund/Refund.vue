@@ -71,6 +71,7 @@
 
 <script>
 import { axios } from '../../../../plugins/axios';
+import {config} from "../../../../api/apiConfig"
 
 export default {
   data:() => ({
@@ -98,7 +99,7 @@ export default {
           this.$store.state.resultSelected = this.selected;
           this.$store.state.resultTotal = this.refundData.final_price;
           axios({
-            url: 'http://10.251.1.174:5000/refund',
+            url: `${config.API}refund`,
             method: 'PUT',
             data: {
               order_detail_number: this.refundData.order_detail_number,
@@ -107,8 +108,7 @@ export default {
               order_detail_id: this.refundData.order_detail_id
             },
             headers: { 
-              'Authorization': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6Mn0.YHNEVqI1PLALLTpPVComx3VMQZkV0z4CzT_SQk88yY0'
-                // 'Authorization': this.$cookies.get('accesstoken')
+                'Authorization': this.$cookies.get('accesstoken')
             }
             })
             .then((response) => {
