@@ -27,6 +27,33 @@ pycparser @ file:///tmp/build/80754af9/pycparser_1594388511720/work
 Pygments==2.7.1
 pyOpenSSL @ file:///tmp/build/80754af9/pyopenssl_1594392929924/work
 PySocks==1.7.1
+click==7.1.2
+Flask==1.1.2
+Flask-Caching==1.9.0
+Flask-Cors==3.0.9
+flask-request-validator==2.1.2
+Flask-Script==2.0.6
+gunicorn==20.0.4
+idna==2.10
+iniconfig==1.0.1
+itsdangerous==1.1.0
+Jinja2==2.11.2
+MarkupSafe==1.1.1
+more-itertools==8.5.0
+mysql-connector-python==8.0.21
+numpy==1.19.2
+packaging==20.4
+pandas==1.1.2
+Pillow==7.2.0
+pluggy==0.13.1
+protobuf==3.13.0
+py==1.9.0
+pycparser==2.20
+PyJWT==1.7.1
+PyMySQL==0.10.1
+pyparsing==2.4.7
+pytest==6.0.2
+python-dateutil==2.8.1
 pytz==2020.1
 requests @ file:///tmp/build/80754af9/requests_1592841827918/work
 ruamel-yaml==0.15.87
