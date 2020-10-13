@@ -24,11 +24,13 @@
     </div>
     <nav-bar></nav-bar>
     <router-view :key="$route.fullPath"></router-view>
+    <footer-box></footer-box>
   </div>
 </template>
 
 <script>
 import NavBar from "./components/Nav/Nav.vue";
+import FooterBox from "./components/Footer/Footer.vue";
 
 export default {
   name: "app",
@@ -41,7 +43,7 @@ export default {
     }, 2000);
   },
   components: {
-    NavBar,
+    NavBar, FooterBox
   },
   updated() {
     if (this.$router.history.current.name === "Main") {
