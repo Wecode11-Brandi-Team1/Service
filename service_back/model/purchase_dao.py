@@ -172,7 +172,7 @@ class PurchaseDao:
         """
             주문이후에 주문상황 내역에 결재완료 추가 - Persistence Layer(model) function
             Args : 
-                token_paylod : 유저 엑세스 토큰
+                order_id : 주문 옵션 아이디
                 db : DATABASE Connection Instance
             Returns :
 
@@ -267,7 +267,7 @@ class PurchaseDao:
         """
             옵션아이디로 부터 색상, 사이즈, 상품id 가져오기  - Persistence Layer(model) function
             Args :
-                my_orders : 주문 번호
+                option_id : 주문 옵션 아아디
                 db : DATABASE Connection Instance
             Returns :
 
@@ -393,7 +393,6 @@ class PurchaseDao:
         """
             상품 주문 상태 확인하기 - Persistence Layer(model) function
             Args :
-                token_paylod : 유저 엑세스 토큰
                 order_detail_number : 주문 상세 번호
                 db : DATABASE Connection Instance
             Returns :
@@ -417,7 +416,6 @@ class PurchaseDao:
         """
             상품 구매 취소하기 - Persistence Layer(model) function
             Args :
-                token_paylod : 유저 엑세스 토큰
                 requestion : 구매 취소에 관한 요청
                 db : DATABASE Connection Instance
             Returns :
@@ -445,7 +443,6 @@ class PurchaseDao:
         """
             환불하기 - Persistence Layer(model) function
             Args :
-                token_paylod : 유저 엑세스 토큰
                 requestion : 환불요청에 관한 요청
                 db : DATABASE Connection Instance
             Returns :
@@ -474,7 +471,6 @@ class PurchaseDao:
         """
             주문상태 수정 내역 추가 - Persistence Layer(model) function
             Args :
-                token_paylod : 유저 엑세스 토큰
                 requestion : 상품 수정에 관한 데이터
                 db : DATABASE Connection Instance
             Returns :
@@ -504,7 +500,7 @@ class PurchaseDao:
 
     def db_time(self, db):
         """
-             DB time 확인 - Persistence Layer(model) function
+            DB time 확인 - Persistence Layer(model) function
             Args :
                 db : DATABASE Connection Instance
             Returns :
