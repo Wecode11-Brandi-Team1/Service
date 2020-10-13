@@ -67,8 +67,9 @@
 </template>
 
 <script>
-import listCard from "./MainComponents/ListCard.vue";
 import axios from "axios";
+import config from "../../api/apiConfig";
+import listCard from "./MainComponents/ListCard.vue";
 
 export default {
   name: "home-page",
@@ -85,9 +86,7 @@ export default {
   }),
   methods: {},
   created: function () {
-    axios
-      .get("http://10.251.1.146:5000/")
-      .then((res) => (this.datas = res.data.data));
+    axios.get(`${config.API}`).then((res) => (this.datas = res.data.data));
   },
 };
 </script>

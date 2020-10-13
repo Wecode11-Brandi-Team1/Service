@@ -58,13 +58,58 @@
               <span>원</span>
             </p>
           </div>
-          <button class="couppon">
+          <button class="couppon" v-on:click="modal_opener">
             쿠폰받기
             <img
               alt="coupon download"
               src="https://web-staging.brandi.co.kr/static/2020.7.3/images/ic-download-black-12-pt.svg"
             />
           </button>
+          <div class="coupon-modal" v-if="open_modal">
+            <div class="coupon-container">
+              <div class="close-container">
+                <img
+                  alt="close"
+                  v-on:click="modal_opener"
+                  src="https://web-staging.brandi.co.kr/static/20.08.01/images/ic-close-gray-28-pt.svg"
+                />
+              </div>
+              <div class="coupon-frame">
+                <div
+                  class="coupon"
+                  v-for="(list, idx) in datas.coupon"
+                  v-bind:key="`coupon` + idx"
+                >
+                  <div class="red-label" />
+                  <div class="coupon-info">
+                    <div class="coupon-name">
+                      <span>{{ list.coupon_name }}</span>
+                      <img
+                        alt="coupon download"
+                        v-on:click="coupon_downloader(list)"
+                        src="https://web-staging.brandi.co.kr/static/2020.7.3/images/ic-download-black-12-pt.svg"
+                      />
+                    </div>
+                    <div class="coupon-price">
+                      {{ Number(list.discount_price).toLocaleString("en")
+                      }}<span>원</span>
+                    </div>
+                    <div class="coupon-sub-info">
+                      <span
+                        >{{ Number(list.minimum_price).toLocaleString("en") }}원
+                        이상 구매시</span
+                      >
+                      <span class="coupon-date"
+                        >{{ list.download_started_at }}~{{
+                          list.download_ended_at
+                        }}</span
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </li>
         <li class="sale_amount">
           <span>{{ Number(sale_amount).toLocaleString("en") }}개 구매중</span>
@@ -246,6 +291,7 @@
 
 <script>
 import axios from "axios";
+import config from "../../../api/apiConfig";
 
 export default {
   name: "product-container",
@@ -261,6 +307,7 @@ export default {
     "option",
   ],
   data: () => ({
+    open_modal: false,
     open_option: "",
     option_color_child: "[색상]을 선택하세요.",
     option_size_child: "[사이즈]를 선택하세요.",
@@ -268,6 +315,19 @@ export default {
     moving_photo: { transform: "" },
     mouse_location: "",
     moving_photo_num: "",
+    datas: {
+      coupon: [
+        {
+          coupon_date: "날짜",
+          coupon_id: 1,
+          coupon_name: "브랜디 감사대전 3000원 할인쿠폰",
+          discount_price: 3000,
+          download_ended_at: "2020.11.05",
+          download_started_at: "2020.10.06",
+          minimum_price: 20000,
+        },
+      ],
+    },
   }),
   computed: {
     sum_result: function () {
@@ -311,6 +371,9 @@ export default {
     },
   },
   methods: {
+    modal_opener: function () {
+      this.open_modal = !this.open_modal;
+    },
     option_opener: function (e) {
       if (
         e.target.id === "size-choice" &&
@@ -404,6 +467,35 @@ export default {
       localStorage.setItem("data", JSON.stringify(this.result_option));
       console.log(localStorage.data);
     },
+    coupon_downloader: function (obj) {
+      axios
+        .post(
+          `${config.API}/coupon?c=${obj.coupon_id}`,
+          {
+            questions: {
+              question_type_id: this.QA_category.indexOf(this.select_category),
+              question_content: this.main_text,
+              is_secreted: this.secret,
+            },
+          },
+          {
+            headers: {
+              Authorization: `localStorage.getItem("token")`,
+            },
+          }
+        )
+        .then((res) => {
+          if (res.status === 200 || res.status === 201) {
+            alert("쿠폰이 발급되었습니다.");
+          } else {
+            return alert("이미 발급된 쿠폰입니다.");
+          }
+        })
+        .catch((error) => console.log(error));
+    },
+  },
+  created: function () {
+    axios.get(`${config.API}`).then((res) => (this.datas.coupon = res.data));
   },
 };
 </script>
@@ -422,6 +514,106 @@ export default {
 
   .none {
     display: none;
+  }
+
+  .coupon-modal {
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999999999;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.4);
+
+    .coupon-container {
+      width: 35vw;
+      max-height: 50vh;
+      overflow: scroll;
+      background-color: white;
+      -ms-overflow-style: none;
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+
+    .close-container {
+      display: flex;
+      justify-content: flex-end;
+      padding-top: 5px;
+      padding-right: 5px;
+    }
+
+    .coupon-frame {
+      display: flex;
+      flex-direction: column;
+      padding: 0 40px 33px 40px;
+    }
+
+    .coupon {
+      display: flex;
+      overflow: hidden;
+      border: 1px solid #dddddd;
+      border-radius: 5px;
+      margin-bottom: 15px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    .red-label {
+      width: 0.8%;
+      background-color: #ff1f4b;
+      margin-right: 20px;
+    }
+
+    .coupon-info {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      padding-right: 20px;
+    }
+
+    .coupon-name {
+      display: flex;
+      justify-content: space-between;
+
+      font-size: 14px;
+      font-weight: 700;
+      margin-top: 20px;
+
+      img {
+        width: 18px;
+      }
+    }
+    .coupon-price {
+      font-size: 20px;
+      font-weight: 700;
+
+      span {
+        font-size: 18px;
+      }
+    }
+
+    .coupon-sub-info {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 5px;
+      margin-bottom: 20px;
+      span {
+        &:first-child {
+          font-size: 14px;
+          color: #9e9e9e;
+        }
+        &:last-child {
+          font-size: 11px;
+          color: #c5c5c5;
+        }
+      }
+    }
   }
 
   .photo-container {

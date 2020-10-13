@@ -5,12 +5,17 @@
         <ul>
           <li>쇼핑몰 · 마켓</li>
           <li><span>></span>카테고리</li>
-          <li
-            v-for="list in Object.values(this.$route.query).splice(0, 2)"
-            v-bind:key="list"
-          >
-            <span v-if="this.$route.query.main_category">></span>
-            {{ list }}
+          <li v-if="$route.query.fc_id">
+            <span>></span
+            >{{ Object.keys(datas.nav_list[$route.query.fc_id])[0] }}
+          </li>
+          <li v-if="$route.query.sc_id">
+            <span>></span
+            >{{
+              Object.values(datas.nav_list[$route.query.fc_id])[0][
+                $route.query.sc_id
+              ]
+            }}
           </li>
         </ul>
       </article>
@@ -117,7 +122,7 @@
 
 <script>
 import axios from "axios";
-import VueRouter from "vue-router";
+import config from "../../api/apiConfig";
 import categoriesCard from "./ProductCard/CategoriesCard.vue";
 
 export default {
@@ -163,30 +168,64 @@ export default {
       }
 
       if (this.select_main_category === "전체") {
+        this.$delete(this.$route.query, "fc_id");
+        this.$delete(this.$route.query, "sc_id");
+        this.$router.push(this.$route.query);
+
         axios
-          .get("http://10.251.1.146:5000/products")
+          .get(
+            `${config.API}/products${this.$route.fullPath.replace(
+              this.$route.path,
+              ""
+            )}`
+          )
           .then((res) => (this.datas.product_list = res.data));
       }
+    },
+    query_maker: function () {
+      let query_arr = [];
+      if (this.is_sale_list) {
+        query_arr.push("&is_discounted=1");
+      }
+      if (this.filltering_criteria === "인기순") {
+        query_arr.push("&is_popular=1");
+      }
+      if (this.filltering_criteria === "최신순") {
+        query_arr.push("&is_new=1");
+      }
+      if (this.filltering_criteria === "가격순") {
+        query_arr.push("&is_cheap=1");
+      }
+      if (this.select_main_category && this.select_sub_category === "전체") {
+        query_arr.unshift(`&fc_id=${this.main_category_number}`);
+      } else if (
+        this.select_sub_category &&
+        this.select_sub_category !== "전체"
+      ) {
+        query_arr.unshift(
+          `&fc_id=${this.main_category_number}&sc_id=${this.sub_category_number}`
+        );
+      }
+      query_arr.unshift("?sp_id=1");
+      this.$router.push(query_arr.join(""));
     },
     update_sub_category: function (e) {
       let updatedText = e.target.id;
       if (updatedText) {
         this.select_sub_category = updatedText;
 
-        axios
-          .get(
-            `http://10.251.1.146:5000/products?sp_id=1&&fc_id=${this.main_category_number}&&sc_id=${this.sub_category_number}`
-          )
-          .then((res) => (this.datas.product_list = res.data));
+        this.query_maker();
       } else {
         this.select_sub_category = "전체";
-
-        axios
-          .get(
-            `http://10.251.1.146:5000/products?sp_id=1&&fc_id=${this.main_category_number}`
-          )
-          .then((res) => (this.datas.product_list = res.data));
       }
+      axios
+        .get(
+          `${config.API}/products${this.$route.fullPath.replace(
+            this.$route.path,
+            ""
+          )}`
+        )
+        .then((res) => (this.datas.product_list = res.data));
     },
 
     fillter_opener: function () {
@@ -194,31 +233,43 @@ export default {
     },
     fillering_what: function (e) {
       this.filltering_criteria = e.target.id;
+      this.query_maker();
+      axios
+        .get(
+          `${config.API}/products${this.$route.fullPath.replace(
+            this.$route.path,
+            ""
+          )}`
+        )
+        .then((res) => (this.datas.product_list = res.data));
       this.is_fllter_active = false;
     },
     sale_checker: function () {
       this.is_sale_list = !this.is_sale_list;
+      this.query_maker();
 
-      if (this.is_sale_list) {
-        axios
-          .get(
-            `http://10.251.1.146:5000/products?sp_id=1&&fc_id=${this.main_category_number}&&sc_id=${this.sub_category_number}&is_discounted=1`
-          )
-          .then((res) => (this.datas.product_list = res.data));
-      } else {
-        axios
-          .get(`http://10.251.1.146:5000/products`)
-          .then((res) => (this.datas.product_list = res.data));
-      }
+      axios
+        .get(
+          `${config.API}/products${this.$route.fullPath.replace(
+            this.$route.path,
+            ""
+          )}`
+        )
+        .then((res) => (this.datas.product_list = res.data));
     },
   },
   created: function () {
     axios
-      .get(`http://10.251.1.146:5000/category?q=${this.$route.params.id}`)
+      .get(`${config.API}/category?q=${this.$route.params.id}`)
       .then((res) => (this.datas.nav_list = Object.values(res.data.쇼핑몰)));
 
     axios
-      .get(`http://10.251.1.146:5000/products`)
+      .get(
+        `${config.API}/products${this.$route.fullPath.replace(
+          this.$route.path,
+          ""
+        )}`
+      )
       .then((res) => (this.datas.product_list = res.data));
   },
 };

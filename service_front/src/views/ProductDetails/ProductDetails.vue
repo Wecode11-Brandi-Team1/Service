@@ -49,7 +49,10 @@
                   v-bind:value="select_category"
                   v-on:click="category_selecter"
                 />
-                <div class="select-question-list-container" v-if="is_category_open">
+                <div
+                  class="select-question-list-container"
+                  v-if="is_category_open"
+                >
                   <div class="select-question-list">
                     <input
                       type="button"
@@ -67,7 +70,10 @@
           <li>
             <div>내용</div>
             <div>
-              <textarea placeholder="내용을 입력해 주세요." v-on:change="input_main_text"></textarea>
+              <textarea
+                placeholder="내용을 입력해 주세요."
+                v-on:change="input_main_text"
+              ></textarea>
             </div>
           </li>
           <li>
@@ -105,13 +111,16 @@
               <span>내용</span>
             </div>
             <div>
-              <span>작성자</span>
+              <span>자</span>
             </div>
             <div>
               <span>작성일</span>
             </div>
           </li>
-          <li v-for="(list, idx) in this.QA_list.questions" v-bind:key="list[1]">
+          <li
+            v-for="(list, idx) in this.QA_list.questions"
+            v-bind:key="list[1]"
+          >
             <div>
               <span>{{ list.question_type }}</span>
             </div>
@@ -121,7 +130,8 @@
             <div>
               <span
                 v-if="!list.is_secreted || list.user_id === QA_list.user_id"
-              >{{ list.question_content }}</span>
+                >{{ list.question_content }}</span
+              >
               <span v-if="list.is_secreted && list.user_id !== QA_list.user_id">
                 <img
                   alt="lock"
@@ -134,56 +144,79 @@
                 <img
                   alt="delete"
                   v-on:click="delete_question(list.question_id)"
+                  s
                   src="https://web-staging.brandi.co.kr/static/2020.7.3/images/ic-close-gray-18-pt.svg"
                 />
               </label>
             </div>
             <div>
-              <span>{{ String(list.user_id).substring(0, 3) }}***</span>
+              <span>{{ list.writer }}</span>
             </div>
             <div>
               <span>{{ list.created_at }}</span>
             </div>
           </li>
         </ul>
-        <div class="page-button-container">
-          <div class="arrow">
+        <div class="page-button-container" v-if="QA_list.qna_count">
+          <div class="arrow" @click="To_the_fore">
             <img
-              class="none"
+              v-if="button_value !== 1"
               alt="quick back"
               src="https://web-staging.brandi.co.kr/static/2020.7.3/images/ic-more-arrow-right-black-28-pt.svg"
             />
           </div>
-          <div class="arrow">
+          <div class="arrow" @click="button_value_down">
             <img
-              class="none"
+              v-if="button_value !== 1"
               alt="quick back"
               src="https://web-staging.brandi.co.kr/static/2020.7.3/images/ic-arrow-right-black-28-pt.svg"
             />
           </div>
-          <div class="page-button">
-            <span class="is_select">1</span>
-          </div>
-          <div class="page-button">
-            <span>2</span>
-          </div>
-          <div class="page-button">
-            <span>3</span>
-          </div>
-          <div class="page-button">
-            <span>4</span>
-          </div>
-          <div class="page-button">
-            <span>5</span>
-          </div>
-          <div class="arrow">
+          <input
+            class="page-button"
+            type="button"
+            :value="button_value"
+            v-on:click="pagenation_button_clicker"
+          />
+          <input
+            class="page-button"
+            type="button"
+            :value="button_value + 1"
+            v-if="page_button_visible(button_value + 1)"
+            v-on:click="pagenation_button_clicker"
+          />
+          <input
+            class="page-button"
+            type="button"
+            :value="button_value + 2"
+            v-if="page_button_visible(button_value + 2)"
+            v-on:click="pagenation_button_clicker"
+          />
+          <input
+            class="page-button"
+            type="button"
+            :value="button_value + 3"
+            v-if="page_button_visible(button_value + 3)"
+            v-on:click="pagenation_button_clicker"
+          />
+          <input
+            class="page-button"
+            type="button"
+            :value="button_value + 4"
+            v-if="page_button_visible(button_value + 4)"
+            v-on:click="pagenation_button_clicker"
+          />
+
+          <div class="arrow" @click="button_value_up">
             <img
+              v-if="post_button_visible()"
               alt="quick front"
               src="https://web-staging.brandi.co.kr/static/2020.7.3/images/ic-arrow-left-black-28-pt.svg"
             />
           </div>
-          <div class="arrow">
+          <div class="arrow" @click="To_the_last">
             <img
+              v-if="post_button_visible()"
               alt="quick front"
               src="https://web-staging.brandi.co.kr/static/2020.7.3/images/ic-more-arrow-left-black-28-pt.svg"
             />
@@ -196,12 +229,16 @@
 
 <script>
 import axios from "axios";
+import config from "../../api/apiConfig";
 import productContainer from "./ProductDetailsComponents/ProductContainer.vue";
 
 export default {
   name: "product-details",
   components: { productContainer },
   data: () => ({
+    limit: 5,
+    offset: 0,
+    button_value: 1,
     see_my_question: false,
     send_question: false,
     is_category_open: false,
@@ -220,7 +257,10 @@ export default {
       "하루배송",
       "취소/변경",
     ],
-    QA_list: [],
+    QA_list: {
+      qna_count: 0,
+      questions: [],
+    },
     datas: {
       product_id: 0,
       seller_name: "",
@@ -235,26 +275,85 @@ export default {
   }),
   computed: {},
   methods: {
+    button_value_up: function (e) {
+      this.button_value = this.button_value + 5;
+    },
+    button_value_down: function (e) {
+      this.button_value = this.button_value - 5;
+    },
+    To_the_fore: function () {
+      this.button_value = 1;
+    },
+    To_the_last: function () {
+      if (
+        Math.floor(this.QA_list.qna_count / 5) ===
+        this.QA_list.qna_count / 5
+      ) {
+        this.button_value = this.QA_list.qna_count / 5 - 4;
+      } else {
+        this.button_value = Math.floor(this.QA_list.qna_count / 5);
+      }
+    },
+    post_button_visible: function () {
+      if (
+        Math.floor(this.QA_list.qna_count / 5) === this.QA_list.qna_count / 5 &&
+        this.button_value === this.QA_list.qna_count / 5 - 4
+      ) {
+        return false;
+      }
+      if (
+        Math.floor(this.QA_list.qna_count / 5) !== this.QA_list.qna_count / 5 &&
+        this.button_value === Math.floor(this.QA_list.qna_count / 5)
+      ) {
+        return false;
+      }
+      return true;
+    },
+    page_button_visible: function (num) {
+      if (
+        Math.floor(this.QA_list.qna_count / 5) === this.QA_list.qna_count / 5 &&
+        num <= Math.floor(this.QA_list.qna_count / 5)
+      ) {
+        return true;
+      }
+      if (
+        Math.floor(this.QA_list.qna_count / 5) !== this.QA_list.qna_count / 5 &&
+        num <= Math.floor(this.QA_list.qna_count / 5) + 1
+      ) {
+        return true;
+      }
+      return false;
+    },
+    pagenation_button_clicker: function (e) {
+      this.offset = (e.target.value - 1) * this.limit;
+      axios
+        .get(
+          `${config.API}/products/1/questions?offset=${this.offset}&limit=${this.limit}`,
+          {
+            headers: {
+              Authorization: localStorage.getItem("token"),
+            },
+          }
+        )
+        .then((res) => (this.QA_list = res.data));
+    },
     question_fillter: function () {
       this.see_my_question = !this.see_my_question;
       if (!this.see_my_question) {
         axios
-          .get(`http://10.251.1.146:5000/products/1/questions?limit=10`, {
+          .get(`${config.API}/products/1/questions?limit=10`, {
             headers: {
-              Authorization: `eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6NH0.MTQmZ6MAVXz2CbJF-0VAULBhokSX48klwW-TqE3gsnA`,
+              Authorization: localStorage.getItem("token"),
             },
           })
           .then((res) => (this.QA_list = res.data));
       } else {
         axios
-          .get(
-            `http://10.251.1.146:5000/products/1/questions?u=${this.QA_list.user_id}`,
-            {
-              headers: {
-                Authorization: `eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6NH0.MTQmZ6MAVXz2CbJF-0VAULBhokSX48klwW-TqE3gsnA`,
-              },
-            }
-          )
+          .get(`${config.API}/products/1/questions?u=${this.QA_list.user_id}`, {
+            headers: {
+              Authorization: localStorage.getItem("token"),
+            },
+          })
           .then((res) => (this.QA_list = res.data));
       }
     },
@@ -287,7 +386,7 @@ export default {
       }
       axios
         .post(
-          "http://10.251.1.146:5000/products/1/questions",
+          `${config.API}/products/1/questions`,
           {
             questions: {
               question_type_id: this.QA_category.indexOf(this.select_category),
@@ -297,16 +396,16 @@ export default {
           },
           {
             headers: {
-              Authorization: `eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6NH0.MTQmZ6MAVXz2CbJF-0VAULBhokSX48klwW-TqE3gsnA`,
+              Authorization: localStorage.getItem("token"),
             },
           }
         )
         .then((res) => console.log(res))
         .then(() =>
           axios
-            .get("http://10.251.1.146:5000/products/1/questions?limit=10", {
+            .get(`${config.API}/products/1/questions?limit=10`, {
               headers: {
-                Authorization: `eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6NH0.MTQmZ6MAVXz2CbJF-0VAULBhokSX48klwW-TqE3gsnA`,
+                Authorization: localStorage.getItem("token"),
               },
             })
             .then((res) => (this.QA_list = res.data))
@@ -335,20 +434,17 @@ export default {
     delete_question(num) {
       let question_id = Number(num);
       axios
-        .delete(
-          `http://10.251.1.146:5000/products/1/questions?q=${question_id}`,
-          {
-            headers: {
-              Authorization: `eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6NH0.MTQmZ6MAVXz2CbJF-0VAULBhokSX48klwW-TqE3gsnA`,
-            },
-          }
-        )
+        .delete(`${config.API}/products/1/questions?q=${question_id}`, {
+          headers: {
+            Authorization: localStorage.getItem("token"),
+          },
+        })
         .then((res) => console.log(res))
         .then(() =>
           axios
-            .get(`http://10.251.1.146:5000/products/1/questions?limit=10`, {
+            .get(`${config.API}/products/1/questions?limit=10`, {
               headers: {
-                Authorization: `eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6NH0.MTQmZ6MAVXz2CbJF-0VAULBhokSX48klwW-TqE3gsnA`,
+                Authorization: localStorage.getItem("token"),
               },
             })
             .then((res) => (this.QA_list = res.data))
@@ -358,12 +454,12 @@ export default {
   },
   created: function () {
     axios
-      .get(`http://10.251.1.146:5000/products/${this.$route.params.id}`)
+      .get(`${config.API}/products/${this.$route.params.id}`)
       .then((res) => (this.datas = res.data));
     axios
-      .get(`http://10.251.1.146:5000/products/1/questions?limit=10`, {
+      .get(`${config.API}/products/1/questions?limit=5`, {
         headers: {
-          Authorization: `eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6NH0.MTQmZ6MAVXz2CbJF-0VAULBhokSX48klwW-TqE3gsnA`,
+          Authorization: localStorage.getItem("token"),
         },
       })
       .then((res) => (this.QA_list = res.data));

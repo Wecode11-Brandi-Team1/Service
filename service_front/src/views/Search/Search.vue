@@ -5,12 +5,16 @@
         id="product"
         v-bind:class="{ 'select-header': this.select_search === 'product' }"
         v-on:click="switching_search"
-      >상품</button>
+      >
+        상품
+      </button>
       <button
         id="store"
         v-bind:class="{ 'select-header': this.select_search === 'store' }"
         v-on:click="switching_search"
-      >스토어</button>
+      >
+        스토어
+      </button>
     </header>
     <main>
       <section
@@ -21,7 +25,10 @@
       >
         <article>
           검색결과(
-          <span>{{ Number(this.datas.products.length).toLocaleString("en") }}</span>건)
+          <span>{{
+            Number(this.datas.products.length).toLocaleString("en")
+          }}</span
+          >건)
         </article>
         <article>
           <div class="checkbox-container" v-on:click="checkbox_clicker">
@@ -45,9 +52,19 @@
             </div>
             <div v-bind:class="{ none: !open_filter }">
               <div class="filter-floating">
-                <div class="filter-box" id="추천순" v-on:click="filter_closer">추천순</div>
-                <div class="filter-box" id="판매량순" v-on:click="filter_closer">판매량순</div>
-                <div class="filter-box" id="최신순" v-on:click="filter_closer">최신순</div>
+                <div class="filter-box" id="추천순" v-on:click="filter_closer">
+                  추천순
+                </div>
+                <div
+                  class="filter-box"
+                  id="판매량순"
+                  v-on:click="filter_closer"
+                >
+                  판매량순
+                </div>
+                <div class="filter-box" id="최신순" v-on:click="filter_closer">
+                  최신순
+                </div>
               </div>
             </div>
           </div>
@@ -72,10 +89,13 @@
                     discount: list.discount_rate,
                     none: !list.discount_rate,
                   }"
-                >{{ Number(list.discount_rate).toLocaleString("en")}}%</span>
+                  >{{ Number(list.discount_rate).toLocaleString("en") }}%</span
+                >
                 <span class="price">
                   {{
-                  Number(list.sale_price * (1 - list.discount_rate / 100)).toLocaleString("en")
+                    Number(
+                      list.sale_price * (1 - list.discount_rate / 100)
+                    ).toLocaleString("en")
                   }}
                 </span>
                 <span
@@ -83,9 +103,12 @@
                     'origin-price': list.discount_rate,
                     none: !list.discount_rate,
                   }"
-                >{{ Number(list.sale_price).toLocaleString("en") }}</span>
+                  >{{ Number(list.sale_price).toLocaleString("en") }}</span
+                >
               </li>
-              <li>{{ Number(list.sale_amount).toLocaleString("en") }}개 구매중</li>
+              <li>
+                {{ Number(list.sale_amount).toLocaleString("en") }}개 구매중
+              </li>
             </ul>
           </router-link>
         </article>
@@ -98,15 +121,22 @@
       >
         <article>
           스토어 검색결과(
-          <span>{{ this.datas.stores.length }}</span>건)
+          <span>{{ this.datas.stores.length }}</span
+          >건)
         </article>
         <article>
-          <div class="store" v-for="list in datas.stores" v-bind:key="list.seller_id">
+          <div
+            class="store"
+            v-for="list in datas.stores"
+            v-bind:key="list.seller_id"
+          >
             <img alt="store logo" v-bind:src="list.profile_image" />
             <div>
               <p>{{ list.seller_name }}</p>
               <p>
-                <span v-for="hash in list.hash_tag" v-bind:key="hash">#{{ hash }}</span>
+                <span v-for="hash in list.hash_tag" v-bind:key="hash"
+                  >#{{ hash }}</span
+                >
               </p>
             </div>
           </div>
@@ -118,6 +148,7 @@
 
 <script>
 import axios from "axios";
+import config from "../../api/apiConfig";
 
 export default {
   name: "",
@@ -128,82 +159,8 @@ export default {
     filter: "추천순",
     open_filter: false,
     datas: {
-      products: [
-        {
-          discount_rate: 0,
-          discounted_price: 32000,
-          image_url:
-            "https://image.brandi.me/cproduct/2020/06/04/17082238_1591255535_image1_M.jpg",
-          sale_price: 32000,
-          product_id: 1,
-          product_name: "vivi 반팔자켓 린넨자켓 2col_무드글램",
-          sale_amount: 0,
-          seller_name: "이지연1",
-        },
-        {
-          discount_rate: 0,
-          discounted_price: 32000,
-          image_url:
-            "https://image.brandi.me/cproduct/2020/06/04/17082238_1591255535_image1_M.jpg",
-          sale_price: 32000,
-          product_id: 2,
-          product_name: "vivi 반팔자켓 린넨자켓 2col_무드글램",
-          sale_amount: 0,
-          seller_name: "이지연1",
-        },
-        {
-          discount_rate: 10,
-          discounted_price: 32000,
-          image_url:
-            "https://image.brandi.me/cproduct/2020/06/04/17082238_1591255535_image1_M.jpg",
-          sale_price: 32000,
-          product_id: 3,
-          product_name: "vivi 반팔자켓 린넨자켓 2col_무드글램",
-          sale_amount: 10,
-          seller_name: "이지연1",
-        },
-        {
-          discount_rate: 0,
-          discounted_price: 32000,
-          image_url:
-            "https://image.brandi.me/cproduct/2020/06/04/17082238_1591255535_image1_M.jpg",
-          sale_price: 32000,
-          product_id: 4,
-          product_name: "vivi 반팔자켓 린넨자켓 2col_무드글램",
-          sale_amount: 0,
-          seller_name: "이지연1",
-        },
-        {
-          discount_rate: 20,
-          discounted_price: 32000,
-          image_url:
-            "https://image.brandi.me/cproduct/2020/06/04/17082238_1591255535_image1_M.jpg",
-          sale_price: 32000,
-          product_id: 5,
-          product_name: "vivi 반팔자켓 린넨자켓 2col_무드글램",
-          sale_amount: 147,
-          seller_name: "이지연1",
-        },
-        {
-          discount_rate: "",
-          discounted_price: 32000,
-          image_url:
-            "https://image.brandi.me/cproduct/2020/06/04/17082238_1591255535_image1_M.jpg",
-          sale_price: 32000,
-          product_id: 6,
-          product_name: "vivi 반팔자켓 린넨자켓 2col_무드글램",
-          sale_amount: 147,
-          seller_name: "이지연1",
-        },
-      ],
-      stores: [
-        {
-          korean_name: "이지연1",
-          profile_image:
-            "https://image.brandi.me/cproduct/2020/01/17/13216968_1579243036_image1_L.jpg",
-          seller_id: 1,
-        },
-      ],
+      products: [],
+      stores: [],
     },
   }),
   methods: {
@@ -211,13 +168,11 @@ export default {
       this.is_checked = !this.is_checked;
       if (this.is_checked) {
         axios
-          .get(
-            `http://10.251.1.146:5000/search?q=${this.$route.query.q}&&is_dicounted=1`
-          )
+          .get(`${config.API}/search?q=${this.$route.query.q}&&is_dicounted=1`)
           .then((res) => (this.datas = { ...this.datas, ...res.data }));
       } else {
         axios
-          .get(`http://10.251.1.146:5000/search?q=${this.$route.query.q}`)
+          .get(`${config.API}/search?q=${this.$route.query.q}`)
           .then((res) => (this.datas = { ...this.datas, ...res.data }));
       }
     },
@@ -233,7 +188,7 @@ export default {
   },
   created: function () {
     axios
-      .get(`http://10.251.1.146:5000/search?q=${this.$route.query.q}`)
+      .get(`${config.API}/search?q=${this.$route.query.q}`)
       .then((res) => (this.datas = res.data));
   },
 };
