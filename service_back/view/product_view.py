@@ -56,7 +56,6 @@ class CategorySetView(MethodView):
     @validate_params(
         Param('q', GET, int, required = True)
     )
-    @cache.cached(timeout=100)
     def get(self, q):
         """
         NAV/SIDE_BAR 카테고리리스트 - Presentation Layer(View) function
