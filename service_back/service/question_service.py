@@ -6,6 +6,7 @@ class QuestionService:
     
     def get_questions(self, params, db):
         """
+        문의글 리스트 - Business Layer(Service) function
         Args:
             service : 서비스 레이어 객체
             params  : 딕셔너리 패킹된 쿼리파라미터객체
@@ -41,6 +42,7 @@ class QuestionService:
 
     def insert_question(self, params, db):
         """
+        문의글 생성 - Business Layer(Service) function
         Args:
             service : 서비스 레이어 객체
             params  : 딕셔너리 패킹된 쿼리파라미터객체
@@ -61,6 +63,7 @@ class QuestionService:
     
     def delete_question(self, params, db):
         """
+        문의글 삭제(Soft Delete) - Business Layer(Service) function
         Args:
             service : 서비스 레이어 객체
             params  : 딕셔너리 패킹된 쿼리파라미터객체 

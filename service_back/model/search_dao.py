@@ -4,9 +4,10 @@ import traceback
 class SearchDao:
     def search_stores(self, params, db):
         """
+        스토어 검색 - Persistence Layer(Model) function
         Args :
             params : 딕셔너리 패킹된 쿼리파라미터객체
-            db : 데이터베이스 연결 객체
+            db     : 데이터베이스 연결 객체
         Returns :
             쿼리파라미터와 매칭되는 스토어 검색결과 리스트
         Authors :
@@ -45,9 +46,10 @@ class SearchDao:
 
     def search_products(self, params, db):
         """
+        상품 검색 - Persistence Layer(Model) function
         Args :
             params : 딕셔너리 패킹된 쿼리파라미터객체
-            db : 데이터베이스 연결 객체
+            db     : 데이터베이스 연결 객체
         Returns :
             쿼리파라미터와 매칭되는 상품 검색결과 리스트
         Authors :

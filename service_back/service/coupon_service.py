@@ -6,6 +6,7 @@ class CouponService:
 
     def get_coupons(self, db):
         """
+        다운로드 가능한 쿠폰조회 - Business Layer(Service) function
         Args :
             coupons_dao: 쿠폰 관련 데이터접근객체
             db : 데이터베이스 연결객체
@@ -29,11 +30,42 @@ class CouponService:
         else :
             return coupons
 
-    def download_coupons(self, params, db):
+    def check_downloaded_coupons(self, user_id, c, db):
         """
+        쿠폰 다운로드 유무 체크 - Business Layer(Service) function
         Args :
             coupons_dao : 쿠폰 관련 데이터접근객체
-            params      : 딕셔너리 패킹된 쿼리파라미터객체
+            user_id     : 현재 접속한 유저아이디
+            c           : 쿠폰아이디
+            db          : 데이터베이스 연결객체
+        Returns :
+        Authors :
+            1218kim23@gmail.com(김기욱)
+        History :
+            2020-10-12 : 예외처리 추가
+            2020-10-08 : 초기 생성
+        """
+        try :
+            coupons = self.coupon_dao.check_downloaded_coupons(user_id, c, db)
+            if coupons:
+                result  = True
+            else : 
+                result = None
+            
+        except :
+            traceback.print_exc()
+            raise 
+
+        else :
+            return result
+
+    def download_coupons(self, user_id, c, db):
+        """
+        쿠폰 다운로드 - Business Layer(Service) function
+        Args :
+            coupons_dao : 쿠폰 관련 데이터접근객체
+            user_id     : 현재 접속한 유저아이디
+            c           : 쿠폰아이디
             db          : 데이터베이스 연결객체
         Returns :
         Authors :
@@ -43,7 +75,7 @@ class CouponService:
             2020-10-07 : 초기 생성
         """
         try :
-            self.coupon_dao.download_coupons(params, db)
+            self.coupon_dao.download_coupons(user_id, c, db)
             
         except :
             traceback.print_exc()
@@ -51,6 +83,7 @@ class CouponService:
     
     def get_downloaded_coupons(self, user_id, db):
         """
+        다운로드한 쿠폰 조회 - Business Layer(Service) function
         Args :
             coupons_dao : 쿠폰 관련 데이터접근객체
             user_id     : 현재 접속한 유저아이디
@@ -99,30 +132,3 @@ class CouponService:
         except :
             traceback.print_exc()
             raise 
-
-    def check_downloaded_coupons(self, user_id, db):
-        """
-        Args :
-            coupons_dao : 쿠폰 관련 데이터접근객체
-            user_id     : 현재 접속한 유저아이디
-            db          : 데이터베이스 연결객체
-        Returns :
-        Authors :
-            1218kim23@gmail.com(김기욱)
-        History :
-            2020-10-12 : 예외처리 추가
-            2020-10-08 : 초기 생성
-        """
-        try :
-            coupons = self.coupon_dao.check_downloaded_coupons(user_id, db)
-            if coupons:
-                result  = [coupon['coupon_id'] for coupon in coupons]
-            else : 
-                result = []
-            
-        except :
-            traceback.print_exc()
-            raise 
-
-        else :
-            return result

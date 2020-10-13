@@ -4,6 +4,7 @@ import traceback
 class QuestionDao:
     def get_questions(self, params, db):
         """
+        문의글 리스트 - Persistence Layer(Model) function
         Args :
             product_id : 상품아이디
             db         : 데이터베이스 연결 객체
@@ -65,7 +66,7 @@ class QuestionDao:
                 cursor.execute(qna_count, params["product_id"])
                 result = cursor.fetchone()
 
-                #count는 무조건 존재해야 하므로 예외처리
+                # count는 무조건 존재해야 하므로 예외처리
                 if not result:
                     raise Exception('QUERY FAILED')
 
@@ -73,7 +74,10 @@ class QuestionDao:
                 # 신규상품의 경우 QNA가 부재할 수 있으므로 NONE값을 따로 예외처리하지않는다
                 sql_result = cursor.fetchall()
                 
+                # 내가 쓴 글 보기 필터링을 위해 현재 접속한 유저아이디를 외부로 따로 빼준다.
                 result['user_id']   = params['user_id']
+
+                #모든 정보를 합쳐서 result를 만들어서 return
                 result['questions'] = sql_result
         
         except :
@@ -85,11 +89,11 @@ class QuestionDao:
     
     def insert_question(self, params, db):
         """
+        문의글 생성 - Persistence Layer(Model) function
         Args :
             params : 딕셔너리 패킹된 쿼리파라미터객체
             db     : 데이터베이스 연결 객체
         Returns :
-            None
         Authors :
             1218kim23@gmail.com(김기욱)
         History :
@@ -130,11 +134,11 @@ class QuestionDao:
 
     def delete_question(self, params, db):
         """
+        문의글 삭제(Soft Delete) - Persistence Layer(Model) function
         Args :
             params : 딕셔너리 패킹된 쿼리파라미터객체
             db     : 데이터베이스 연결 객체
         Returns :
-            None
         Authors :
             1218kim23@gmail.com(김기욱)
         History :
@@ -151,9 +155,10 @@ class QuestionDao:
                     product_id = %s
                     AND id = %s;
                 """
-                sql = cursor.execute(sql, (params['product_id'], params['q']))
-            
-                if not sql:
+                result = cursor.execute(sql, (params['product_id'], params['q']))
+
+                # None값이 발생하면 ERROR이므로 reraise 실행
+                if not result:
                     raise Exception('INVALID PRODUCT OR COUPON ID')
 
         except :

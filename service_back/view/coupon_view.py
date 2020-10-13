@@ -19,14 +19,14 @@ class CouponView(MethodView):
 
     def get(self):
         """
-        쿠폰 목록을 조회하는 메서드
+        다운로드 가능한 쿠폰조회 - Presentation Layer(View) function
         Args:
             service    : 서비스 레이어 객체
         Returns:
             200:    
                 다운로드&사용가능한 모든 쿠폰리스트 JSONDATA
             400:
-                EXCEPTION MESSAGE
+                {message : 모든 레이어에서 레이즈된 에러메시지}
         Author:
             김기욱(1218kim23@gmail.com)
         History:
@@ -52,7 +52,7 @@ class CouponView(MethodView):
     @login_confirm
     def post(self, token_payload, c):
         """
-        (회원유저전용)쿠폰을 다운로드 하는 메서드
+        쿠폰 다운로드 - Presentation Layer(View) function
         Args:
             service       : 서비스 레이어 객체
             c             : 쿼리파라미터(쿠폰아이디)
@@ -61,7 +61,7 @@ class CouponView(MethodView):
             200:    
                 {message : SUCCESS}
             400:
-                EXCEPTION MESSAGE
+                {message : 모든 레이어에서 레이즈된 에러메시지}
         Author:
             김기욱(1218kim23@gmail.com)
         History:
@@ -71,16 +71,12 @@ class CouponView(MethodView):
         try :
             db = get_connection()
             user_id = token_payload['id']
-            downloaded_coupon_list = self.service.check_downloaded_coupons(user_id, db)
+            downloaded_coupon_check = self.service.check_downloaded_coupons(user_id, c, db)
             
-            if c in downloaded_coupon_list:
+            if downloaded_coupon_check:
                 return jsonify({'message':'INVALID ACCESS TO DOWNLOAD'}), 400
 
-            params = {
-                'user_id'   : user_id,
-                'coupon_id' : c
-            }
-            self.service.download_coupons(params, db)
+            self.service.download_coupons(user_id, c, db)
         
         except Exception as e:
             db.rollback()
@@ -100,7 +96,7 @@ class UserCouponView(MethodView):
     @login_confirm
     def get(self, token_payload):
         """
-        (회원유저전용)다운로드한 쿠폰을 조회하는 메서드
+        다운로드한 쿠폰 조회 - Presentation Layer(View) function
         Args:
             service       : 서비스 레이어 객체
             token_payload : 로그인데코레이터로 반환된 user_id 
@@ -108,7 +104,7 @@ class UserCouponView(MethodView):
             200:    
                 접속한 유저가 다운로드한 모든 쿠폰리스트 JSONDATA
             400:
-                EXCEPTION MESSAGE
+                {message : 모든 레이어에서 레이즈된 에러메시지}
         Author:
             김기욱(1218kim23@gmail.com)
         History:
@@ -137,7 +133,7 @@ class UserCouponView(MethodView):
     @login_confirm
     def post(self, token_payload, c):
         """
-        (회원유저전용)다운로드한 쿠폰을 사용하는 메서드
+        다운로드한 쿠폰 사용 - Presentation Layer(View) function
         Args:
             service       : 서비스 레이어 객체
             c             : 쿼리파라미터(쿠폰아이디)
@@ -146,7 +142,7 @@ class UserCouponView(MethodView):
             200:    
                 {message : SUCCESS}
             400:
-                EXCEPTION MESSAGE
+                {message : 모든 레이어에서 레이즈된 에러메시지}
         Author:
             김기욱(1218kim23@gmail.com)
         History:

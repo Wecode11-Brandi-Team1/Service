@@ -4,6 +4,7 @@ import traceback
 class CouponDao:
     def get_coupons(self, db):
         """
+        다운로드 가능한 쿠폰조회 - Persistence Layer(Model) function
         Args :
             db : 데이터베이스 연결 객체
         Returns :
@@ -47,7 +48,7 @@ class CouponDao:
                     cd.discount_price DESC;
                 """
                 cursor.execute(sql)
-                coupons = cursor.fetchall()
+                result = cursor.fetchall()
                 #쿠폰리스트는 None값이 반환 가능하므로 None값 예외처리 해주지 않는다
 
         except :
@@ -55,13 +56,51 @@ class CouponDao:
             raise
         
         else :
-            return coupons
+            return result
 
-    def download_coupons(self, params, db):
+    def check_downloaded_coupons(self, user_id, c, db):
         """
+        쿠폰 다운로드 유무 체크 - Persistence Layer(Model) function
         Args :
-            params : 딕셔너리 패킹된 쿼리파라미터객체 
-            db     : 데이터베이스 연결 객체
+            user_id : 유저아이디
+            c       : 쿠폰아이디
+            db      : 데이터베이스 연결 객체
+        Returns :
+            다운로드 받은 쿠폰리스트
+        Authors :
+            1218kim23@gmail.com(김기욱)
+        History :
+            2020-10-08 : 초기생성
+        """
+        try :
+            with db.cursor() as cursor:
+                sql = """
+                SELECT 
+                    uc.id
+                FROM 
+                    user_coupons uc
+                WHERE
+                    uc.user_id = %s
+                    AND uc.coupon_id = %s;
+                """
+                cursor.execute(sql, (user_id, c))
+                result = cursor.fetchall()
+                #쿠폰리스트는 None값이 반환 가능하므로 None값 예외처리 해주지 않는다
+
+        except :
+            traceback.print_exc()
+            raise
+        
+        else :
+            return result
+
+    def download_coupons(self, user_id, c, db):
+        """
+        쿠폰 다운로드 - Persistence Layer(Model) function
+        Args :
+            user_id : 유저아이디
+            c       : 쿠폰아이디
+            db      : 데이터베이스 연결 객체
         Returns :
         Authors :
             1218kim23@gmail.com(김기욱)
@@ -80,10 +119,7 @@ class CouponDao:
                     %s
                 );
                 """
-                result = cursor.execute(sql, (
-                    params['user_id'],
-                    params['coupon_id']
-                ))
+                result = cursor.execute(sql, (user_id, c))
 
         except :
             traceback.print_exc()
@@ -91,6 +127,7 @@ class CouponDao:
 
     def get_downloaded_coupons(self, user_id, db):
         """
+        다운로드한 쿠폰 조회 - Persistence Layer(Model) function
         Args :
             user_id : 유저아이디
             db      : 데이터베이스 연결 객체
@@ -126,17 +163,18 @@ class CouponDao:
                 """
 
                 cursor.execute(sql, user_id)
-                coupons = cursor.fetchall()
+                result = cursor.fetchall()
                 #쿠폰리스트는 None값이 반환 가능하므로 None값 예외처리 해주지 않는다
 
         except :
             traceback.print_exc()
         
         else :
-            return coupons
+            return result
 
     def use_downloaded_coupons(self, params, db):
         """
+        다운로드한 쿠폰 조회 - Persistence Layer(Model) function
         Args :
             params : 딕셔너리 패킹된 쿼리파라미터객체 
             db     : 데이터베이스 연결 객체
@@ -156,44 +194,11 @@ class CouponDao:
                     user_id = %s
                     AND coupon_id = %s;
                 """
-                sql = cursor.execute(sql, (params['user_id'], params['coupon_id']))
+                result = cursor.execute(sql, (params['user_id'], params['coupon_id']))
                 # None값이 발생하면 ERROR이므로 reraise 실행
-                if not sql :
+                if not result :
                     raise Exception('INVALID COUPON ID')
 
         except :
             traceback.print_exc()
             raise 
-
-    def check_downloaded_coupons(self, user_id, db):
-        """
-        Args :
-            user_id : 유저아이디
-            db      : 데이터베이스 연결 객체
-        Returns :
-            다운로드 받은 쿠폰리스트
-        Authors :
-            1218kim23@gmail.com(김기욱)
-        History :
-            2020-10-08 : 초기생성
-        """
-        try :
-            with db.cursor() as cursor:
-                sql = """
-                SELECT 
-                    uc.coupon_id 
-                FROM 
-                    user_coupons uc
-                WHERE
-                    uc.user_id = %s;
-                """
-                cursor.execute(sql, user_id)
-                result = cursor.fetchall()
-                #쿠폰리스트는 None값이 반환 가능하므로 None값 예외처리 해주지 않는다
-
-        except :
-            traceback.print_exc()
-            raise
-        
-        else :
-            return result

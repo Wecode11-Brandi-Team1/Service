@@ -4,6 +4,7 @@ import traceback
 class ProductDao:
     def get_most_sold_products(self, db):
         """
+        메인페이지 인기상품리스트 - Persistence Layer(Model) function
         Args :
             db : 데이터베이스 연결 객체
         Returns :
@@ -11,6 +12,7 @@ class ProductDao:
         Authors :
             1218kim23@gmail.com(김기욱)
         History :
+            2020-10-12 : 할인가 로직 추가
             2020-09-28 : None값 예외처리 추가
             2020-09-22 : 초기생성
         """
@@ -25,7 +27,8 @@ class ProductDao:
                     pi.image_path,
                     pd.name as product_name,
                     pd.discount_rate,
-                    pd.sale_price 
+                    pd.sale_price,
+                    CONVERT(pd.sale_price*((100-pd.discount_rate)/100) , UNSIGNED) as discounted_price 
                 FROM 
                     products p,
                     product_images pi,
@@ -55,6 +58,7 @@ class ProductDao:
 
     def get_discounted_products(self, db):
         """
+        메인페이지 할인상품리스트 - Persistence Layer(Model) function
         Args :
             db : 데이터베이스 연결 객체
         Returns :
@@ -62,6 +66,7 @@ class ProductDao:
         Authors :
             1218kim23@gmail.com(김기욱)
         History :
+            2020-10-12 : 할인가 로직 추가
             2020-09-28 : None값 예외처리 추가
             2020-09-22 : 초기생성
         """
@@ -76,7 +81,8 @@ class ProductDao:
                     pi.image_path,
                     pd.name as product_name,
                     pd.discount_rate,
-                    pd.sale_price 
+                    pd.sale_price,
+                    CONVERT(pd.sale_price*((100-pd.discount_rate)/100) , UNSIGNED) as discounted_price  
                 FROM 
                     products p,
                     product_images pi,
@@ -106,6 +112,7 @@ class ProductDao:
 
     def get_cateogory_set(self, q, db):
         """
+        NAV/SIDE_BAR 카테고리리스트 - Persistence Layer(Model) function
         Args :
             db : 데이터베이스 연결 객체
             q  : 쿼리파라미터(셀러속성 아이디)
@@ -164,6 +171,7 @@ class ProductDao:
 
     def get_products(self, params, db):
         """
+        전체상품 리스트(필터링있음) - Persistence Layer(Model) function
         Args :
             db      : 데이터베이스 연결 객체
             params  : 딕셔너리 패킹된 쿼리파라미터
@@ -186,7 +194,8 @@ class ProductDao:
                     pi.image_path,
                     pd.name as product_name,
                     pd.discount_rate,
-                    pd.sale_price 
+                    pd.sale_price,
+                    CONVERT(pd.sale_price*((100-pd.discount_rate)/100) , UNSIGNED) as discounted_price 
                 FROM 
                     products p,
                     product_images pi,
@@ -244,6 +253,7 @@ class ProductDao:
                 cursor.execute(sql+";", params)
                 result = cursor.fetchall()
 
+                # None값이 발생하면 ERROR이므로 reraise 실행
                 if not result:
                     raise Exception('QUERY FAILED')
             
@@ -256,6 +266,7 @@ class ProductDao:
     
     def get_product(self, product_id, db):
         """
+        상품 상세페이지 - Persistence Layer(Model) function
         Args :
             db          : 데이터베이스 연결 객체
             product_id  : 상품아이디
@@ -277,7 +288,7 @@ class ProductDao:
                     pd.discount_rate,
                     pd.sale_price,
                     pd.description,
-                    pd.sale_price*((100-pd.discount_rate)/100) as discounted_price
+                    CONVERT(pd.sale_price*((100-pd.discount_rate)/100) , UNSIGNED) as discounted_price
                 FROM 
                     products p,
                     product_details pd,
@@ -302,7 +313,7 @@ class ProductDao:
                     AND p.id = %s;
                 """
                 
-                options = """
+                option = """
                 SELECT 
                     colors.name as color,
                     sizes.name as size,
@@ -319,26 +330,26 @@ class ProductDao:
                     AND sizes.id = opt.size_id
                     AND p.id = %s;
                 """
-                product = cursor.execute(product, product_id)
-                product = cursor.fetchone()
+                cursor.execute(product, product_id)
+                result = cursor.fetchone()
 
-                if not product:
+                # None값이 발생하면 ERROR이므로 reraise 실행
+                if not result:
                     raise Exception('INVALID PRODUCT ID')
 
-                images = cursor.execute(image, product_id)
+                cursor.execute(image, product_id)
                 images = cursor.fetchall()
                 images = [image["image_path"] for image in images]
 
-                options = cursor.execute(options, product_id)
+                cursor.execute(option, product_id)
                 options = cursor.fetchall()
             
-                product["image_path"] = images
-                product["option"] = options
-                product["discounted_price"] = int(product["discounted_price"])
+                result["image_path"] = images
+                result["option"] = options
                
         except :
              traceback.print_exc()
              raise
         
         else :
-            return product
+            return result

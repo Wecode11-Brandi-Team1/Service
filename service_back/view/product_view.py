@@ -21,13 +21,14 @@ class MainProductsView(MethodView):
     @cache.cached(timeout=30)
     def get(self):
         """
+        메인페이지 상품리스트 - Presentation Layer(View) function
         Args:
             service: 서비스 레이어 객체
         Returns:
             200:    
                 할인률이 존재하는 상품 & 판매량 상위 상품들로 묶은 리스트 JSONDATA
-            400: 
-                VALUES DO NOT EXIST : 요청한 데이터가 존재하지 않음
+            400:
+                EXCEPTION MESSAGE
         Author:
             김기욱(1218kim23@gmail.com)
         History:
@@ -37,10 +38,6 @@ class MainProductsView(MethodView):
             db = get_connection()
             products = self.service.get_main_products(db)
 
-            if products is None:
-                # 요청한 데이터가 존재하지 않는 경우 에러 전달
-                return jsonify({'message':'VALUES DO NOT EXIST'}), 400
-        
         except Exception as e:
             return jsonify({'message':f'{e}'}), 400
         
@@ -62,11 +59,14 @@ class CategorySetView(MethodView):
     @cache.cached(timeout=100)
     def get(self, q):
         """
+        NAV/SIDE_BAR 카테고리리스트 - Presentation Layer(View) function
         Args:
             service: 서비스 레이어 객체
         Returns:
             200:    
                 쿼리파라미터에 해당되는 카테고리 JSONDATA
+            400:
+                {message : 모든 레이어에서 레이즈된 에러메시지}
         Author:
             김기욱(1218kim23@gmail.com)
         History:
@@ -105,6 +105,7 @@ class ProductsView(MethodView):
     @cache.cached(timeout=30)
     def get(self, *args):
         """
+        전체상품 리스트(필터링있음) - Presentation Layer(View) function
         Args:
             service: 서비스 레이어 객체
             args = {
@@ -122,6 +123,8 @@ class ProductsView(MethodView):
         Returns:
             200:    
                 쿼리파라미터에 해당되는 카테고리 JSONDATA
+            400:
+                {message : 모든 레이어에서 레이즈된 에러메시지}
         Author:
             김기욱(1218kim23@gmail.com)
         History:
@@ -163,12 +166,15 @@ class ProductView(MethodView):
     @cache.cached(timeout=30)
     def get(self, product_id):
         """
+        상품 상세페이지 - Presentation Layer(View) function
         Args:
             service    : 서비스 레이어 객체
             product_id : 상품아이디
         Returns:
             200:    
                 상품상세 JSONDATA
+            400:
+                {message : 모든 레이어에서 레이즈된 에러메시지}
         Author:
             김기욱(1218kim23@gmail.com)
         History:

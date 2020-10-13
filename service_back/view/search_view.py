@@ -24,15 +24,16 @@ class SearchView(MethodView):
     )
     def get(self, *args):
         """
+        검색 - Presentation Layer(View) function
         Args :
-            service: 서비스레이어 객체
-            args = {
-                'limit' : 데이터의 최대 갯수,
-                'q'     : 검색어
-            }
+            service : 서비스레이어 객체
+            limit   : 데이터의 최대 갯수
+            q       : 검색어
         Returns :
             200:
                 쿼리파라미터와 매칭되는 상품 및 셀러정보 JSONDATA
+            400: 
+                {message : 모든 레이어에서 레이즈된 에러메시지} 
         Authors :
             1218kim23@gmail.com(김기욱)
         History :

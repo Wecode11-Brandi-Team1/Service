@@ -7,6 +7,7 @@ class ProductService:
     
     def get_main_products(self, db):
         """
+        메인페이지 상품리스트 - Business Layer(Service) function
         Args :
             product_dao: 상품 관련 데이터접근객체
             db : 데이터베이스 연결객체
@@ -15,6 +16,7 @@ class ProductService:
         Authors :
             1218kim23@gmail.com(김기욱)
         History :
+            2020-10-12 : 할인가 추가 로직 삭제(쿼리에서 받음)
             2020-10-03 : 할인가 추가 로직 변경
             2020-09-28 : 예외처리 수정(traceback 추가 *모든 함수 공통사항*)
             2020-09-22 : 초기 생성
@@ -22,19 +24,13 @@ class ProductService:
         try :
             mostsold_products   = self.product_dao.get_most_sold_products(db)
             discounted_products = self.product_dao.get_discounted_products(db)
-            #할인가격 추가(할인률*판매가격)
-            if mostsold_products :
-                for product in mostsold_products :
-                    product['discounted_price'] = round(product['sale_price']*(100-product['discount_rate'])/100)
-            else : 
+            # 쿼리결과가 False일 경우 다음 문구로 대체
+            if not mostsold_products :
                 mostsold_products = "판매량 높은 상품이 존재하지 않습니다."
 
-            if discounted_products :
-                for product in discounted_products :
-                    product['discounted_price'] = round(product['sale_price']*(100-product['discount_rate'])/100)
-
-            else : 
-                mostsold_products = "할인상품이 존재하지 않습니다."
+            if not discounted_products :
+                discounted_products = "할인상품이 존재하지 않습니다."
+                
 
             products = {
             #100개 이상 상품을 판매량이 높은 상품으로 규정하고 그 중 10개를 리스트에 넣음 
@@ -52,6 +48,7 @@ class ProductService:
         
     def get_category_set(self, q, db):
         """
+        NAV/SIDE_BAR 카테고리리스트 - Business Layer(Service) function
         Args :
             product_dao: 상품 관련 데이터접근객체
             q : 쿼리파라미터(셀러속성 id)
@@ -98,6 +95,7 @@ class ProductService:
     
     def get_products(self, params, db):
         """
+        전체상품 리스트(필터링있음) - Business Layer(Service) function
         Args :
             product_dao: 상품 관련 데이터접근객체
             params : 딕셔너리 패킹된 쿼리파라미터객체
@@ -107,18 +105,16 @@ class ProductService:
         Authors :
             1218kim23@gmail.com(김기욱)
         History :
+            2020-10-12 : 할인가 추가 로직 삭제(쿼리에서 받음)
             2020-10-03 : 할인가 추가 로직 변경
             2020-09-28 : 초기 생성
         """
         try :
             product_data = self.product_dao.get_products(params, db)
-            if product_data :
-                for product in product_data :
-                    product['discounted_price'] = round(product['sale_price']*(100-product['discount_rate'])/100)
-            
-            else : 
+            # 쿼리결과가 False일 경우 다음 문구로 대체
+            if not product_data :
                 product_data = "해당 카테고리에 맞는 상품이 존재하지 않습니다."
-
+                
         except :
             traceback.print_exc()
             raise 
@@ -128,6 +124,7 @@ class ProductService:
 
     def get_product(self, product_id, db):
         """
+        상품 상세페이지 - Business Layer(Service) function
         Args :
             product_dao: 상품 관련 데이터접근객체
             product_id : 상품아이디

@@ -26,6 +26,7 @@ class QuestionView(MethodView):
     @login_confirm
     def get(self, token_payload, *args):
         """
+        문의글 리스트 - Presentation Layer(View) function
         Args:
             service       : 서비스 레이어 객체
             token_payload : 로그인데코레이터로 반환된 user_id 
@@ -36,7 +37,7 @@ class QuestionView(MethodView):
             200:    
                 상품아이디에 매칭되는 Questions JSONDATA
             400: 
-                모든 레이어에서 raise 된 ERROR
+                {message : 모든 레이어에서 레이즈된 에러메시지}
         Author:
             김기욱(1218kim23@gmail.com)
         History:
@@ -63,6 +64,7 @@ class QuestionView(MethodView):
             db.close() 
     
     @catch_exception
+    #POST요청받은 JSON DATA의 관련 에러는 Validate_params에서 checking
     @validate_params(
         Param('product_id', PATH, int, required = True),
         Param('questions', JSON, dict, required = True)
@@ -70,6 +72,7 @@ class QuestionView(MethodView):
     @login_confirm
     def post(self, token_payload, *args):
         """
+        문의글 생성 - Presentation Layer(View) function
         Args:
             service       : 서비스 레이어 객체
             token_payload : 로그인데코레이터로 반환된 user_id 
@@ -82,9 +85,8 @@ class QuestionView(MethodView):
         Returns:
             200:    
                 {'message':'SUCCESS'}
-            400:
-                KEY ERROR
-                그 외 모든 레이어에서 raise 된 ERROR
+            400: 
+                {message : 모든 레이어에서 레이즈된 에러메시지}
         Author:
             김기욱(1218kim23@gmail.com)
         History:
@@ -99,11 +101,7 @@ class QuestionView(MethodView):
                 'user_id'   : token_payload['id']
             }
             self.service.insert_question(params, db)
-        
-        except KeyError as k:
-            db.rollback()
-            return jsonify({'message':f'{k}'}), 400
-           
+
         except Exception as e:
             db.rollback()
             return jsonify({'message':f'{e}'}), 400
@@ -123,6 +121,7 @@ class QuestionView(MethodView):
     @login_confirm
     def delete(self, token_payload, *args):
         """
+        문의글 삭제(Soft Delete) - Presentation Layer(View) function
         Args:
             service       : 서비스 레이어 객체
             token_payload : 로그인데코레이터로 반환된 user_id 
@@ -131,8 +130,8 @@ class QuestionView(MethodView):
         Returns:
             200:    
                 {'message':'SUCCESS'}
-            400:
-                EXCEPTION MESSAGE
+            400: 
+                {message : 모든 레이어에서 레이즈된 에러메시지}
         Author:
             김기욱(1218kim23@gmail.com)
         History:
