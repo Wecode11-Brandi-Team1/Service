@@ -81,4 +81,11 @@ export default {
   border-bottom: none;
   color: black;
 }
+
+@media screen and (max-width: 400px){
+  .active-tab{
+    padding-bottom: 14px !important;
+    border-bottom: 2px solid #ff1f4b !important;
+  }
+}
 </style>

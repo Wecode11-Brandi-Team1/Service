@@ -9,6 +9,7 @@ export const store = new Vuex.Store({
     token: "",
     googleToken: "",
     resultSelected: "",
+    cancelSelected:"",
     resultTotal: "",
     cancelTotal: "",
     signUpTabName: "",

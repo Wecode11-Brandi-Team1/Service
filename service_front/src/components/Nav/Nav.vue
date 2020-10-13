@@ -1,4 +1,4 @@
-<template>
+<template scroll=no>
   <div>
     <div class="nav-wrap" @mouseenter="resetHover">
       <div class="nav-left">
@@ -32,6 +32,7 @@
           <li class="border">|</li>
           <li>입점문의</li>
         </ul>
+        <img class="cart-mobile" src="http://web-staging.brandi.co.kr/static/20.08.01/images/img_top_cart.png" />
       </div>
     </div>
     <div class="nav-menu">
@@ -44,6 +45,32 @@
         this.$store.state.menutab.currentHover === 5
       "
     />
+  <!-- MobileNav  -->
+  <div class="nav-wrap-mobile">
+    <div class="gnbTop">
+        <h1>
+          <router-link to="/">
+            <img ait="BRANDI" src="https://web-staging.brandi.co.kr/static/20.08.01/images/logo@3x.png" />
+          </router-link>
+        </h1>
+        <div class="search-box">
+          <form>
+            <button>검색</button>
+            <input type="text" />
+          </form>
+        </div>
+        <div class="cart-icon">
+          <img src="https://web-staging.brandi.co.kr/static/20.08.01/images/img_top_cart.png" />
+        </div>
+      </div>
+      <div class="nav-menu-mini">
+        <div class="nav-container">
+          <ul>
+            <tab-item v-for="item in menu" v-bind="item" :key="item.id" />
+          </ul>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -182,6 +209,10 @@ export default {
         cursor: default;
       }
     }
+
+    .cart-mobile{
+      display: none;
+    }
   }
 }
 .nav-menu {
@@ -195,4 +226,140 @@ export default {
   text-align: center;
   font-weight: 900;
 }
+
+.nav-wrap-mobile{
+  display: none;
+}
+
+@media screen and (max-width: 400px){
+  .nav-wrap {
+    display: none;
+  }
+
+  .nav-menu{
+    display: none;
+  }
+
+  .nav-wrap-mobile{
+    width: 100%;
+    height: 57px;
+    position: relative;
+    display: block;
+    z-index: 21;
+
+      .gnbTop{
+        padding: 13px 10px;
+        display: block;
+        height: 57px;
+        border-bottom: 1px solid #d2d2d2;
+
+        h1{
+          width: 25%;
+          height: 30px;
+          text-align: left;
+          float: left;
+          margin: 0 3px 0 0;
+          padding: 0;
+
+          a{
+            width: 100%;
+            max-width: 80px;
+            height: 30px;
+            position: relative;
+            display: block;
+            line-height: 30px;
+
+            img{
+              width: 100%;
+              vertical-align: top;
+              margin-top: 8px;
+            }
+          }
+        }
+      }
+
+      .search-box{
+        width: 64%;
+        height: 30px;
+        float: left;
+        border-radius: 15px;
+        background-color: #eee;
+        background-image: url('https://web-staging.brandi.co.kr/static/20.08.01/images/ico_search_m.gif');
+        background-repeat: no-repeat;
+        background-position: 10px 7px;
+        background-size: 15px;
+        padding: 0;
+        padding-left: 34px;
+
+        form{
+          width: 100%;
+          height: 100%;
+
+          button{
+            width: 0;
+            height: 0;
+            border: 0px;
+            overflow: hidden;
+            text-indent: -999px;
+          }
+
+          input{
+            width: calc(100% - 58px);
+            height: 30px;
+            font-size: 15px;
+            line-height: 20px;
+            background: transparent;
+            border: 0px;
+            padding: 5px;
+          }
+          
+        }
+      }
+
+      .cart-icon{
+        width: 30px;
+        height: 30px;
+        display: block;
+        position: absolute;
+        top: 50%;
+        right: 12px;
+        text-align: center;
+        transform: translate(0, -50%);
+
+        img{
+          width: 30px;
+          position: absolute;
+          top: 37%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+        }
+      }
+
+      .nav-menu-mini{
+        width: 100%;
+        height: 51px;
+        display: block;
+        background: #fff;
+        overflow: hidden;
+        border-bottom: 1px solid #ddd;
+
+        .nav-container{
+          width: 360px;
+          overflow-x:scroll;
+          white-space: nowrap;
+          
+          ul{
+            padding: 13px 15px;
+
+            span{
+              font-size: 13px;
+              font-weight: bold;
+              padding: 0px;
+              margin-right: 28px;
+            }
+          }
+        }
+      }
+    }
+  }
 </style>

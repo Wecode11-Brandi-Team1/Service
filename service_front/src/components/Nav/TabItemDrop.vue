@@ -2,7 +2,7 @@
   <div class="category-bg" @mouseleave="resetHover">
     <div
       class="category-wrap"
-      v-if="this.$store.state.menutab.currentHover === 3"
+      v-if="this.$store.state.menutab.currentHover === 3 && isMobile === false"
     >
       <ul>
         <li v-for="item in shopData().item" :key="Object.keys(item)[0]">
@@ -10,7 +10,7 @@
             class="header"
             v-for="(list, index) in item"
             :key="index"
-            @click="goToProduct(Object.keys(item))"
+            @click="pageStatus"
           >
             {{ Object.keys(item)[0] }}
             <a class="list" v-for="(content, index) in list" :key="index">
@@ -57,6 +57,7 @@
 export default {
   data() {
     return {
+      isMobile: false,
       list: [
         { id: 0, label: "홈" },
         { id: 1, label: "랭킹" },
@@ -71,6 +72,14 @@ export default {
     };
   },
   methods: {
+    pageStatus() {
+      let mql = window.matchMedia("screen and (max-width: 400px)");
+      if (mql.matches) {
+          this.isMobile = true
+      } else {
+          this.isMobile = false
+      }
+    },
     resetHover() {
       this.$store.state.menutab.currentHover = null;
     },
@@ -144,6 +153,12 @@ export default {
       height: 100%;
       background-color: #e1e1e1;
     }
+  }
+}
+
+@media screen and (max-width: 400px){
+  .category-bg{
+    display: none;
   }
 }
 </style>

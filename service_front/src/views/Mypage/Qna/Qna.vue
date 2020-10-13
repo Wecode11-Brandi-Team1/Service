@@ -8,16 +8,14 @@
               <dd>Q&A 내역이 존재하지 않습니다.</dd>
             </dl> -->
             <dl class="list-header">
-              <dt>답변상태</dt>
+              <dt>작성일</dt>
               <dt>내용</dt>
               <dt>작성자</dt>
-              <dt>작성일</dt>
             </dl>
-            <dl class="qna_question">
-              <dd>미답변</dd>
-              <dd>테스트테스트콘푸라이크냠냠</dd>
-              <dd></dd>
-              <dd>2020.09.24</dd>
+            <dl class="qna_question" v-for="question in questionsData" v-bind:key="question.id">
+              <dd>{{ question.created_at }}</dd>
+              <dd>{{ question.question_content }}</dd>
+              <dd>{{ question.writer }}</dd>
             </dl>
           </div>
       </div>
@@ -26,15 +24,35 @@
 </template>
 
 <script>
+import { axios } from '../../../plugins/axios'
+
 export default {
   data:() => ({
     pageName:'qna',
-    mobilePageName:'상품 Q&A'
+    mobilePageName:'상품 Q&A',
+    questionsData:[]
   }),
   mounted: function () {
     this.$store.state.myPageTabName = this.pageName;
     this.$store.state.myPageShow = true;
     this.$store.state.mobilePageName = this.mobilePageName;
+
+    axios({
+      url: 'http://10.251.1.113:5000/products/1/questions?u=2',
+      method: 'GET',
+      headers: { 
+        'Authorization': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6Mn0.YHNEVqI1PLALLTpPVComx3VMQZkV0z4CzT_SQk88yY0'
+        //this.$cookies.get("accesstoken")
+      }
+    })
+    .then((response) => {
+      console.log(response);
+      this.questionsData = response.data.questions;
+
+    })
+    .catch((error) => {
+      console.log(response);
+    })
   }
 }
 </script>
@@ -45,6 +63,7 @@ export default {
     width: 100%;
     padding: 0px 20px;
     margin: 0px auto;
+    margin-bottom: 70px;
 
     .qna-box{
       h2{
@@ -99,6 +118,15 @@ export default {
             &:first-child{
               width: 15%;
               text-align: center;
+            }
+          }
+        }
+
+        .qna_question{
+
+          dd{
+            &:nth-child(2){
+              text-align: left;
             }
           }
         }

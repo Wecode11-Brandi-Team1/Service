@@ -11,6 +11,8 @@
       <dl class="order-totalpay">
         <dd>주문취소일</dd>
         <dd class="order-rigth">{{ toDayValue }}</dd>
+        <dd>주문취소사유</dd>
+        <dd class="order-rigth">{{ selectedType }}</dd>
         <dd class="order-totalpay-title">총 주문취소금액</dd>
         <dd class="order-totalpay-title red order-rigth">{{ Number(this.$store.state.cancelTotal).toLocaleString() }}원</dd>
       </dl>
@@ -50,6 +52,15 @@ export default {
 
       return year + '-' + month + '-' + date
     },
+    selectedType(){
+      if(this.$store.state.cancelSelected == 1){
+        return '구매자 취소';
+      }else if(this.$store.state.cancelSelected == 2){
+        return '구매자 변심';
+      }else if(this.$store.state.cancelSelected == 3){
+        return '상품 품절';
+      }
+    }
   }
 }
 </script>

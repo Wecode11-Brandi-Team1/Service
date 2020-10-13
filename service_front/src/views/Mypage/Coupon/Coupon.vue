@@ -11,7 +11,7 @@
             </dl>
           </div>
         </div>
-        <div v-if="isCoupon">
+        <div>
         <div class="coupon">
           <h2>발급받은 쿠폰 <strong>{{ couponData.the_number_of_coupons }}</strong><span><span class="coupon-star">* </span>유효기간이 30일 지난 쿠폰은 목록에서 삭제됩니다.</span></h2>
           <div class="coupon-list">
@@ -27,6 +27,9 @@
               <dd>[전체 쿠폰] {{ Number(couponData.coupons[index].minimum_price).toLocaleString() }} 이상 구매시</dd>
               <dd>{{ couponData.coupons[index].valid_ended_at }} ~ {{ couponData.coupons[index].valid_started_at }}</dd>
             </dl>
+          </div>
+          <div class="coupon-no-data" v-if="isCoupon">
+            쿠폰이 존재하지 않습니다.
           </div>
         </div>
         </div>
@@ -51,10 +54,10 @@ export default {
     this.$store.state.mobilePageName = this.mobilePageName;
 
     axios({
-      url: 'http://10.251.1.113:5000/user/coupons',
+      url: 'http://10.251.1.174:5000/user/coupons',
       method: 'GET',
       headers: { 
-        'Authorization': this.$cookies.get('accesstoken') 
+        'Authorization': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6Mn0.YHNEVqI1PLALLTpPVComx3VMQZkV0z4CzT_SQk88yY0'
         //this.$cookies.get("accesstoken")
       }
     })
@@ -64,13 +67,11 @@ export default {
       this.$store.state.couponNum = response.data.the_number_of_coupons;
 
       if(response.data === "쿠폰이 존재하지 않습니다."){
-        this.isCoupon = false;
-        alert('쿠폰이 존재하지 않습니다.');
+        this.isCoupon = true;
       }
     })
     .catch((error) => {
-      alert('쿠폰이 존재하지 않습니다.');
-      this.isCoupon = false;
+      this.isCoupon = true;
     })
   }
 }
@@ -79,6 +80,7 @@ export default {
 <style lang="scss" scoped>
 .mypage-wrap{
   color: #1e1e1e;
+  margin: 0px 0 70px 0 !important;
 
   .page-box{
     width: 100%;
@@ -177,6 +179,12 @@ export default {
             }
           }
         }
+      }
+
+      .coupon-no-data{
+        text-align: center;
+        padding: 50px;
+        border-bottom: 1px solid #000;
       }
     }
   }

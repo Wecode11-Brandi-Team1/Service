@@ -66,7 +66,7 @@ export default {
           }
         });
     }},
-    
+  
     onSignInSuccess (googleUser) {
       const accessToken = googleUser.getAuthResponse(true).access_token;
       const headers = {
@@ -76,7 +76,9 @@ export default {
       .then((response) => {
         if(response.data.access_token){
           this.$cookies.set("accesstoken", "response.data.access_token");
-          this.$router.push({path: '/'});
+          console.log(this.$cookies.isKey("accesstoken"));
+          console.log(this.$cookies.get(test));
+          // this.$router.push({path: '/'});
         }
       })
       .catch((error) => {

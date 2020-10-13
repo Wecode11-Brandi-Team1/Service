@@ -10,10 +10,8 @@
           {{ orderItem.order_number }}<router-link to="/order/detail"><div class="btn-order">주문상세보기<img src="https://web-staging.brandi.co.kr/static/2020.7.3/images/ic-titleic-detailpage-moreaction@3x.png" /></div></router-link></h2>
           <div class="delivery-title">브랜디 배송 상품</div>
           <div class="delivery-icon"><img src="https://web-staging.brandi.co.kr/static/2020.7.3/images/ic-seller-xl@3x.png" />상품</div>
-          <orderData v-bind:propsdata="detailItem" v-for="detailItem in orderItem.order_details" v-bind:key="detailItem.id"></orderData>
-          <div class="buttons-box">
-            <button class="refundBtn" @click="refundBtn">환불요청</button>
-            <button class="cancelBtn" @click="cancelBtn">주문취소</button>
+          <div class="order-items">
+            <orderData v-bind:propsdata="detailItem" v-bind:date="orderItem.order_date" v-for="detailItem in orderItem.order_details" v-bind:key="detailItem.id"></orderData>
           </div>
         </div>
       </div>
@@ -147,35 +145,24 @@ export default {
     viewData: false,
     productData: [],
     mobilePageName: '',
+    dateData: ''
   }),
-  props:['propsdata'],
+  props:['propsdata', 'date'],
   components:{
     OrderData
-  },
-  methods:{
-    refundBtn(){
-      if (confirm('선택하신 주문을 환불하시겠습니까?')) {
-        this.$router.push({path: '/mypage/refund'});
-      }
-    },
-    cancelBtn(){
-      if (confirm('선택하신 주문을 취소하시겠습니까?')) {
-        this.$router.push({path: '/mypage/cancel'});
-      }
-    },
   },
   mounted: function () {
     this.$store.state.myPageTabName = this.pageName;
     this.$store.state.myPageShow = true;
     axios({
-      url: 'http://10.251.1.174/orders',
+      url: 'http://10.251.1.174:5000/orders',
       method: 'GET',
       headers: { 
-        'Authorization': this.$cookies.get('accesstoken')
+        'Authorization': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6Mn0.YHNEVqI1PLALLTpPVComx3VMQZkV0z4CzT_SQk88yY0'
+        // 'Authorization': this.$cookies.get('accesstoken')
       }
     })
     .then((response) => {
-      console.log(response.data.data);
       this.productData = response.data;
       this.viewData = true;
       this.viewNoData = false;
@@ -184,6 +171,22 @@ export default {
       console.log(error);
       this.viewData = false;
       this.viewNoData = true;
+    })
+
+    axios({
+      url: 'http://10.251.1.174:5000/user/coupons',
+      method: 'GET',
+      headers: { 
+        'Authorization': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6Mn0.YHNEVqI1PLALLTpPVComx3VMQZkV0z4CzT_SQk88yY0'
+        //this.$cookies.get("accesstoken")
+      }
+    })
+    .then((response) => {
+      console.log(response.data);
+      this.$store.state.couponNum = response.data.the_number_of_coupons;
+    })
+    .catch((error) => {
+      console.log(error);
     })
   }
 }
@@ -195,6 +198,7 @@ export default {
     width: 100%;
     padding: 0px 20px;
     margin: 0px auto;
+    margin-bottom: 70px;
 
     .order-no-data{
       font-size: 16px;
@@ -258,40 +262,9 @@ export default {
     }
   }
 
-  .buttons-box{
-    width: 100%;
-    text-align: right;
-    border-top: 1px solid #e1e1e1;
-    border-bottom: 1px solid  #000;
-    padding: 21px 0px;
-
-    .refundBtn{
-      height: 42px;
-      font-size: 13px;
-      color: #000;
-      border: 1px solid #000;
-      background: #fff;
-      padding: 10px 25px;
-
-      &:focus{
-        outline: none;
-      }
-    }
-
-    .cancelBtn{
-      height: 42px;
-      font-size: 13px;
-      color: #fff;
-      border: 1px solid #000;
-      background: #000;
-      padding: 10px 25px;
-
-      &:focus{
-        outline: none;
-      }
-    }
+  .order-items{
+    border-bottom: 1px solid #000;
   }
-
   .mobile-box{
     display: none;
   }
@@ -310,7 +283,7 @@ export default {
 
 @media screen and (max-width: 400px){
   .order-inquiry-wrap{
-    margin: 55px 0 180px 0;
+    margin: 0px 0 180px 0;
 
     .order-no-data{
       display: none;
