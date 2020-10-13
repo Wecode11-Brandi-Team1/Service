@@ -86,7 +86,9 @@ export default {
   }),
   methods: {},
   created: function () {
-    axios.get(`${config.API}`).then((res) => (this.datas = res.data.data));
+    axios
+      .get(`http://192.168.7.5:5000/`)
+      .then((res) => (this.datas.coupon = res.data));
   },
 };
 </script>

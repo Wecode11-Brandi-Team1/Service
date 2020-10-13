@@ -42,14 +42,12 @@
         </li>
         <li class="price-container">
           <div class="price">
-            <p class="discount-rate" v-if="discount_rate">
-              {{ discount_rate }}%
-            </p>
+            <p class="discount-rate" v-if="discount_rate">{{ discount_rate }}%</p>
             <p class="final-price">
               {{
-                Number(sale_price * (1 - discount_rate / 100)).toLocaleString(
-                  "en"
-                )
+              Number(sale_price * (1 - discount_rate / 100)).toLocaleString(
+              "en"
+              )
               }}
               <span>원</span>
             </p>
@@ -75,11 +73,7 @@
                 />
               </div>
               <div class="coupon-frame">
-                <div
-                  class="coupon"
-                  v-for="(list, idx) in datas.coupon"
-                  v-bind:key="`coupon` + idx"
-                >
+                <div class="coupon" v-for="(list, idx) in datas.coupon" v-bind:key="`coupon` + idx">
                   <div class="red-label" />
                   <div class="coupon-info">
                     <div class="coupon-name">
@@ -92,18 +86,19 @@
                     </div>
                     <div class="coupon-price">
                       {{ Number(list.discount_price).toLocaleString("en")
-                      }}<span>원</span>
+                      }}
+                      <span>원</span>
                     </div>
                     <div class="coupon-sub-info">
-                      <span
-                        >{{ Number(list.minimum_price).toLocaleString("en") }}원
-                        이상 구매시</span
-                      >
-                      <span class="coupon-date"
-                        >{{ list.download_started_at }}~{{
-                          list.download_ended_at
-                        }}</span
-                      >
+                      <span>
+                        {{ Number(list.minimum_price).toLocaleString("en") }}원
+                        이상 구매시
+                      </span>
+                      <span class="coupon-date">
+                        {{ list.download_started_at }}~{{
+                        list.download_ended_at
+                        }}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -116,11 +111,7 @@
         </li>
         <li class="option-choice">
           <div class="option-select-container">
-            <div
-              class="option-default"
-              id="color-choice"
-              v-on:click="option_opener"
-            >
+            <div class="option-default" id="color-choice" v-on:click="option_opener">
               <span id="color-choice">{{ option_color_child }}</span>
               <img
                 alt="arrow"
@@ -133,9 +124,11 @@
                 v-bind:id="option_color_child"
                 v-on:click="option_closer_color"
               >
-                <span v-bind:id="option_color_child">{{
+                <span v-bind:id="option_color_child">
+                  {{
                   option_color_child
-                }}</span>
+                  }}
+                </span>
                 <img
                   v-bind:id="option_color_child"
                   alt="arrow"
@@ -181,9 +174,11 @@
                 v-bind:id="option_size_child"
                 v-on:click="option_closer_size"
               >
-                <span v-bind:id="option_size_child">{{
+                <span v-bind:id="option_size_child">
+                  {{
                   option_size_child
-                }}</span>
+                  }}
+                </span>
                 <img
                   v-bind:id="option_size_child"
                   alt="arrow"
@@ -252,9 +247,9 @@
             </div>
             <span>
               {{
-                Number(
-                  sale_price * (1 - discount_rate / 100) * list.quantity
-                ).toLocaleString("en")
+              Number(
+              sale_price * (1 - discount_rate / 100) * list.quantity
+              ).toLocaleString("en")
               }}원
             </span>
           </div>
@@ -264,11 +259,11 @@
           <p>
             <span>
               {{
-                Number(
-                  sale_price * (1 - discount_rate / 100) * sum_result
-                ).toLocaleString("en")
-              }} </span
-            >원
+              Number(
+              sale_price * (1 - discount_rate / 100) * sum_result
+              ).toLocaleString("en")
+              }}
+            </span>원
           </p>
         </li>
         <li
@@ -318,7 +313,6 @@ export default {
     datas: {
       coupon: [
         {
-          coupon_date: "날짜",
           coupon_id: 1,
           coupon_name: "브랜디 감사대전 3000원 할인쿠폰",
           discount_price: 3000,
@@ -464,44 +458,35 @@ export default {
       console.log(click_location - this.mouse_location);
     },
     save_product_data: function () {
-      let product_data = this.result_option;
-      if (localStorage.data) {
-        product_data.push(JSON.parse(localStorage.getItem("data")));
-        localStorage.setItem("data", JSON.stringify(product_data));
-      } else {
-        localStorage.setItem("data", JSON.stringify(product_data));
-      }
+      localStorage.setItem("data", JSON.stringify(this.result_option));
       alert("주문하기에 담았습니다.");
     },
     coupon_downloader: function (obj) {
       axios
         .post(
-          `${config.API}/coupon?c=${obj.coupon_id}`,
+          `http://192.168.7.5:5000/coupons?c=${obj.coupon_id}`,
           {
-            questions: {
-              question_type_id: this.QA_category.indexOf(this.select_category),
-              question_content: this.main_text,
-              is_secreted: this.secret,
-            },
+            questions: { a: "" },
           },
           {
             headers: {
-              Authorization: `localStorage.getItem("token")`,
+              Authorization:
+                "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6Mn0.YHNEVqI1PLALLTpPVComx3VMQZkV0z4CzT_SQk88yY0",
             },
           }
         )
-        .then((res) => {
-          if (res.status === 200 || res.status === 201) {
-            alert("쿠폰이 발급되었습니다.");
-          } else {
-            return alert("이미 발급된 쿠폰입니다.");
-          }
-        })
-        .catch((error) => console.log(error));
+        .then((res) => console.log(res));
     },
   },
   created: function () {
-    axios.get(`${config.API}`).then((res) => (this.datas.coupon = res.data));
+    axios
+      .get(`http://192.168.7.5:5000/coupons`, {
+        headers: {
+          Authorization:
+            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6Mn0.YHNEVqI1PLALLTpPVComx3VMQZkV0z4CzT_SQk88yY0",
+        },
+      })
+      .then((res) => (this.datas.coupon = res.data.coupons));
   },
 };
 </script>

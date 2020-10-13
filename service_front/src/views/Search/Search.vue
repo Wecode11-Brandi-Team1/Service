@@ -5,16 +5,12 @@
         id="product"
         v-bind:class="{ 'select-header': this.select_search === 'product' }"
         v-on:click="switching_search"
-      >
-        상품
-      </button>
+      >상품</button>
       <button
         id="store"
         v-bind:class="{ 'select-header': this.select_search === 'store' }"
         v-on:click="switching_search"
-      >
-        스토어
-      </button>
+      >스토어</button>
     </header>
     <main>
       <section
@@ -25,10 +21,11 @@
       >
         <article>
           검색결과(
-          <span>{{
+          <span>
+            {{
             Number(this.datas.products.length).toLocaleString("en")
-          }}</span
-          >건)
+            }}
+          </span>건)
         </article>
         <article>
           <div class="checkbox-container" v-on:click="checkbox_clicker">
@@ -52,19 +49,9 @@
             </div>
             <div v-bind:class="{ none: !open_filter }">
               <div class="filter-floating">
-                <div class="filter-box" id="추천순" v-on:click="filter_closer">
-                  추천순
-                </div>
-                <div
-                  class="filter-box"
-                  id="판매량순"
-                  v-on:click="filter_closer"
-                >
-                  판매량순
-                </div>
-                <div class="filter-box" id="최신순" v-on:click="filter_closer">
-                  최신순
-                </div>
+                <div class="filter-box" id="추천순" v-on:click="filter_closer">추천순</div>
+                <div class="filter-box" id="판매량순" v-on:click="filter_closer">판매량순</div>
+                <div class="filter-box" id="최신순" v-on:click="filter_closer">최신순</div>
               </div>
             </div>
           </div>
@@ -89,13 +76,12 @@
                     discount: list.discount_rate,
                     none: !list.discount_rate,
                   }"
-                  >{{ Number(list.discount_rate).toLocaleString("en") }}%</span
-                >
+                >{{ Number(list.discount_rate).toLocaleString("en") }}%</span>
                 <span class="price">
                   {{
-                    Number(
-                      list.sale_price * (1 - list.discount_rate / 100)
-                    ).toLocaleString("en")
+                  Number(
+                  list.sale_price * (1 - list.discount_rate / 100)
+                  ).toLocaleString("en")
                   }}
                 </span>
                 <span
@@ -103,12 +89,9 @@
                     'origin-price': list.discount_rate,
                     none: !list.discount_rate,
                   }"
-                  >{{ Number(list.sale_price).toLocaleString("en") }}</span
-                >
+                >{{ Number(list.sale_price).toLocaleString("en") }}</span>
               </li>
-              <li>
-                {{ Number(list.sale_amount).toLocaleString("en") }}개 구매중
-              </li>
+              <li>{{ Number(list.sale_amount).toLocaleString("en") }}개 구매중</li>
             </ul>
           </router-link>
         </article>
@@ -121,22 +104,15 @@
       >
         <article>
           스토어 검색결과(
-          <span>{{ this.datas.stores.length }}</span
-          >건)
+          <span>{{ this.datas.stores.length }}</span>건)
         </article>
         <article>
-          <div
-            class="store"
-            v-for="list in datas.stores"
-            v-bind:key="list.seller_id"
-          >
+          <div class="store" v-for="list in datas.stores" v-bind:key="list.seller_id">
             <img alt="store logo" v-bind:src="list.profile_image" />
             <div>
               <p>{{ list.seller_name }}</p>
               <p>
-                <span v-for="hash in list.hash_tag" v-bind:key="hash"
-                  >#{{ hash }}</span
-                >
+                <span v-for="hash in list.hash_tag" v-bind:key="hash">#{{ hash }}</span>
               </p>
             </div>
           </div>
@@ -168,11 +144,13 @@ export default {
       this.is_checked = !this.is_checked;
       if (this.is_checked) {
         axios
-          .get(`${config.API}/search?q=${this.$route.query.q}&&is_dicounted=1`)
+          .get(
+            `http://192.168.7.5:5000/search?q=${this.$route.query.q}&&is_dicounted=1`
+          )
           .then((res) => (this.datas = { ...this.datas, ...res.data }));
       } else {
         axios
-          .get(`${config.API}/search?q=${this.$route.query.q}`)
+          .get(`http://192.168.7.5:5000/search?q=${this.$route.query.q}`)
           .then((res) => (this.datas = { ...this.datas, ...res.data }));
       }
     },
@@ -188,7 +166,7 @@ export default {
   },
   created: function () {
     axios
-      .get(`${config.API}/search?q=${this.$route.query.q}`)
+      .get(`http://192.168.7.5:5000/search?q=${this.$route.query.q}`)
       .then((res) => (this.datas = res.data));
   },
 };

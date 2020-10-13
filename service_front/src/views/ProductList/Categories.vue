@@ -4,17 +4,19 @@
       <article>
         <ul>
           <li>쇼핑몰 · 마켓</li>
-          <li><span>></span>카테고리</li>
+          <li>
+            <span>></span>카테고리
+          </li>
           <li v-if="$route.query.fc_id">
-            <span>></span
-            >{{ Object.keys(datas.nav_list[$route.query.fc_id])[0] }}
+            <span>></span>
+            {{ Object.keys(datas.nav_list[$route.query.fc_id])[0] }}
           </li>
           <li v-if="$route.query.sc_id">
-            <span>></span
-            >{{
-              Object.values(datas.nav_list[$route.query.fc_id])[0][
-                $route.query.sc_id
-              ]
+            <span>></span>
+            {{
+            Object.values(datas.nav_list[$route.query.fc_id])[0][
+            $route.query.sc_id
+            ]
             }}
           </li>
         </ul>
@@ -32,23 +34,14 @@
                 checked: is_sale_list,
                 unchecked: !is_sale_list,
               }"
-            >
-              ✓
-            </div>
-            세일
+            >✓</div>세일
           </div>
           <h2>
             <span>CATEGORIES</span>
           </h2>
-          <div class="nav-box" id="전체" v-on:click="update_main_category">
-            전체
-          </div>
+          <div class="nav-box" id="전체" v-on:click="update_main_category">전체</div>
           <div v-for="list in datas.nav_list" v-bind:key="Object.keys(list)[0]">
-            <div
-              class="nav-box"
-              v-bind:id="Object.keys(list)[0]"
-              v-on:click="update_main_category"
-            >
+            <div class="nav-box" v-bind:id="Object.keys(list)[0]" v-on:click="update_main_category">
               {{ Object.keys(list)[0] }}
               <img
                 v-if="select_main_category === Object.keys(list)[0]"
@@ -101,9 +94,7 @@
               }"
               v-bind:id="list"
               v-on:click="fillering_what"
-            >
-              {{ list }}
-            </div>
+            >{{ list }}</div>
           </div>
         </article>
         <article class="product-list">
@@ -174,7 +165,7 @@ export default {
 
         axios
           .get(
-            `${config.API}/products${this.$route.fullPath.replace(
+            `http://192.168.7.5:5000/products${this.$route.fullPath.replace(
               this.$route.path,
               ""
             )}`
@@ -220,7 +211,7 @@ export default {
       }
       axios
         .get(
-          `${config.API}/products${this.$route.fullPath.replace(
+          `http://192.168.7.5:5000/products${this.$route.fullPath.replace(
             this.$route.path,
             ""
           )}`
@@ -236,7 +227,7 @@ export default {
       this.query_maker();
       axios
         .get(
-          `${config.API}/products${this.$route.fullPath.replace(
+          `http://192.168.7.5:5000/products${this.$route.fullPath.replace(
             this.$route.path,
             ""
           )}`
@@ -250,7 +241,7 @@ export default {
 
       axios
         .get(
-          `${config.API}/products${this.$route.fullPath.replace(
+          `http://192.168.7.5:5000/products${this.$route.fullPath.replace(
             this.$route.path,
             ""
           )}`
@@ -260,12 +251,12 @@ export default {
   },
   created: function () {
     axios
-      .get(`${config.API}/category?q=${this.$route.params.id}`)
+      .get(`http://192.168.7.5:5000/category?q=${this.$route.params.id}`)
       .then((res) => (this.datas.nav_list = Object.values(res.data.쇼핑몰)));
 
     axios
       .get(
-        `${config.API}/products${this.$route.fullPath.replace(
+        `http://192.168.7.5:5000/products${this.$route.fullPath.replace(
           this.$route.path,
           ""
         )}`
