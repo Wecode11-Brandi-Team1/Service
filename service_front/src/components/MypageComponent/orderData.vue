@@ -20,11 +20,23 @@
           <strong>{{ Number(propsdata.final_price).toLocaleString() }} 원</strong>
         </dd>
         <dd>
-          <strong>상품준비중</strong>
-          <strong>배송중</strong>
+          <strong v-if="propsdata.order_detail_statuses_id === 1">결제완료</strong>
+          <strong v-else-if="propsdata.order_detail_statuses_id=== 2">상품준비중</strong>
+          <strong v-else-if="propsdata.order_detail_statuses_id === 3">배송중</strong>
+          <strong v-else-if="propsdata.order_detail_statuses_id === 4">배송완료</strong>
+          <strong v-else-if="propsdata.order_detail_statuses_id === 5">구매확정</strong>
+          <strong v-else-if="propsdata.order_detail_statuses_id === 6">주문취소완료</strong>
+          <strong v-else-if="propsdata.order_detail_statuses_id === 7">환불요청</strong>
+          <strong v-else-if="propsdata.order_detail_statuses_id === 8">환불완료</strong>
         </dd>
       </dl>
     </div>
+    <dl class="buttons-box" v-if="propsdata.order_detail_statuses_id === 1 || propsdata.order_detail_statuses_id=== 2 || propsdata.order_detail_statuses_id === 3 || propsdata.order_detail_statuses_id === 4">
+        <dd>
+          <button class="refundBtn" @click="refundBtn" v-if="propsdata.order_detail_statuses_id === 3 || propsdata.order_detail_statuses_id=== 4">환불요청</button>
+          <button class="cancelBtn" @click="cancelBtn" v-if="propsdata.order_detail_statuses_id === 1 || propsdata.order_detail_statuses_id === 2">주문취소</button>
+        </dd>
+      </dl>
   </div>
 </template>
 
@@ -33,8 +45,25 @@ import { axios } from '../../plugins/axios'
 
 export default {
   data:()=>({
+
   }),
-  props:['propsdata'],
+  props:['propsdata', 'date'],
+  methods:{
+    refundBtn(){
+      if (confirm('선택하신 주문을 환불하시겠습니까?')) {
+        localStorage.setItem('refundData', JSON.stringify(this.propsdata));
+        localStorage.setItem('date', JSON.stringify(this.date));
+        this.$router.push({path: '/mypage/refund'});
+      }
+    },
+    cancelBtn(){
+      if (confirm('선택하신 주문을 취소하시겠습니까?')) {
+        localStorage.setItem('cancelData', JSON.stringify(this.propsdata));
+        localStorage.setItem('date', JSON.stringify(this.date));
+        this.$router.push({path: '/mypage/cancel'});
+      }
+    },
+  },
 }
 </script>
 
@@ -80,6 +109,7 @@ export default {
         &:first-child{
           text-align: left;
           padding: 19px 10px;
+
           a{
             font-weight: bold;
           }
@@ -126,8 +156,51 @@ export default {
           font-size: 19px;
           color: #1e1e1e;
         }
+
+        &:last-child{
+          width: 215px;
+        }
       }
     }
   }
+
+  .buttons-box{
+    width: 100%;
+    border-top: 1px solid #ddd;
+    padding: 10px 0;
+    margin: 0;
+
+    dd{
+      width: 100% !important;
+      text-align: end;
+      margin: 0;
+      
+      .refundBtn{
+        height: 42px;
+        font-size: 13px;
+        color: #000;
+        border: 1px solid #000;
+        background: #fff;
+        padding: 10px 25px;
+
+        &:focus{
+          outline: none;
+        }
+      } 
+
+      .cancelBtn{
+        height: 42px;
+        font-size: 13px;
+        color: #fff;
+        border: 1px solid #000;
+        background: #000;
+        padding: 10px 25px;
+
+        &:focus{
+          outline: none;
+        }
+      }
+    }
+  }  
 }
 </style>

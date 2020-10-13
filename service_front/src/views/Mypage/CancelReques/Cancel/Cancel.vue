@@ -4,28 +4,50 @@
       <h1>주문취소</h1>
     </div>
     <div class="cancel-box">
-      <h2>{{ productData.data ? productData.data[0].created_at : '' }} <span></span>{{ productData.data ? productData.data[0].order_detail_id : '' }} <a class="btn-order">주문상세보기<img src="https://web-staging.brandi.co.kr/static/2020.7.3/images/ic-titleic-detailpage-moreaction@3x.png" /></a></h2>
+      <h2>{{ cancelDate }} <span></span>{{ cancelData.order_detail_number }} <a class="btn-order">주문상세보기<img src="https://web-staging.brandi.co.kr/static/2020.7.3/images/ic-titleic-detailpage-moreaction@3x.png" /></a></h2>
       <div class="order-item">
         <dl>
-          <dt><a>{{ productData.data ? productData.data[0].korean_name : '' }}</a></dt>
+          <dt><a>{{ cancelData.seller_name }}</a></dt>
           <dt></dt>
           <dt>주문금액</dt>
           <dt>진행상황</dt>
         </dl>
         <dl class="order-info">
           <dd>
-            <img :src="productData.data ? productData.data[0].main_img : ''" />
+            <img :src="cancelData.images" />
           </dd>
           <dd>
-            <span class="item-title">{{ productData.data ? productData.data[0].name : '' }}</span>
-            <span>{{ productData.data ? productData.data[0].option_color : '' }}/{{ productData.data ? productData.data[0].option_size : '' }}</span>
-            <span>{{ productData.data ? productData.data[0].units : '' }} 개</span>
+            <span class="item-title">{{ cancelData.product_name }}</span>
+            <span>{{ cancelData.color }}/{{ cancelData.size }}</span>
+            <span>{{ cancelData.quantity }} 개</span>
           </dd>
           <dd>
-            <strong>{{ productData.data ? Number(productData.data[0].price).toLocaleString() : '' }} 원</strong>
+            <strong>{{ Number(cancelData.final_price).toLocaleString() }} 원</strong>
           </dd>
           <dd>
-            <strong>상품준비중</strong>
+            <strong v-if="cancelData.order_detail_statuses_id === 1">결제완료</strong>
+            <strong v-else-if="cancelData.order_detail_statuses_id=== 2">상품준비중</strong>
+            <strong v-else-if="cancelData.order_detail_statuses_id === 3">배송중</strong>
+            <strong v-else-if="cancelData.order_detail_statuses_id === 4">배송완료</strong>
+            <strong v-else-if="cancelData.order_detail_statuses_id === 5">구매확정</strong>
+            <strong v-else-if="cancelData.order_detail_statuses_id === 6">주문취소완료</strong>
+            <strong v-else-if="cancelData.order_detail_statuses_id === 7">환불요청</strong>
+            <strong v-else-if="cancelData.order_detail_statuses_id === 8">환불완료</strong>
+          </dd>
+        </dl>
+      </div>
+    </div>
+    <div class="order-cancel">
+      <h2>취소사유</h2>
+      <div class="cancel-select">
+        <dl>
+          <dt>사유</dt>
+          <dd>
+            <select v-model="selected" class="bank-select">
+              <option v-for="option in options" v-bind:key="option.value" :value="option.value">
+                {{ option.text }}
+              </option>
+            </select>
           </dd>
         </dl>
       </div>
@@ -34,7 +56,7 @@
     <h2>주문 취소 정보</h2>
       <dl class="order-totalpay">
         <dd class="order-totalpay-title">총 주문취소금액</dd>
-        <dd class="order-totalpay-title red order-rigth">{{ productData.data ? Number(productData.data[0].price).toLocaleString() : '' }} 원</dd>
+        <dd class="order-totalpay-title red order-rigth">{{ Number(cancelData.final_price).toLocaleString() }} 원</dd>
       </dl>
     </div>
     <div class="btn-wrap">
@@ -48,33 +70,52 @@ import { axios } from '../../../../plugins/axios';
 
 export default {
   data:() => ({
-    productData:[],
+    cancelData:[],
+    options: [
+      { text: '사유를 선택하세요.', value: '0' },
+      { text: '구매자 취소', value: '1' },
+      { text: '구매자 변심', value: '2' },
+      { text: '상품 품절', value: '3' }
+    ],
+    selected: '0',
+    cancelDate:''
   }),
   methods:{
     cancelResultBtn(){
-      if (confirm('선택하신 주문을 취소하시겠습니까?')) {
-        this.$store.state.cancelTotal = this.productData.data[0].price;
-        this.$router.push({path: '/mypage/cancel/result'});
+      if(this.selected == 0){
+        alert('환불사유를 선택해주세요.');
+      }else{
+        let confirmResult = confirm('선택하신 주문을 취소하시겠습니까?');
+        if(confirmResult){
+          this.$store.state.cancelSelected = this.selected;
+          this.$store.state.cancelTotal = this.cancelData.final_price;
+          axios({
+            url: 'http://10.251.1.174:5000/order-cancellation',
+            method: 'PUT',
+            data: {
+              order_detail_number: this.cancelData.order_detail_number,
+              order_cancel_reason_id: this.selected,
+              order_detail_id: this.cancelData.order_detail_id,
+            },
+            headers: { 
+              'Authorization': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6Mn0.YHNEVqI1PLALLTpPVComx3VMQZkV0z4CzT_SQk88yY0'
+              // 'Authorization': this.$cookies.get('accesstoken')
+            }
+          })
+          .then((response) => {
+            localStorage.removeItem("cancelData");
+            this.$router.push({path: '/mypage/cancel/result'});
+          })
+          .catch((error) => {
+            console.log(error.response);
+        })
       }
     }
+  }
   },
   mounted: function () {
-    axios({
-      url: 'http://10.251.1.113:5000/api/order/item',
-      method: 'GET',
-      headers: { 
-        'Authorization': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjozMTZ9.S9rb5I0Z7Ud5hEbaYhKqqnUZpKNkwFQbkrjoM6grtX0'
-      }
-    })
-    .then((response) => {
-      console.log(response.data.data);
-      this.productData = response.data;
-    })
-    .catch((error) => {
-      console.log(error);
-      alert('주문한 내역이 없습니다. 상품을 확인해주세요.');
-      this.$router.replace({path: '/mypage'});
-    })
+    this.cancelData = JSON.parse(localStorage.getItem('cancelData'));
+    this.cancelDate = JSON.parse(localStorage.getItem('date'));
   }
 }
 </script>
@@ -202,6 +243,59 @@ export default {
       }
     }
   }
+
+  .order-cancel{
+    h2{
+      font-size: 26px;
+      font-weight: 400;
+      border-bottom: 1px solid #000;
+      margin-top: 50px;
+      padding-bottom: 15px;
+    }
+
+    .cancel-select{
+      width: 100%;
+      font-size: 1.2em;
+      display: table;
+      overflow: hidden;
+      border-bottom: 1px solid #000;
+      margin-bottom: 50px;
+
+      dl{
+        display: table-row;
+
+        dt{
+          width: 20%;
+          font-weight: 700;
+          display: table-cell;
+          vertical-align: middle;
+          padding: 10px 15px;
+          border-bottom: 1px solid #bdbdbd;
+        }
+
+        dd{
+          width: 80%;
+          font-size: 15px;
+          line-height: 48px;
+          display: table-cell;
+          border-bottom: 1px solid #bdbdbd;
+          padding: 10px 15px;
+
+          .bank-select{
+            width: 150px;
+            height: 43px;
+            color: #8d8d8d;
+            background: #f5f5f5;
+            border: none;
+            font-size: 14px;
+            line-height: 22.5px;
+            padding: 13px;
+            margin: 3px 0px;
+          }
+        }
+      }
+    }
+  } 
 
   .totalpay-box{
     h2{

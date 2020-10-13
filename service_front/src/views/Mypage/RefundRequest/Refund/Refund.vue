@@ -4,28 +4,35 @@
       <h1>환불요청</h1>
     </div>
     <div class="refund-box">
-      <h2>{{ productData.data ? productData.data[0].created_at : '' }} <span></span>{{ productData.data ? productData.data[0].order_detail_id : '' }} <a class="btn-order">주문상세보기<img src="https://web-staging.brandi.co.kr/static/2020.7.3/images/ic-titleic-detailpage-moreaction@3x.png" /></a></h2>
+      <h2>{{ refundDate }} <span></span>{{ refundData.order_detail_number }} <a class="btn-order">주문상세보기<img src="https://web-staging.brandi.co.kr/static/2020.7.3/images/ic-titleic-detailpage-moreaction@3x.png" /></a></h2>
       <div class="order-item">
         <dl>
-          <dt><a>{{ productData.data ? productData.data[0].korean_name : '' }}</a></dt>
+          <dt><a>{{ refundData.seller_name }}</a></dt>
           <dt></dt>
           <dt>주문금액</dt>
           <dt>진행상황</dt>
         </dl>
         <dl class="order-info">
           <dd>
-            <img :src="productData.data ? productData.data[0].main_img : ''" />
+            <img :src="refundData.images" />
           </dd>
           <dd>
-            <span class="item-title">{{ productData.data ? productData.data[0].name : '' }}</span>
-            <span>{{ productData.data ? productData.data[0].option_color : '' }}/{{ productData.data ? productData.data[0].option_size : '' }}</span>
-            <span>{{ productData.data ? productData.data[0].units : '' }} 개</span>
+            <span class="item-title">{{ refundData.product_name }}</span>
+            <span>{{ refundData.color }}/{{ refundData.size }}</span>
+            <span>{{ refundData.quantity }} 개</span>
           </dd>
           <dd>
-            <strong>{{ productData.data ? Number(productData.data[0].price).toLocaleString() : '' }} 원</strong>
+            <strong>{{ Number(refundData.final_price).toLocaleString() }} 원</strong>
           </dd>
           <dd>
-            <strong>배송중</strong>
+            <strong v-if="refundData.order_detail_statuses_id === 1">결제완료</strong>
+            <strong v-else-if="refundData.order_detail_statuses_id=== 2">상품준비중</strong>
+            <strong v-else-if="refundData.order_detail_statuses_id === 3">배송중</strong>
+            <strong v-else-if="refundData.order_detail_statuses_id === 4">배송완료</strong>
+            <strong v-else-if="refundData.order_detail_statuses_id === 5">구매확정</strong>
+            <strong v-else-if="refundData.order_detail_statuses_id === 6">주문취소완료</strong>
+            <strong v-else-if="refundData.order_detail_statuses_id === 7">환불요청</strong>
+            <strong v-else-if="refundData.order_detail_statuses_id === 8">환불완료</strong>
           </dd>
         </dl>
       </div>
@@ -53,7 +60,7 @@
     <h2>환불정보</h2>
       <dl class="order-totalpay">
         <dd class="order-totalpay-title">총 환불예정금액</dd>
-        <dd class="order-totalpay-title red order-rigth">{{ productData.data ? Number(productData.data[0].price).toLocaleString() : '' }} 원</dd>
+        <dd class="order-totalpay-title red order-rigth">{{ Number(refundData.final_price).toLocaleString() }} 원</dd>
       </dl>
     </div>
     <div class="btn-wrap">
@@ -78,7 +85,8 @@ export default {
       { text: '일부상품누락', value: '5' },
       { text: '기타', value: '6' },
     ],
-    productData:[],
+    refundData:[],
+    refundDate:''
   }),
   methods:{
     refundBtn(){
@@ -87,31 +95,37 @@ export default {
       }else{
         let confirmResult = confirm('해당 상품을 환불요청하시겠습니까?');
         if(confirmResult){
-          this.$store.state.resultSelected = this.selected ;
-          this.$store.state.resultTotal = this.productData.data[0].price;
-          this.$router.push({path: '/mypage/refund/result'});
+          this.$store.state.resultSelected = this.selected;
+          this.$store.state.resultTotal = this.refundData.final_price;
+          axios({
+            url: 'http://10.251.1.174:5000/refund',
+            method: 'PUT',
+            data: {
+              order_detail_number: this.refundData.order_detail_number,
+              order_refund_reason_id: this.selected,
+              order_refund_reason_description: this.reason,
+              order_detail_id: this.refundData.order_detail_id
+            },
+            headers: { 
+              'Authorization': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6Mn0.YHNEVqI1PLALLTpPVComx3VMQZkV0z4CzT_SQk88yY0'
+                // 'Authorization': this.$cookies.get('accesstoken')
+            }
+            })
+            .then((response) => {
+              localStorage.removeItem("refundData");
+              this.$router.push({path: '/mypage/refund/result'});
+            })
+            .catch((error) => {
+              console.log(error.response);
+          })
         }
       }
     }
   },
   mounted: function () {
     this.$store.state.myPageShow = false;
-    axios({
-      url: 'http://10.251.1.113:5000/api/order/item',
-      method: 'GET',
-      headers: { 
-        'Authorization': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjozMTZ9.S9rb5I0Z7Ud5hEbaYhKqqnUZpKNkwFQbkrjoM6grtX0'
-      }
-    })
-    .then((response) => {
-      console.log(response.data.data);
-      this.productData = response.data;
-    })
-    .catch((error) => {
-      console.log(error);
-      alert('주문한 내역이 없습니다. 상품을 확인해주세요.');
-      this.$router.replace({path: '/mypage'});
-    })
+    this.refundData = JSON.parse(localStorage.getItem('refundData'));
+    this.refundDate = JSON.parse(localStorage.getItem('date'));
   }
 }
 </script>
