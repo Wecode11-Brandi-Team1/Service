@@ -10,29 +10,27 @@
       </div>
       <div class="nav-center">
         <div class="label">
-          <button type="button" @click="move_search" /><input
-            type="text"
-            v-model="search"
-            v-on:keyup.enter="move_search"
-          />
+          <button type="button" @click="move_search" />
+          <input type="text" v-model="search" v-on:keyup.enter="move_search" />
         </div>
       </div>
       <div class="nav-right">
         <ul>
           <li>찜</li>
           <li class="border">|</li>
-          <li @click="$router.push('order')">장바구니</li>
+          <li @click="$router.push('/order')">장바구니</li>
           <li class="border">|</li>
-          <li @click="$router.push('mypage')">마이페이지</li>
+          <li @click="$router.push('/mypage')">마이페이지</li>
           <li class="border">|</li>
-          <li v-if="!this.$cookies.get('accesstoken')" @click="$router.push('login')">
-            로그인
-          </li>
+          <li v-if="!this.$cookies.get('accesstoken')" @click="$router.push('/login')">로그인</li>
           <li v-else @click="logout">로그아웃</li>
           <li class="border">|</li>
           <li>입점문의</li>
         </ul>
-        <img class="cart-mobile" src="http://web-staging.brandi.co.kr/static/20.08.01/images/img_top_cart.png" />
+        <img
+          class="cart-mobile"
+          src="http://web-staging.brandi.co.kr/static/20.08.01/images/img_top_cart.png"
+        />
       </div>
     </div>
     <div class="nav-menu">
@@ -45,12 +43,15 @@
         this.$store.state.menutab.currentHover === 5
       "
     />
-  <!-- MobileNav  -->
-  <div class="nav-wrap-mobile">
-    <div class="gnbTop">
+    <!-- MobileNav  -->
+    <div class="nav-wrap-mobile">
+      <div class="gnbTop">
         <h1>
           <router-link to="/">
-            <img ait="BRANDI" src="https://web-staging.brandi.co.kr/static/20.08.01/images/logo@3x.png" />
+            <img
+              ait="BRANDI"
+              src="https://web-staging.brandi.co.kr/static/20.08.01/images/logo@3x.png"
+            />
           </router-link>
         </h1>
         <div class="search-box">
@@ -76,7 +77,7 @@
 
 <script>
 import axios from "axios";
-import {config} from "../../api/apiConfig"
+import { config } from "../../api/apiConfig";
 import TabItemDrop from "./TabItemDrop.vue";
 import TabItem from "./TabItem.vue";
 export default {
@@ -128,7 +129,7 @@ export default {
   },
   methods: {
     logout() {
-      this.$cookies.remove('accesstoken');
+      this.$cookies.remove("accesstoken");
       alert("로그아웃 하였습니다");
       this.$router.push({ path: "/" });
     },
@@ -209,7 +210,7 @@ export default {
       }
     }
 
-    .cart-mobile{
+    .cart-mobile {
       display: none;
     }
   }
@@ -226,139 +227,138 @@ export default {
   font-weight: 900;
 }
 
-.nav-wrap-mobile{
+.nav-wrap-mobile {
   display: none;
 }
 
-@media screen and (max-width: 400px){
+@media screen and (max-width: 400px) {
   .nav-wrap {
     display: none;
   }
 
-  .nav-menu{
+  .nav-menu {
     display: none;
   }
 
-  .nav-wrap-mobile{
+  .nav-wrap-mobile {
     width: 100%;
     height: 57px;
     position: relative;
     display: block;
     z-index: 21;
 
-      .gnbTop{
-        padding: 13px 10px;
-        display: block;
-        height: 57px;
-        border-bottom: 1px solid #d2d2d2;
+    .gnbTop {
+      padding: 13px 10px;
+      display: block;
+      height: 57px;
+      border-bottom: 1px solid #d2d2d2;
 
-        h1{
-          width: 25%;
-          height: 30px;
-          text-align: left;
-          float: left;
-          margin: 0 3px 0 0;
-          padding: 0;
-
-          a{
-            width: 100%;
-            max-width: 80px;
-            height: 30px;
-            position: relative;
-            display: block;
-            line-height: 30px;
-
-            img{
-              width: 100%;
-              vertical-align: top;
-              margin-top: 8px;
-            }
-          }
-        }
-      }
-
-      .search-box{
-        width: 64%;
+      h1 {
+        width: 25%;
         height: 30px;
+        text-align: left;
         float: left;
-        border-radius: 15px;
-        background-color: #eee;
-        background-image: url('https://web-staging.brandi.co.kr/static/20.08.01/images/ico_search_m.gif');
-        background-repeat: no-repeat;
-        background-position: 10px 7px;
-        background-size: 15px;
+        margin: 0 3px 0 0;
         padding: 0;
-        padding-left: 34px;
 
-        form{
+        a {
           width: 100%;
-          height: 100%;
+          max-width: 80px;
+          height: 30px;
+          position: relative;
+          display: block;
+          line-height: 30px;
 
-          button{
-            width: 0;
-            height: 0;
-            border: 0px;
-            overflow: hidden;
-            text-indent: -999px;
+          img {
+            width: 100%;
+            vertical-align: top;
+            margin-top: 8px;
           }
-
-          input{
-            width: calc(100% - 58px);
-            height: 30px;
-            font-size: 15px;
-            line-height: 20px;
-            background: transparent;
-            border: 0px;
-            padding: 5px;
-          }
-          
         }
       }
+    }
 
-      .cart-icon{
-        width: 30px;
-        height: 30px;
-        display: block;
-        position: absolute;
-        top: 50%;
-        right: 12px;
-        text-align: center;
-        transform: translate(0, -50%);
+    .search-box {
+      width: 64%;
+      height: 30px;
+      float: left;
+      border-radius: 15px;
+      background-color: #eee;
+      background-image: url("https://web-staging.brandi.co.kr/static/20.08.01/images/ico_search_m.gif");
+      background-repeat: no-repeat;
+      background-position: 10px 7px;
+      background-size: 15px;
+      padding: 0;
+      padding-left: 34px;
 
-        img{
-          width: 30px;
-          position: absolute;
-          top: 37%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-        }
-      }
-
-      .nav-menu-mini{
+      form {
         width: 100%;
-        height: 51px;
-        display: block;
-        background: #fff;
-        overflow: hidden;
-        border-bottom: 1px solid #ddd;
+        height: 100%;
 
-        .nav-container{
-          width: 360px;
-          overflow-x:scroll;
-          white-space: nowrap;
-          
-          ul{
-            padding: 13px 15px;
+        button {
+          width: 0;
+          height: 0;
+          border: 0px;
+          overflow: hidden;
+          text-indent: -999px;
+        }
 
-            span{
-              font-size: 13px;
-              font-weight: bold;
-              padding: 0px;
-              margin-right: 28px;
-            }
+        input {
+          width: calc(100% - 58px);
+          height: 30px;
+          font-size: 15px;
+          line-height: 20px;
+          background: transparent;
+          border: 0px;
+          padding: 5px;
+        }
+      }
+    }
+
+    .cart-icon {
+      width: 30px;
+      height: 30px;
+      display: block;
+      position: absolute;
+      top: 50%;
+      right: 12px;
+      text-align: center;
+      transform: translate(0, -50%);
+
+      img {
+        width: 30px;
+        position: absolute;
+        top: 37%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+    }
+
+    .nav-menu-mini {
+      width: 100%;
+      height: 51px;
+      display: block;
+      background: #fff;
+      overflow: hidden;
+      border-bottom: 1px solid #ddd;
+
+      .nav-container {
+        width: 360px;
+        overflow-x: scroll;
+        white-space: nowrap;
+
+        ul {
+          padding: 13px 15px;
+
+          span {
+            font-size: 13px;
+            font-weight: bold;
+            padding: 0px;
+            margin-right: 28px;
           }
         }
       }
     }
   }
+}
 </style>

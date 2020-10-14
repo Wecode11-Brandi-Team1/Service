@@ -21,7 +21,7 @@ export default {
   name: "categories-card",
   components: {},
   props: [
-    "id",
+    "product_id",
     "image_path",
     "seller_name",
     "product_name",

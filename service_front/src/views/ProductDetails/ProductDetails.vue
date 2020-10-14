@@ -219,7 +219,7 @@
 
 <script>
 import axios from "axios";
-import {config} from "../../api/apiConfig";
+import { config } from "../../api/apiConfig";
 import productContainer from "./ProductDetailsComponents/ProductContainer.vue";
 
 export default {
@@ -318,7 +318,7 @@ export default {
       this.offset = (e.target.value - 1) * this.limit;
       axios
         .get(
-          `${config}products/1/questions?offset=${this.offset}&limit=${this.limit}`,
+          `${config.API}products/1/questions?offset=${this.offset}&limit=${this.limit}`,
           {
             headers: {
               Authorization: this.$cookies.get("accesstoken"),
@@ -331,7 +331,7 @@ export default {
       this.see_my_question = !this.see_my_question;
       if (!this.see_my_question) {
         axios
-          .get(`${config}products/1/questions?limit=10`, {
+          .get(`${config.API}products/1/questions?limit=10`, {
             headers: {
               Authorization: this.$cookies.get("accesstoken"),
             },
@@ -376,7 +376,7 @@ export default {
       }
       axios
         .post(
-          `${config}products/1/questions`,
+          `${config.API}products/1/questions`,
           {
             questions: {
               question_type_id: this.QA_category.indexOf(this.select_category),
@@ -393,7 +393,7 @@ export default {
         .then((res) => console.log(res))
         .then(() =>
           axios
-            .get(`${config}products/1/questions?limit=10`, {
+            .get(`${config.API}products/1/questions?limit=10`, {
               headers: {
                 Authorization: this.$cookies.get("accesstoken"),
               },
@@ -432,7 +432,7 @@ export default {
         .then((res) => console.log(res))
         .then(() =>
           axios
-            .get(`${config}products/1/questions?limit=10`, {
+            .get(`${config.API}products/1/questions?limit=10`, {
               headers: {
                 Authorization: this.$cookies.get("accesstoken"),
               },
@@ -444,10 +444,10 @@ export default {
   },
   created: function () {
     axios
-      .get(`${config}products/${this.$route.params.id}`)
+      .get(`${config.API}products/${this.$route.params.id}`)
       .then((res) => (this.datas = res.data));
     axios
-      .get(`${config}products/1/questions?limit=5`, {
+      .get(`${config.API}products/1/questions?limit=5`, {
         headers: {
           Authorization: this.$cookies.get("accesstoken"),
         },
@@ -500,7 +500,6 @@ export default {
         color: #9a9a9e;
         border-bottom: 4px solid #f2f2f2;
       }
-    
 
       .select-li {
         border-bottom: 4px solid black;

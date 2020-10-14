@@ -3,11 +3,11 @@
     <header>
       <article>
         <ul>
-          <li>쇼핑몰 · 마켓</li>
+          <li>{{top_category}}</li>
           <li>
             <span>></span>카테고리
           </li>
-          <li v-if="$route.query.fc_id">
+          <!-- <li v-if="$route.query.fc_id">
             <span>></span>
             {{ Object.keys(datas.nav_list[$route.query.fc_id])[0] }}
           </li>
@@ -18,7 +18,7 @@
             $route.query.sc_id
             ]
             }}
-          </li>
+          </li>-->
         </ul>
       </article>
     </header>
@@ -113,13 +113,14 @@
 
 <script>
 import axios from "axios";
-import {config} from "../../api/apiConfig";
+import { config } from "../../api/apiConfig";
 import categoriesCard from "./ProductCard/CategoriesCard.vue";
 
 export default {
   name: "categories",
   components: { categoriesCard },
   data: () => ({
+    top_category: "",
     is_sale_list: false,
     is_fllter_active: false,
     filltering_criteria: "인기순",
@@ -128,7 +129,6 @@ export default {
     fillter_list: ["인기순", "최신순", "가격순"],
     datas: {
       nav_list: [],
-      categories: ["main", "sub"],
       product_list: {},
     },
   }),
@@ -150,29 +150,6 @@ export default {
     },
   },
   methods: {
-    update_main_category: function (e) {
-      let updatedText = e.target.id;
-      if (e.target.id !== this.select_main_category) {
-        this.select_main_category = updatedText;
-      } else {
-        this.select_main_category = "";
-      }
-
-      if (this.select_main_category === "전체") {
-        this.$delete(this.$route.query, "fc_id");
-        this.$delete(this.$route.query, "sc_id");
-        this.$router.push(this.$route.query);
-
-        axios
-          .get(
-            `${config}products${this.$route.fullPath.replace(
-              this.$route.path,
-              ""
-            )}`
-          )
-          .then((res) => (this.datas.product_list = res.data));
-      }
-    },
     query_maker: function () {
       let query_arr = [];
       if (this.is_sale_list) {
@@ -200,18 +177,38 @@ export default {
       query_arr.unshift("?sp_id=1");
       this.$router.push(query_arr.join(""));
     },
+    update_main_category: function (e) {
+      let updatedText = e.target.id;
+      if (e.target.id !== this.select_main_category) {
+        this.select_main_category = updatedText;
+      } else {
+        this.select_main_category = "";
+      }
+
+      if (this.select_main_category === "전체") {
+        this.$router.push("?sp_id=1");
+
+        axios
+          .get(
+            `${config.API}products${this.$route.fullPath.replace(
+              this.$route.path,
+              ""
+            )}`
+          )
+          .then((res) => (this.datas.product_list = res.data));
+      }
+    },
     update_sub_category: function (e) {
       let updatedText = e.target.id;
       if (updatedText) {
         this.select_sub_category = updatedText;
-
-        this.query_maker();
       } else {
         this.select_sub_category = "전체";
       }
+      this.query_maker();
       axios
         .get(
-          `${config}products${this.$route.fullPath.replace(
+          `${config.API}products${this.$route.fullPath.replace(
             this.$route.path,
             ""
           )}`
@@ -227,7 +224,7 @@ export default {
       this.query_maker();
       axios
         .get(
-          `${config}products${this.$route.fullPath.replace(
+          `${config.API}products${this.$route.fullPath.replace(
             this.$route.path,
             ""
           )}`
@@ -237,11 +234,11 @@ export default {
     },
     sale_checker: function () {
       this.is_sale_list = !this.is_sale_list;
-      this.query_maker();
 
+      this.query_maker();
       axios
         .get(
-          `${config}products${this.$route.fullPath.replace(
+          `${config.API}products${this.$route.fullPath.replace(
             this.$route.path,
             ""
           )}`
@@ -249,14 +246,19 @@ export default {
         .then((res) => (this.datas.product_list = res.data));
     },
   },
-  created: function () {
+  mounted: function () {
     axios
-      .get(`${config}category?q=${this.$route.params.id}`)
-      .then((res) => (this.datas.nav_list = Object.values(res.data.쇼핑몰)));
+      .get(`${config.API}category?q=${this.$route.params.id}`)
+      .then(
+        (res) => (
+          (this.datas.nav_list = Object.values(res.data)[0]),
+          (this.top_category = Object.keys(res.data)[0])
+        )
+      );
 
     axios
       .get(
-        `${config}products${this.$route.fullPath.replace(
+        `${config.API}products${this.$route.fullPath.replace(
           this.$route.path,
           ""
         )}`

@@ -56,7 +56,7 @@
               <span>원</span>
             </p>
           </div>
-          <button class="couppon">
+          <button class="couppon-open" v-on:click="modal_opener">
             쿠폰받기
             <img
               alt="coupon download"
@@ -285,6 +285,8 @@
 </template>
 
 <script>
+import axios from "axios";
+import { config } from "../../../api/apiConfig";
 
 export default {
   name: "product-container",
@@ -300,6 +302,7 @@ export default {
     "option",
   ],
   data: () => ({
+    open_modal: false,
     open_option: "",
     option_color_child: "[색상]을 선택하세요.",
     option_size_child: "[사이즈]를 선택하세요.",
@@ -353,6 +356,9 @@ export default {
     },
   },
   methods: {
+    modal_opener: function () {
+      this.open_modal = !this.open_modal;
+    },
     option_opener: function (e) {
       if (
         e.target.id === "size-choice" &&
@@ -443,20 +449,28 @@ export default {
       console.log(click_location - this.mouse_location);
     },
     save_product_data: function () {
-      localStorage.setItem("data", JSON.stringify(this.result_option));
+      let result = [];
+      if (localStorage.data) {
+        result.push(JSON.parse(localStorage.getItem("data")));
+        for (let i in this.result_option) {
+          result.push(this.result_option[i]);
+        }
+        localStorage.setItem("data", JSON.stringify(result));
+      } else {
+        localStorage.setItem("data", JSON.stringify(this.result_option));
+      }
       alert("주문하기에 담았습니다.");
     },
     coupon_downloader: function (obj) {
       axios
         .post(
-          `${config}coupons?c=${obj.coupon_id}`,
+          `${config.API}coupons?c=${obj.coupon_id}`,
           {
             questions: { a: "" },
           },
           {
             headers: {
-              Authorization:
-                "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6Mn0.YHNEVqI1PLALLTpPVComx3VMQZkV0z4CzT_SQk88yY0",
+              Authorization: this.$cookies.get("accesstoken"),
             },
           }
         )
@@ -465,10 +479,9 @@ export default {
   },
   created: function () {
     axios
-      .get(`${config}coupons`, {
+      .get(`${config.API}coupons`, {
         headers: {
-          Authorization:
-            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6Mn0.YHNEVqI1PLALLTpPVComx3VMQZkV0z4CzT_SQk88yY0",
+          Authorization: this.$cookies.get("accesstoken"),
         },
       })
       .then((res) => (this.datas.coupon = res.data.coupons));
@@ -613,7 +626,7 @@ export default {
       }
     }
 
-    .couppon {
+    .couppon-open {
       height: 32px;
       font-size: 12px;
       border: 1px solid black;
@@ -623,6 +636,106 @@ export default {
         position: relative;
         bottom: 2px;
         margin-left: 20px;
+      }
+    }
+
+    .coupon-modal {
+      position: fixed;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999999999;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0, 0, 0, 0.4);
+
+      .coupon-container {
+        width: 35vw;
+        max-height: 50vh;
+        overflow: scroll;
+        background-color: white;
+        -ms-overflow-style: none;
+        &::-webkit-scrollbar {
+          display: none;
+        }
+      }
+
+      .close-container {
+        display: flex;
+        justify-content: flex-end;
+        padding-top: 5px;
+        padding-right: 5px;
+      }
+
+      .coupon-frame {
+        display: flex;
+        flex-direction: column;
+        padding: 0 40px 33px 40px;
+      }
+
+      .coupon {
+        display: flex;
+        overflow: hidden;
+        border: 1px solid #dddddd;
+        border-radius: 5px;
+        margin-bottom: 15px;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+
+      .red-label {
+        width: 0.8%;
+        background-color: #ff1f4b;
+        margin-right: 20px;
+      }
+
+      .coupon-info {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        padding-right: 20px;
+      }
+
+      .coupon-name {
+        display: flex;
+        justify-content: space-between;
+
+        font-size: 14px;
+        font-weight: 700;
+        margin-top: 20px;
+
+        img {
+          width: 18px;
+        }
+      }
+      .coupon-price {
+        font-size: 20px;
+        font-weight: 700;
+
+        span {
+          font-size: 18px;
+        }
+      }
+
+      .coupon-sub-info {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 5px;
+        margin-bottom: 20px;
+        span {
+          &:first-child {
+            font-size: 14px;
+            color: #9e9e9e;
+          }
+          &:last-child {
+            font-size: 11px;
+            color: #c5c5c5;
+          }
+        }
       }
     }
 
