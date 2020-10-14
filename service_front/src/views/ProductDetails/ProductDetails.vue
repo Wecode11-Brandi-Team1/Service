@@ -3,16 +3,12 @@
     <product-container v-bind="datas" />
     <section class="product-info" id="info">
       <ul class="sub-nav">
-        <a href="#info">
-          <li v-bind:class="{ 'select-li': !see_QA }">
-            <span>상품정보</span>
-          </li>
-        </a>
-        <a href="#QA">
-          <li v-bind:class="{ 'select-li': see_QA }">
-            <span>Q&A({{ this.QA_list.qna_count }})</span>
-          </li>
-        </a>
+        <li v-bind:class="{ 'select-li': !see_QA }" v-on:click="move_product_info">
+          <span>상품정보</span>
+        </li>
+        <li v-bind:class="{ 'select-li': see_QA }" v-on:click="move_QA">
+          <span>Q&A({{ this.QA_list.qna_count }})</span>
+        </li>
       </ul>
       <article>
         <div class="main-info" v-html="datas.description"></div>
@@ -226,8 +222,10 @@ export default {
   name: "product-details",
   components: { productContainer },
   data: () => ({
+    product_info_location: "",
+    QA_location: "",
     limit: 5,
-    offset: 0,
+    offset: 5,
     button_value: 1,
     see_my_question: false,
     send_question: false,
@@ -276,25 +274,16 @@ export default {
     },
     To_the_last: function () {
       if (
-        Math.floor(this.QA_list.qna_count / 5) ===
-        this.QA_list.qna_count / 5
+        Math.floor(this.QA_list.qna_count / 25) ===
+        this.QA_list.qna_count / 25
       ) {
-        this.button_value = this.QA_list.qna_count / 5 - 4;
+        this.button_value = Math.floor(this.QA_list.qna_count / 25);
       } else {
-        this.button_value = Math.floor(this.QA_list.qna_count / 5);
+        this.button_value = Math.floor(this.QA_list.qna_count / 25) + 5;
       }
     },
     post_button_visible: function () {
-      if (
-        Math.floor(this.QA_list.qna_count / 5) === this.QA_list.qna_count / 5 &&
-        this.button_value === this.QA_list.qna_count / 5 - 4
-      ) {
-        return false;
-      }
-      if (
-        Math.floor(this.QA_list.qna_count / 5) !== this.QA_list.qna_count / 5 &&
-        this.button_value === Math.floor(this.QA_list.qna_count / 5)
-      ) {
+      if ((this.button_value + 4) * 5 >= this.QA_list.qna_count) {
         return false;
       }
       return true;
@@ -315,23 +304,21 @@ export default {
       return false;
     },
     pagenation_button_clicker: function (e) {
-      this.offset = (e.target.value - 1) * this.limit;
+      this.offset = e.target.value * this.limit;
       axios
-        .get(
-          `${config.API}products/1/questions?offset=${this.offset}&limit=${this.limit}`,
-          {
-            headers: {
-              Authorization: this.$cookies.get("accesstoken"),
-            },
-          }
-        )
-        .then((res) => (this.QA_list = res.data));
+        .get(`${config.API}products/1/questions?limit=${this.offset}`, {
+          headers: {
+            Authorization: this.$cookies.get("accesstoken"),
+          },
+        })
+        .then((res) => (this.QA_list = res.data))
+        .then(() => this.QA_list.questions.splice(0, this.offset - 5));
     },
     question_fillter: function () {
       this.see_my_question = !this.see_my_question;
       if (!this.see_my_question) {
         axios
-          .get(`${config.API}products/1/questions?limit=10`, {
+          .get(`${config.API}products/1/questions?limit=5`, {
             headers: {
               Authorization: this.$cookies.get("accesstoken"),
             },
@@ -393,7 +380,7 @@ export default {
         .then((res) => console.log(res))
         .then(() =>
           axios
-            .get(`${config.API}products/1/questions?limit=10`, {
+            .get(`${config.API}products/1/questions?limit=5`, {
               headers: {
                 Authorization: this.$cookies.get("accesstoken"),
               },
@@ -409,6 +396,12 @@ export default {
       this.secret = false;
       this.send_question = false;
     },
+    move_product_info: function () {
+      window.scrollBy(0, this.product_info_location);
+    },
+    move_QA: function () {
+      window.scrollBy(0, this.QA_location);
+    },
     handleScroll: function (e) {
       let length_QA = document
         .querySelector(".QA-header")
@@ -416,6 +409,9 @@ export default {
       let length_info = document
         .querySelector(".product-info")
         .getBoundingClientRect().top;
+      this.product_info_location = length_info;
+      this.QA_location = length_QA;
+
       if (length_QA - window.innerHeight * 0.3 <= 0) {
         return (this.see_QA = true);
       } else {
@@ -433,7 +429,7 @@ export default {
         .then((res) => console.log(res))
         .then(() =>
           axios
-            .get(`${config.API}products/1/questions?limit=10`, {
+            .get(`${config.API}products/1/questions?limit=5`, {
               headers: {
                 Authorization: this.$cookies.get("accesstoken"),
               },

@@ -266,11 +266,7 @@
             </span>원
           </p>
         </li>
-        <li
-          class="perchase"
-          v-on:mousedown="large_photo_slider"
-          v-on:click="mouse_location_cheacker"
-        >
+        <li class="perchase">
           <button v-on:click="save_product_data">주문 하기</button>
           <button v-on:click="move_order">
             <img
@@ -308,7 +304,6 @@ export default {
     option_size_child: "[사이즈]를 선택하세요.",
     result_option: [],
     moving_photo: { transform: "" },
-    mouse_location: "",
     moving_photo_num: "",
     datas: {
       coupon: [],
@@ -370,7 +365,7 @@ export default {
       }
     },
     plus: function (list) {
-      if (list.stock > list.quantity) {
+      if (list.stock > list.quantity && 20 > list.quantity) {
         list.quantity += 1;
         list.final_price = list.discount_price * list.quantity;
       }
@@ -439,27 +434,22 @@ export default {
       this.moving_photo.transform =
         `translatex(` + this.moving_photo_num + `%)`;
     },
-    mouse_location_cheacker: function (e) {
-      let y = e.pageY;
-      this.mouse_location = y;
-    },
-    large_photo_slider: function (e) {
-      let click_location = e.pageY;
-      let move_location = click_location - this.mouse_location;
-      console.log(click_location - this.mouse_location);
-    },
     save_product_data: function () {
-      // let result = [];
-      // if (localStorage.data) {
-      //   result.push(JSON.parse(localStorage.getItem("data")));
-      //   for (let i in this.result_option) {
-      //     result.push(this.result_option[i]);
-      //   }
-      //   localStorage.setItem("data", JSON.stringify(result));
-      // } else {
+      let result = [];
+      if (this.result_option.length === 0) {
+        return alert("선택된 옵션이 없습니다");
+      }
+      if (localStorage.data) {
+        result = JSON.parse(localStorage.getItem("data"));
+        for (let i in this.result_option) {
+          result.push(this.result_option[i]);
+        }
+        localStorage.setItem("data", JSON.stringify(result));
+      } else {
         localStorage.setItem("data", JSON.stringify(this.result_option));
-      // }
+      }
       alert("주문하기에 담았습니다.");
+      result.push(this.result_option[0]);
     },
     coupon_downloader: function (obj) {
       axios
@@ -475,11 +465,13 @@ export default {
           }
         )
         .then((response) => {
-            if(res.status===200){alert("쿠폰이 등록되었습니다.")}
-          })
-          .catch((error) => {
-            alert("이미 등록된 쿠폰입니다.")
+          if (res.status === 200) {
+            alert("쿠폰이 등록되었습니다.");
+          }
         })
+        .catch((error) => {
+          alert("이미 등록된 쿠폰입니다.");
+        });
     },
   },
   created: function () {
