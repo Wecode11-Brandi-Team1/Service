@@ -403,6 +403,7 @@ export default {
         .catch((error) => console.log(error));
 
       alert("등록되었습니다.");
+      localStorage.setItem("user_id", this.QA_list.user_id);
       this.select_category = "질문유형을 선택하세요.";
       this.main_text = "";
       this.secret = false;
