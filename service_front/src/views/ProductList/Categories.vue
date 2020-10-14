@@ -7,7 +7,7 @@
           <li>
             <span>></span>카테고리
           </li>
-          <!-- <li v-if="$route.query.fc_id">
+          <li v-if="$route.query.fc_id">
             <span>></span>
             {{ Object.keys(datas.nav_list[$route.query.fc_id])[0] }}
           </li>
@@ -18,7 +18,7 @@
             $route.query.sc_id
             ]
             }}
-          </li>-->
+          </li>
         </ul>
       </article>
     </header>
@@ -86,8 +86,8 @@
               />
             </div>
             <div
-              v-for="list in fillter_list"
-              v-bind:key="list"
+              v-for="(list,idx) in fillter_list"
+              v-bind:key="idx"
               v-bind:class="{
                 fillter: is_fllter_active,
                 none: !is_fllter_active,
@@ -100,8 +100,8 @@
         <article class="product-list">
           <router-link
             v-bind:to="`/products/${list.product_id}`"
-            v-for="list in datas.product_list"
-            v-bind:key="list.product_id"
+            v-for="(list,idx) in datas.product_list"
+            v-bind:key="idx + `product_id`"
           >
             <categories-card v-bind="list" />
           </router-link>
@@ -174,7 +174,7 @@ export default {
           `&fc_id=${this.main_category_number}&sc_id=${this.sub_category_number}`
         );
       }
-      query_arr.unshift("?sp_id=1");
+      query_arr.unshift(`?sp_id=${this.$route.params.id}`);
       this.$router.push(query_arr.join(""));
     },
     update_main_category: function (e) {
@@ -186,7 +186,7 @@ export default {
       }
 
       if (this.select_main_category === "전체") {
-        this.$router.push("?sp_id=1");
+        this.$router.push(`?sp_id=${this.$route.params.id}`);
 
         axios
           .get(
@@ -206,6 +206,7 @@ export default {
         this.select_sub_category = "전체";
       }
       this.query_maker();
+
       axios
         .get(
           `${config.API}products${this.$route.fullPath.replace(
@@ -221,7 +222,9 @@ export default {
     },
     fillering_what: function (e) {
       this.filltering_criteria = e.target.id;
+
       this.query_maker();
+
       axios
         .get(
           `${config.API}products${this.$route.fullPath.replace(
@@ -236,6 +239,7 @@ export default {
       this.is_sale_list = !this.is_sale_list;
 
       this.query_maker();
+
       axios
         .get(
           `${config.API}products${this.$route.fullPath.replace(

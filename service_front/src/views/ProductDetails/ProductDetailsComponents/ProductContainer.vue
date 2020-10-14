@@ -524,6 +524,7 @@ export default {
 
     .large-photo {
       width: 560px;
+      height: 620px;
       margin-bottom: 20px;
       background-color: black;
     }

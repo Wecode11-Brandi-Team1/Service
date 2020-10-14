@@ -68,7 +68,7 @@
 
 <script>
 import axios from "axios";
-import {config} from "../../api/apiConfig";
+import { config } from "../../api/apiConfig";
 import listCard from "./MainComponents/ListCard.vue";
 
 export default {
@@ -86,9 +86,7 @@ export default {
   }),
   methods: {},
   created: function () {
-    axios
-      .get(`http://13.209.10.81:5000/`)
-      .then((res) => (this.datas = res.data.data));
+    axios.get(`${config.API}`).then((res) => (this.datas = res.data.data));
   },
 };
 </script>
