@@ -106,6 +106,9 @@
             <categories-card v-bind="list" />
           </router-link>
         </article>
+        <article class="button-container" v-if="offset === datas.product_list.length">
+          <button v-on:click="pagination_button">더보기</button>
+        </article>
       </section>
     </main>
   </div>
@@ -120,6 +123,8 @@ export default {
   name: "categories",
   components: { categoriesCard },
   data: () => ({
+    limit: 24,
+    offset: 40,
     top_category: "",
     is_sale_list: false,
     is_fllter_active: false,
@@ -129,7 +134,7 @@ export default {
     fillter_list: ["인기순", "최신순", "가격순"],
     datas: {
       nav_list: [],
-      product_list: {},
+      product_list: [],
     },
   }),
   computed: {
@@ -150,6 +155,19 @@ export default {
     },
   },
   methods: {
+    pagination_button: function () {
+      this.offset = this.offset + this.limit;
+
+      axios
+        .get(
+          `${config.API}products${this.$route.fullPath.replace(
+            this.$route.path,
+            ""
+          )}&limit=${this.offset}`
+        )
+        .then((res) => (this.datas.product_list = res.data))
+        .then(() => window.scrollBy(0, -2360));
+    },
     query_maker: function () {
       let query_arr = [];
       if (this.is_sale_list) {
@@ -250,7 +268,7 @@ export default {
         .then((res) => (this.datas.product_list = res.data));
     },
   },
-  mounted: function () {
+  created: function () {
     axios
       .get(`${config.API}category?q=${this.$route.params.id}`)
       .then(
@@ -265,7 +283,7 @@ export default {
         `${config.API}products${this.$route.fullPath.replace(
           this.$route.path,
           ""
-        )}`
+        )}&limit=${this.offset}`
       )
       .then((res) => (this.datas.product_list = res.data));
   },
@@ -478,6 +496,16 @@ export default {
           margin-top: 0;
         }
       }
+    }
+  }
+  .button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    button {
+      border: 1px solid black;
+      padding: 15px 60px;
     }
   }
 }

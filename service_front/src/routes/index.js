@@ -33,9 +33,6 @@ Vue.use(VueCookies);
 
 export const router = new VueRouter({
   mode: "history",
-  scrollBehavior() {
-    return { x: 0, y: 0 };
-  },
   routes: [
     {
       path: "/",
@@ -182,4 +179,11 @@ export const router = new VueRouter({
       component: Event,
     },
   ],
+});
+
+router.beforeEach(function (to, from, next) {
+  setTimeout(() => {
+    window.scrollTo(0, 0);
+  }, 100);
+  next();
 });

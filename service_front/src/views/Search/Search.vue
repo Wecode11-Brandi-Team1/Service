@@ -124,7 +124,7 @@
 
 <script>
 import axios from "axios";
-import {config} from "../../api/apiConfig";
+import { config } from "../../api/apiConfig";
 
 export default {
   name: "",
@@ -144,13 +144,11 @@ export default {
       this.is_checked = !this.is_checked;
       if (this.is_checked) {
         axios
-          .get(
-            `${config.API}/search?q=${this.$route.query.q}&is_dicounted=1`
-          )
+          .get(`${config.API}search?q=${this.$route.query.q}&is_discounted=1`)
           .then((res) => (this.datas = { ...this.datas, ...res.data }));
       } else {
         axios
-          .get(`${config.API}/search?q=${this.$route.query.q}`)
+          .get(`${config.API}search?q=${this.$route.query.q}`)
           .then((res) => (this.datas = { ...this.datas, ...res.data }));
       }
     },
@@ -166,7 +164,7 @@ export default {
   },
   created: function () {
     axios
-      .get(`${config.API}/search?q=${this.$route.query.q}`)
+      .get(`${config.API}search?q=${this.$route.query.q}`)
       .then((res) => (this.datas = res.data));
   },
 };
@@ -211,7 +209,7 @@ export default {
   }
 
   main {
-    width: 90%;
+    width: 60%;
     margin: 0 auto;
     padding: 0 2.3%;
 
@@ -370,6 +368,7 @@ export default {
     }
 
     .store-container {
+      height: 100%;
       article {
         &:first-child {
           margin: 12.45px 0;
