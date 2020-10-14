@@ -31,8 +31,6 @@ export default {
     PayInfo,
   },
   data: () => ({
-    couponData:[],
-    isCoupon: false,
     orderList: [],
     ordererList: {
       name: "",
@@ -44,34 +42,48 @@ export default {
       email2: "",
     },
   }),
-  created(){
-    axios({
-      url: `${config.API}user/coupons`,
-      method: 'GET',
-      headers: { 
-        'Authorization': this.$cookies.get("accesstoken")
-        
-      }
-    })
-    .then((response) => {
-      console.log(response.data);
-      this.couponData = response.data;
-      this.$store.state.couponNum = response.data.the_number_of_coupons;
-
-      if(response.data === "쿠폰이 존재하지 않습니다."){
-        this.isCoupon = true;
-      }
-    })
-    .catch((error) => {
-      this.isCoupon = true;
-    })
-  },
   computed: {
     getDiscountPrice() {
       let result = [];
       if (this.getData().length > 0) {
         for (let i = 0; i < this.getData().length; i++) {
-          result = result + this.getData()[i].discount_price;
+          result.push(this.getData()[i].discount_price);
+        }
+      }
+      return result;
+    },
+    getOptionId() {
+      let result = [];
+      if (this.getData().length > 0) {
+        for (let i = 0; i < this.getData().length; i++) {
+          result.push(this.getData()[i].option_id);
+        }
+      }
+      return result;
+    },
+    getQuantity() {
+      let result = [];
+      if (this.getData().length > 0) {
+        for (let i = 0; i < this.getData().length; i++) {
+          result.push(this.getData()[i].quantity);
+        }
+      }
+      return result;
+    },
+    getPrice() {
+      let result = [];
+      if (this.getData().length > 0) {
+        for (let i = 0; i < this.getData().length; i++) {
+          result.push(this.getData()[i].price);
+        }
+      }
+      return result;
+    },
+    getFinalPrice() {
+      let result = [];
+      if (this.getData().length > 0) {
+        for (let i = 0; i < this.getData().length; i++) {
+          result.push(this.getData()[i].final_price);
         }
       }
       return result;
@@ -117,17 +129,17 @@ export default {
         address: this.$store.state.shipList.address.address,
         detail_address: this.$store.state.shipList.address_detail,
         shipping_memo: this.$store.state.shipList.memo,
-        option_id: [getData().option_id, 1],
-        quantity: [getData().quantity, 1],  
-        price: [getData().price, 31000],
+        option_id: this.getOptionId,
+        quantity: this.getQuantity,
+        price: this.getPrice,
         coupon_id: [1, 1],
-        discount_price: [getData().discount_price, 32000],
-        final_price: [getData().final_price, 32000],
+        discount_price: this.getDiscountPrice,
+        final_price: this.getFinalPrice,
         total_price: this.totalPrice
       };
       axios
         .post(`${config.API}purchase`, list, headers)
-        .then((response) => {alert("주문완료")});
+        .then((response) => {this.$router.push('/order/result')});
     },
   },
 };

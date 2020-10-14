@@ -10,6 +10,7 @@ import Success from '../views/Signup/Success/Success.vue'
 import ProductList from '../views/ProductList/Categories.vue'
 import ProductDetails from '../views/ProductDetails/ProductDetails.vue'
 import Order from '../views/Order/Order.vue'
+import OrderResult from '../views/Order/OrderResult.vue'
 import Mypage from '../views/Mypage/Mypage.vue'
 import OrderInquiry from '../views/Mypage/OrderInquiry/OrderInquiry.vue'
 import Coupon from '../views/Mypage/Coupon/Coupon.vue'
@@ -24,9 +25,11 @@ import CancelResult from '../views/Mypage/CancelReques/Cancel/CancelResult/Cance
 import Event from '../views/Event/Event.vue'
 import Search from '../views/Search/Search.vue'
 import GSignInButton from 'vue-google-signin-button'
+import VueCookies from "vue-cookies"
 
 Vue.use(VueRouter);
 Vue.use(GSignInButton);
+Vue.use(VueCookies);
 
 export const router = new VueRouter({
   mode: "history",
@@ -43,6 +46,13 @@ export const router = new VueRouter({
       path: "/login",
       name: "Login",
       component: Login,
+      beforeEnter: function (to, from, next) {
+        if (!window.$cookies.isKey('accesstoken')) {
+          next();
+        } else {
+          alert('이미 로그인하였습니다.');
+        }
+      },
     },
     {
       path: "/signup",
@@ -80,10 +90,39 @@ export const router = new VueRouter({
       path: "/order",
       name: "Order",
       component: Order,
+      beforeEnter: function (to, from, next) {
+        if (window.$cookies.isKey('accesstoken')) {
+          next();
+        } else {
+          alert('로그인 후 이용해주세요.');
+          next('/login');
+        }
+      },
+    },
+    {
+      path: "/order/result",
+      name: "OrderResult",
+      component: OrderResult,
+      beforeEnter: function (to, from, next) {
+        if (window.$cookies.isKey('accesstoken')) {
+          next();
+        } else {
+          alert('로그인 후 이용해주세요.');
+          next('/login');
+        }
+      },
     },
     {
       path: "/mypage",
       component: Mypage,
+      beforeEnter: function (to, from, next) {
+        if (window.$cookies.isKey('accesstoken')) {
+          next();
+        } else {
+          alert('로그인 후 이용해주세요.');
+          next('/login');
+        }
+      },
       children: [
         {
           path: "",

@@ -5,8 +5,8 @@
       <h2>무료배송으로 내일 받는 브랜디 LOGIN</h2>
     </div>
     <div class="login-container">
-      <input type="text" placeholder="아이디 입력" v-model="account" />
-      <input type="password" placeholder="비밀번호 입력" v-model="password" />
+      <input type="text" placeholder="아이디 입력" v-model="account" @keyup.enter="loginSubmit" />
+      <input type="password" placeholder="비밀번호 입력" v-model="password" @keyup.enter="loginSubmit" />
       <div class="btn-box">
         <button class="login-btn" v-on:click="loginSubmit">로그인</button>
         <router-link to="/signup"

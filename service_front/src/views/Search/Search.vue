@@ -59,8 +59,8 @@
         <article>
           <router-link
             v-bind:to="`/products/${list.product_id}`"
-            v-for="list in datas.products"
-            v-bind:key="list.product_id"
+            v-for="(list,idx) in datas.products"
+            v-bind:key="idx + `product_id`"
           >
             <ul class="product">
               <li>
@@ -145,12 +145,12 @@ export default {
       if (this.is_checked) {
         axios
           .get(
-            `http://192.168.7.5:5000/search?q=${this.$route.query.q}&&is_dicounted=1`
+            `${config.API}/search?q=${this.$route.query.q}&is_dicounted=1`
           )
           .then((res) => (this.datas = { ...this.datas, ...res.data }));
       } else {
         axios
-          .get(`http://192.168.7.5:5000/search?q=${this.$route.query.q}`)
+          .get(`${config.API}/search?q=${this.$route.query.q}`)
           .then((res) => (this.datas = { ...this.datas, ...res.data }));
       }
     },
@@ -166,7 +166,7 @@ export default {
   },
   created: function () {
     axios
-      .get(`http://192.168.7.5:5000/search?q=${this.$route.query.q}`)
+      .get(`${config.API}/search?q=${this.$route.query.q}`)
       .then((res) => (this.datas = res.data));
   },
 };
@@ -303,6 +303,7 @@ export default {
                 &:first-child {
                   img {
                     width: 100%;
+                    height: 242px;
                   }
                 }
 
@@ -369,7 +370,6 @@ export default {
     }
 
     .store-container {
-      height: 100px;
       article {
         &:first-child {
           margin: 12.45px 0;

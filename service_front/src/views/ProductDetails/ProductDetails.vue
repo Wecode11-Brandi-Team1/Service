@@ -105,7 +105,7 @@
               <span>내용</span>
             </div>
             <div>
-              <span>자</span>
+              <span>작성자</span>
             </div>
             <div>
               <span>작성일</span>
