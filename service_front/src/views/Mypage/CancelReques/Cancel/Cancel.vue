@@ -67,6 +67,7 @@
 
 <script>
 import { axios } from '../../../../plugins/axios';
+import {config} from "../../../../api/apiConfig"
 
 export default {
   data:() => ({
@@ -83,14 +84,14 @@ export default {
   methods:{
     cancelResultBtn(){
       if(this.selected == 0){
-        alert('환불사유를 선택해주세요.');
+        alert('취소사유를 선택해주세요.');
       }else{
         let confirmResult = confirm('선택하신 주문을 취소하시겠습니까?');
         if(confirmResult){
           this.$store.state.cancelSelected = this.selected;
           this.$store.state.cancelTotal = this.cancelData.final_price;
           axios({
-            url: 'http://10.251.1.174:5000/order-cancellation',
+            url: `${config.API}order-cancellation`,
             method: 'PUT',
             data: {
               order_detail_number: this.cancelData.order_detail_number,
@@ -98,8 +99,7 @@ export default {
               order_detail_id: this.cancelData.order_detail_id,
             },
             headers: { 
-              'Authorization': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6Mn0.YHNEVqI1PLALLTpPVComx3VMQZkV0z4CzT_SQk88yY0'
-              // 'Authorization': this.$cookies.get('accesstoken')
+              'Authorization': this.$cookies.get("accesstoken")
             }
           })
           .then((response) => {

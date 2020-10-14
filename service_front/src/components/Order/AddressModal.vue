@@ -162,7 +162,7 @@ export default {
         .then(reponese => this.updateData())
     },
     pasteAddressData(data) {
-      const phoneNum = data.item.phone_number 
+      const phoneNum = data.item.phone_number
         this.$store.state.shipList.name = data.item.name;
         this.$store.state.shipList.address.zonecode = data.item.zip_code;
         this.$store.state.shipList.address.address = data.item.address;
@@ -171,7 +171,6 @@ export default {
         this.$store.state.shipList.phone2 = phoneNum.slice(4, 8);
         this.$store.state.shipList.phone3 = phoneNum.slice(9, 13);
         this.$store.state.showModal = false
-        // console.log(`${this.$store.state.shipList.phone1}-${this.$store.state.shipList.phone2}-${this.$store.state.shipList.phone3}`);
     },
     deleteAddressData(data) {
       this.addTab = false

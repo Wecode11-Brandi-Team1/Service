@@ -449,16 +449,16 @@ export default {
       console.log(click_location - this.mouse_location);
     },
     save_product_data: function () {
-      let result = [];
-      if (localStorage.data) {
-        result.push(JSON.parse(localStorage.getItem("data")));
-        for (let i in this.result_option) {
-          result.push(this.result_option[i]);
-        }
-        localStorage.setItem("data", JSON.stringify(result));
-      } else {
+      // let result = [];
+      // if (localStorage.data) {
+      //   result.push(JSON.parse(localStorage.getItem("data")));
+      //   for (let i in this.result_option) {
+      //     result.push(this.result_option[i]);
+      //   }
+      //   localStorage.setItem("data", JSON.stringify(result));
+      // } else {
         localStorage.setItem("data", JSON.stringify(this.result_option));
-      }
+      // }
       alert("주문하기에 담았습니다.");
     },
     coupon_downloader: function (obj) {
@@ -474,7 +474,12 @@ export default {
             },
           }
         )
-        .then((res) => console.log(res));
+        .then((response) => {
+            if(res.status===200){alert("쿠폰이 등록되었습니다.")}
+          })
+          .catch((error) => {
+            alert("이미 등록된 쿠폰입니다.")
+        })
     },
   },
   created: function () {

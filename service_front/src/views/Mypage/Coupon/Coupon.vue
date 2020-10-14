@@ -69,6 +69,8 @@ export default {
 
       if(response.data === "쿠폰이 존재하지 않습니다."){
         this.isCoupon = true;
+      }else{
+        this.isCoupon = false;
       }
     })
     .catch((error) => {

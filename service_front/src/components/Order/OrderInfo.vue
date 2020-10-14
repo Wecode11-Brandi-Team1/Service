@@ -11,7 +11,7 @@
           상품
         </span>
       </div>
-      <div class="product-list" v-for="item in getData()" :key="item.option_id">
+      <div class="product-list" v-for="item in data" :key="item.option_id">
         <div class="order-row">
           <span class="brand">{{ item.seller_name }}</span>
           <span class="blank"></span>
@@ -34,13 +34,12 @@
           </div>
           <span class="blank"></span>
           <span class="coupon-label">
-            <span class="coupon-list"
-              ><select>
-                <option value="">쿠폰을 선택하세요</option>
-                <option>회원가입 축하쿠폰(2,000원 할인)</option>
-                <option>회원가입 축하쿠폰(2,000원 할인)</option>
-              </select></span
-            >
+            <span class="coupon-list">
+              <select @change="useCoupon" v-for="(data,index) in couponData.coupons" v-bind:key="data.id">
+              <option value="select">쿠폰을 선택하세요</option>
+              <option :value="couponData.coupons[index].coupon_id">{{ couponData.coupons[index].coupon_name }}&nbsp;{{ Number(couponData.coupons[index].discount_price).toLocaleString() }}원 할인</option>
+            </select>
+              </span>
           </span>
           <span class="price-value"
             >{{ (item.price * item.quantity).toLocaleString() }}원</span
@@ -58,22 +57,59 @@
 </template>
 
 <script>
+import axios from "axios";
+import {config} from "../../api/apiConfig"
+
 export default {
+  data: () => ({
+    couponData:[],
+    isCoupon: false,
+    data: []
+  }),
+  created(){
+    axios({
+      url: `${config.API}user/coupons`,
+      method: 'GET',
+      headers: { 
+        'Authorization': this.$cookies.get("accesstoken")
+      }
+    })
+    .then((response) => {
+      console.log(this.couponData);
+      this.couponData = response.data;
+      this.$store.state.couponNum = response.data.the_number_of_coupons;
+
+      if(response.data === "쿠폰이 존재하지 않습니다."){
+        this.isCoupon = true;
+      }
+    })
+    .catch((error) => {
+      this.isCoupon = true;
+    }),
+    this.data = JSON.parse(localStorage.getItem("data"))
+  },
   computed: {
     totalPrice() {
       let sum = 0;
-      for (let i = 0; i < this.getData().length; i++) {
+      for (let i = 0; i < this.data.length; i++) {
         sum +=
-          (this.getData()[i].price) *
-          (this.getData()[i].quantity);
+          (this.data[i].price) *
+          (this.data[i].quantity);
       }
       return sum;
     },
   },
   methods: {
-    getData() {
-      return JSON.parse(localStorage.getItem("data"));
-    },
+    useCoupon(e) {
+      const discountPrice = this.couponData.coupons[0].discount_price
+      const id = e.target.value
+      
+     if(id === "select") {
+       return this.data[0].price = this.data[0].price + discountPrice
+     } else {
+      return  this.data[0].price = this.data[0].price - discountPrice
+     }
+    }
   },
 };
 </script>

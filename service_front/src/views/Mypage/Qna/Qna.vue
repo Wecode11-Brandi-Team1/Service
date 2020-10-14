@@ -4,9 +4,10 @@
       <div class="qna-box">
         <h2>상품 Q&A</h2>
         <div class="qna-list">
-          <!-- <dl class="qna-no-data">
+          <dl class="qna-no-data" v-if="noQna">
               <dd>Q&A 내역이 존재하지 않습니다.</dd>
-          </dl>-->
+          </dl>
+          <div v-if="isQna" class="qna-inner-box">
           <dl class="list-header">
             <dt>작성일</dt>
             <dt>내용</dt>
@@ -17,6 +18,7 @@
             <dd>{{ question.question_content }}</dd>
             <dd>{{ question.writer }}</dd>
           </dl>
+          </div>
         </div>
       </div>
     </div>
@@ -32,6 +34,8 @@ export default {
     pageName: "qna",
     mobilePageName: "상품 Q&A",
     questionsData: [],
+    noQna:true,
+    isQna:false
   }),
   mounted: function () {
     this.$store.state.myPageTabName = this.pageName;
@@ -46,10 +50,18 @@ export default {
       },
     })
       .then((response) => {
-        console.log(response);
-        this.questionsData = response.data.questions;
+        if(response.data.questions.length == 0){
+          this.noQna = true;
+          this.isQna = false;
+        }else if(response.data.questions.length >= 1){
+          this.noQna = false;
+          this.isQna = true;
+          this.questionsData = response.data.questions;
+        }
       })
       .catch((error) => {
+        this.noQna = true;
+        this.isQna = false;
         console.log(response);
       });
   },
@@ -98,25 +110,29 @@ export default {
           padding: 10px;
         }
 
-        .list-header {
-          width: 100%;
-          display: table-row;
-          border-bottom: 1px solid #ddd;
-          overflow: hidden;
+        .qna-inner-box{
+          display: table-row-group;
+          
+          .list-header {
+            width: 100%;
+            display: table-row;
+            border-bottom: 1px solid #ddd;
+            overflow: hidden;
 
-          dt {
-            font-size: 16px;
-            text-align: center;
-            font-weight: bold;
-            display: table-cell;
-            vertical-align: middle;
-            padding: 10px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #ccc;
-
-            &:first-child {
-              width: 15%;
+            dt {
+              font-size: 16px;
               text-align: center;
+              font-weight: bold;
+              display: table-cell;
+              vertical-align: middle;
+              padding: 10px;
+              padding-bottom: 10px;
+              border-bottom: 1px solid #ccc;
+
+              &:first-child {
+                width: 15%;
+                text-align: center;
+              }
             }
           }
         }
