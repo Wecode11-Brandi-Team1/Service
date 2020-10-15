@@ -135,25 +135,17 @@ class ProductDao:
                     sp.id AS sp_id,
                     sp.name AS sp_name
                 FROM 
-                    seller_properties AS sp
-                LEFT JOIN 
-                    first_category_seller_properties AS fcsp
-                ON       
-                    sp.id = fcsp.seller_property_id
-                LEFT JOIN
-                    first_categories AS fc
-                ON
-                    fcsp.first_category_id = fc.id
-                LEFT JOIN
-                    first_category_second_categories AS fcsc 
-                ON 
-                    fc.id = fcsc.first_category_id
-                LEFT JOIN
+                    seller_properties as sp,
+                    first_category_seller_properties as fcsp,
+                    first_categories as fc,
+                    first_category_second_categories as fcsc,
                     second_categories as sc
-                ON
-                    fcsc.second_category_id = sc.id
                 WHERE
-                    sp.id = %s;
+                    sp.id = fcsp.seller_property_id
+                    AND fcsp.first_category_id = fc.id
+                    AND fc.id = fcsc.first_category_id
+                    AND fcsc.second_category_id = sc.id
+                    AND sp.id = %s;
                 """
                 cursor.execute(sql, q)
                 result = cursor.fetchall()

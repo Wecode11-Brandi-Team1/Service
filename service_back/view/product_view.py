@@ -28,7 +28,7 @@ class MainProductsView(MethodView):
             200:    
                 할인률이 존재하는 상품 & 판매량 상위 상품들로 묶은 리스트 JSONDATA
             400:
-                EXCEPTION MESSAGE
+                {message : 모든 레이어에서 레이즈된 에러메시지}
         Author:
             김기욱(1218kim23@gmail.com)
         History:
@@ -61,6 +61,7 @@ class CategorySetView(MethodView):
         NAV/SIDE_BAR 카테고리리스트 - Presentation Layer(View) function
         Args:
             service: 서비스 레이어 객체
+            q      : 쿼리파라미터(셀러속성아이디)
         Returns:
             200:    
                 쿼리파라미터에 해당되는 카테고리 JSONDATA
@@ -101,7 +102,6 @@ class ProductsView(MethodView):
         Param('is_new',   GET, bool, required = False),
         Param('is_cheap', GET, bool, required = False)
     )
-    @cache.cached(timeout=30)
     def get(self, *args):
         """
         전체상품 리스트(필터링있음) - Presentation Layer(View) function

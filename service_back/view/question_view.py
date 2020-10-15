@@ -9,7 +9,6 @@ from flask_request_validator import (
     JSON,
     validate_params
 )
-
 from connection import get_connection
 from utils      import login_confirm, catch_exception
 

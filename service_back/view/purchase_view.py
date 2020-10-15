@@ -60,8 +60,7 @@ class MyOrder(MethodView):
             마이페이지에 구매 정보 가져오기 - Presentation Layer(view)) function
             Args : 
                 token_paylod : 유저 엑세스 토큰
-            Returns :
-
+            Returns:
             Author :
                 taeha7b@gmail.com (김태하)
             History:

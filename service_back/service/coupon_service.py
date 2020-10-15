@@ -9,7 +9,7 @@ class CouponService:
         다운로드 가능한 쿠폰조회 - Business Layer(Service) function
         Args :
             coupons_dao: 쿠폰 관련 데이터접근객체
-            db : 데이터베이스 연결객체
+            db         : 데이터베이스 연결객체
         Returns :
             coupons객체(쿠폰 리스트)
         Authors :

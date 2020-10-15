@@ -9,8 +9,8 @@ class SearchService:
         스토어 검색 - Business Layer(Service) function
         Args :
             search_dao: 검색 관련 데이터접근객체
-            params : 딕셔너리 패킹된 쿼리파라미터객체
-            db : 데이터베이스 연결객체
+            params    : 딕셔너리 패킹된 쿼리파라미터객체
+            db        : 데이터베이스 연결객체
         Returns :
             search_stores_results객체(검색어와 매칭된 셀러 리스트)
         Authors :
@@ -24,7 +24,7 @@ class SearchService:
         try :
             search_stores_results = self.search_dao.search_stores(params, db)
             if not search_stores_results :
-                search_stores_results = "검색된 스토어가 없습니다."
+                search_stores_results = '검색된 스토어가 없습니다.'
        
         except :
             traceback.print_exc()
@@ -38,8 +38,8 @@ class SearchService:
         상품 검색 - Business Layer(Service) function
         Args :
             search_dao: 검색 관련 데이터접근객체
-            params : 딕셔너리 패킹된 쿼리파라미터객체
-            db : 데이터베이스 연결객체
+            params    : 딕셔너리 패킹된 쿼리파라미터객체
+            db        : 데이터베이스 연결객체
         Returns :
             search_products_results객체(검색어와 매칭된 상품 리스트)
         Authors :
