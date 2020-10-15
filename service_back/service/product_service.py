@@ -10,7 +10,7 @@ class ProductService:
         메인페이지 상품리스트 - Business Layer(Service) function
         Args :
             product_dao: 상품 관련 데이터접근객체
-            db : 데이터베이스 연결객체
+            db         : 데이터베이스 연결객체
         Returns :
             products객체(할인률존재상품 + 판매량높은상품)
         Authors :
@@ -51,8 +51,8 @@ class ProductService:
         NAV/SIDE_BAR 카테고리리스트 - Business Layer(Service) function
         Args :
             product_dao: 상품 관련 데이터접근객체
-            q : 쿼리파라미터(셀러속성 id)
-            db : 데이터베이스 연결객체
+            q          : 쿼리파라미터(셀러속성 id)
+            db         : 데이터베이스 연결객체
         Returns :
             category_set객체(셀러속성에 매칭되는 1,2차 카테고리리스트)
         Authors :
@@ -98,8 +98,8 @@ class ProductService:
         전체상품 리스트(필터링있음) - Business Layer(Service) function
         Args :
             product_dao: 상품 관련 데이터접근객체
-            params : 딕셔너리 패킹된 쿼리파라미터객체
-            db : 데이터베이스 연결객체
+            params     : 딕셔너리 패킹된 쿼리파라미터객체
+            db         : 데이터베이스 연결객체
         Returns :
             products객체(필터링 적용된 전체 상품리스트)
         Authors :
@@ -128,7 +128,7 @@ class ProductService:
         Args :
             product_dao: 상품 관련 데이터접근객체
             product_id : 상품아이디
-            db : 데이터베이스 연결객체
+            db         : 데이터베이스 연결객체
         Returns :
             product객체(상품아이디에 매칭되는 상품상세정보)
         Authors :

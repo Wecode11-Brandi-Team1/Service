@@ -42,12 +42,14 @@ def create_app(test_config = None):
         1218kim23@gmail.com(김기욱)
         taeha7b@gmail.com(김태하)
     History :
+        2020-10-11 : Caching 구현
         2020-10-02 : ASCCI형식 False로 변경(김기욱)
         2020-09-17 : 초기 생성(김기욱 김태하)
     """
 
     app = Flask(__name__)
     app.config['JSON_AS_ASCII'] = False
+    
     app.config['CACHE_TYPE'] = 'simple'
     cache.init_app(app)
 

@@ -28,7 +28,7 @@ class SearchView(MethodView):
         Args :
             service : 서비스레이어 객체
             limit   : 데이터의 최대 갯수
-            q       : 검색어
+            q       : 쿼리파라미터(검색어)
         Returns :
             200:
                 쿼리파라미터와 매칭되는 상품 및 셀러정보 JSONDATA
