@@ -29,5 +29,10 @@
 * 상품 구매, 취소, 환불
 
 ### 적용 기술 - 프론트엔드
+* HTML, CSS
+* JS
+* Vue(Vue router, Vue Webpack, Vuex)
+* SASS
+* Vuetify
 
 ### 구현된 기능 - 프론트엔드
