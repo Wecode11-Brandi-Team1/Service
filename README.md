@@ -15,7 +15,7 @@
 
 ## 적용 기술 및 구현된 기능
 ### 적용 기술 - 백엔드
-* Python, Flaks web framework
+* Python, Flask web framework
 * Bcrypt
 * JWT
 * MySQL
